@@ -1,0 +1,2996 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Boshqaruv Paneli — Istanbul Cafe</title>
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-page: #f1f5f9;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --border-color: #e2e8f0;
+            --border-subtle: #f1f5f9;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            
+            --accent-red: #e11d48;
+            --accent-red-hover: #be123c;
+            --accent-red-light: rgba(225, 29, 72, 0.08);
+            --accent-green: #10b981;
+            --accent-green-light: rgba(16, 185, 129, 0.1);
+            --accent-amber: #f59e0b;
+            --accent-amber-light: rgba(245, 158, 11, 0.12);
+            --accent-blue: #0284c7;
+            --accent-blue-light: rgba(2, 132, 199, 0.1);
+            --accent-purple: #8b5cf6;
+            --accent-purple-light: rgba(139, 92, 246, 0.1);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* =======================================
+           SIDEBAR (DESKTOP)
+        ======================================= */
+        .sidebar {
+            width: 250px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 22px 16px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 8px 20px 8px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .brand-logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #e11d48, #be123c);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+        }
+
+        .brand-text-wrap {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 20px;
+            flex: 1;
+        }
+
+        .nav-section-lbl {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 8px 12px 4px 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            position: relative;
+        }
+
+        .nav-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item svg {
+            width: 19px;
+            height: 19px;
+            stroke-width: 2.2;
+            color: var(--text-muted);
+            transition: color 0.18s;
+        }
+
+        .nav-item:hover {
+            background: #f8fafc;
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-red-light);
+            color: var(--accent-red);
+            font-weight: 800;
+        }
+
+        .nav-item.active svg {
+            color: var(--accent-red);
+        }
+
+        .nav-badge-pill {
+            font-size: 11px;
+            font-weight: 800;
+            background: var(--accent-red);
+            color: #fff;
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            display: inline-block;
+        }
+
+        .sidebar-bottom-info {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            display: inline-block;
+            margin-right: 6px;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* =======================================
+           MAIN CONTENT WRAPPER
+        ======================================= */
+        .main-wrapper {
+            margin-left: 250px;
+            flex: 1;
+            padding: 20px 28px 70px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1400px;
+        }
+
+        /* Top Header Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 12px 20px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .top-bar-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-bar-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .top-bar-date-pill {
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            width: 38px;
+            height: 38px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            color: var(--text-secondary);
+            transition: all 0.15s ease;
+        }
+
+        .icon-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.2;
+        }
+
+        .red-dot-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--accent-red);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 900;
+            border-radius: var(--radius-full);
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            border: 2px solid #ffffff;
+        }
+
+        /* Banner Card */
+        .dashboard-header-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: var(--radius-xl);
+            padding: 22px 28px;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header-banner::after {
+            content: '';
+            position: absolute;
+            right: -50px;
+            top: -50px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(225, 29, 72, 0.25) 0%, rgba(225, 29, 72, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .banner-left h1 {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.4px;
+            margin-bottom: 4px;
+        }
+
+        .banner-left p {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .banner-actions {
+            display: flex;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .btn-banner-action {
+            background: var(--accent-red);
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .btn-banner-action:hover {
+            background: var(--accent-red-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-banner-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s;
+        }
+
+        .btn-banner-secondary:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        /* 4 KPI CARDS GRID */
+        .kpi-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-icon-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .kpi-icon-badge.red { background: var(--accent-red-light); color: var(--accent-red); }
+        .kpi-icon-badge.green { background: var(--accent-green-light); color: var(--accent-green); }
+        .kpi-icon-badge.amber { background: var(--accent-amber-light); color: var(--accent-amber); }
+        .kpi-icon-badge.blue { background: var(--accent-blue-light); color: var(--accent-blue); }
+
+        .kpi-val {
+            font-size: 23px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .kpi-val.green { color: #059669; }
+        .kpi-val.red { color: var(--accent-red); }
+
+        .kpi-foot {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .kpi-card-accent-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        .kpi-card-accent-line.green { background: var(--accent-green); }
+        .kpi-card-accent-line.red { background: var(--accent-red); }
+        .kpi-card-accent-line.amber { background: var(--accent-amber); }
+        .kpi-card-accent-line.blue { background: var(--accent-blue); }
+
+        /* TAB SYSTEM */
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* TWO-COLUMN DASHBOARD LAYOUT */
+        .dash-layout-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+        }
+
+        .panel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
+        }
+
+        .panel-tag {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            background: #f1f5f9;
+            color: var(--text-secondary);
+        }
+
+        .panel-body {
+            padding: 16px 20px;
+            flex: 1;
+        }
+
+        /* TABLES */
+        .data-table-wrap {
+            overflow-x: auto;
+        }
+
+        .clean-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .clean-table th {
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 900;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 1px solid var(--border-color);
+            background: #f8fafc;
+            white-space: nowrap;
+        }
+
+        .clean-table td {
+            padding: 13px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-subtle);
+            vertical-align: middle;
+        }
+
+        .clean-table tr {
+            transition: background 0.12s ease;
+        }
+
+        .clean-table tbody tr {
+            cursor: pointer;
+        }
+
+        .clean-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Status Pills */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status-badge.new {
+            background: rgba(245, 158, 11, 0.12);
+            color: #b45309;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-badge.cooking {
+            background: rgba(2, 132, 199, 0.12);
+            color: #0369a1;
+            border: 1px solid rgba(2, 132, 199, 0.3);
+        }
+
+        .status-badge.delivering {
+            background: rgba(139, 92, 246, 0.12);
+            color: #6d28d9;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .status-badge.completed {
+            background: rgba(16, 185, 129, 0.12);
+            color: #047857;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.cancelled {
+            background: rgba(239, 68, 68, 0.12);
+            color: #b91c1c;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .service-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+        }
+        .service-badge.pickup {
+            background: rgba(217, 119, 6, 0.12);
+            color: #b45309;
+        }
+        .service-badge.delivery {
+            background: rgba(2, 132, 199, 0.12);
+            color: #0284c7;
+        }
+
+        /* Filter Pills & Action Bar */
+        .filter-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-pills-list {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .f-pill {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .f-pill:hover {
+            background: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        .f-pill.active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #ffffff;
+            font-weight: 800;
+            box-shadow: 0 2px 6px rgba(225, 29, 72, 0.25);
+        }
+
+        .f-pill-count {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 1px 6px;
+            border-radius: var(--radius-full);
+            font-size: 10.5px;
+        }
+
+        .f-pill:not(.active) .f-pill-count {
+            background: #e2e8f0;
+            color: var(--text-secondary);
+        }
+
+        .search-control-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-width: 240px;
+        }
+
+        .search-control-wrap svg {
+            position: absolute;
+            left: 12px;
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-box-input {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 8px 12px 8px 36px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.15s;
+        }
+
+        .search-box-input:focus {
+            background: #ffffff;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
+        }
+
+        /* Fast Action Button in Table */
+        .btn-fast-advance {
+            background: var(--accent-red);
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-fast-advance:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .btn-fast-advance.amber { background: #d97706; }
+        .btn-fast-advance.blue { background: #0284c7; }
+        .btn-fast-advance.green { background: #059669; }
+
+        /* DAY-BY-DAY ORDERS SECTION */
+        .day-group-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+
+        .day-group-header {
+            padding: 14px 20px;
+            background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .day-title-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .day-calendar-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--accent-blue-light);
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .day-name-txt {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        .day-stats-pill-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .day-stat-pill {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .day-stat-pill.revenue {
+            background: var(--accent-green-light);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #047857;
+        }
+
+        .day-stat-pill.count {
+            background: var(--accent-blue-light);
+            border-color: rgba(2, 132, 199, 0.3);
+            color: #0369a1;
+        }
+
+        /* TODAY'S ITEMS SOLD LIST */
+        .today-dish-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            background: #f8fafc;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 8px;
+            transition: transform 0.12s ease;
+        }
+
+        .today-dish-item:hover {
+            transform: translateX(3px);
+            background: #f1f5f9;
+        }
+
+        .today-dish-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .today-dish-rank {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .today-dish-rank.gold { background: #fef3c7; color: #b45309; }
+        .today-dish-rank.silver { background: #e2e8f0; color: #475569; }
+        .today-dish-rank.bronze { background: #ffedd5; color: #c2410c; }
+
+        .today-dish-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .today-dish-title {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .today-dish-sub {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .today-dish-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .today-dish-total {
+            font-size: 14px;
+            font-weight: 900;
+            color: #059669;
+        }
+
+        .today-dish-qty-badge {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent-red);
+            background: var(--accent-red-light);
+            padding: 1px 7px;
+            border-radius: var(--radius-full);
+            align-self: flex-end;
+        }
+
+        /* MENU MANAGEMENT GRID */
+        .menu-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 16px 20px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xs);
+        }
+
+        .btn-add-item {
+            background: var(--accent-red);
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+            transition: background 0.15s;
+        }
+
+        .btn-add-item:hover {
+            background: var(--accent-red-hover);
+        }
+
+        .menu-grid-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 16px;
+        }
+
+        .menu-dish-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .menu-dish-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dish-cat-pill {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent-blue);
+            background: var(--accent-blue-light);
+            padding: 3px 9px;
+            border-radius: var(--radius-full);
+            width: fit-content;
+        }
+
+        .dish-name-txt {
+            font-size: 15.5px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-top: 6px;
+        }
+
+        .dish-price-txt {
+            font-size: 17px;
+            font-weight: 900;
+            color: #059669;
+        }
+
+        .dish-actions-bar {
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 12px;
+        }
+
+        .btn-edit-dish {
+            flex: 1;
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-edit-dish:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-del-dish {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-del-dish:hover {
+            background: rgba(239, 68, 68, 0.16);
+        }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: var(--shadow-lg);
+            animation: modalPop 0.18s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 14px;
+        }
+
+        .modal-heading {
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        .btn-modal-close {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .btn-modal-close:hover {
+            color: var(--text-primary);
+            background: #f1f5f9;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-lbl {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .detail-val {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .receipt-image-view {
+            max-height: 200px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .items-box-list {
+            background: #f8fafc;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+        }
+
+        .item-line-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .item-line-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .modal-action-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 16px;
+        }
+
+        .btn-action-stage {
+            flex: 1;
+            padding: 11px 14px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: opacity 0.15s ease, transform 0.1s ease;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .btn-action-stage:hover {
+            opacity: 0.9;
+        }
+
+        .btn-action-stage.amber { background: #d97706; color: #fff; }
+        .btn-action-stage.blue { background: #0284c7; color: #fff; }
+        .btn-action-stage.green { background: #059669; color: #fff; }
+        .btn-action-stage.red { background: rgba(239, 68, 68, 0.1); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.25); }
+        .btn-action-stage.delete { background: #f1f5f9; color: var(--text-secondary); border: 1px solid var(--border-color); }
+        .btn-action-stage.print { background: #e2e8f0; color: #0f172a; border: 1px solid var(--border-color); }
+
+        /* Form Inputs */
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label-txt {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-secondary);
+        }
+
+        .form-control-input {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            outline: none;
+            transition: border 0.15s;
+        }
+
+        .form-control-input:focus {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
+        }
+
+        /* MOBILE BOTTOM NAVIGATION */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--bg-sidebar);
+            border-top: 1px solid var(--border-color);
+            padding: 8px 8px 14px 8px;
+            z-index: 99;
+            justify-content: space-around;
+            box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .m-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        .m-nav-item.active {
+            color: var(--accent-red);
+            font-weight: 800;
+        }
+
+        .m-nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .m-badge-pill {
+            position: absolute;
+            top: 0px;
+            right: 4px;
+            background: var(--accent-red);
+            color: #fff;
+            font-size: 9.5px;
+            font-weight: 900;
+            border-radius: var(--radius-full);
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+        }
+
+        @media (max-width: 980px) {
+            .sidebar { display: none; }
+            .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+                padding: 14px 12px 85px 12px;
+                gap: 14px;
+            }
+            .kpi-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .dash-layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .mobile-bottom-nav { display: flex; }
+            .dashboard-header-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                padding: 18px;
+            }
+            .banner-actions {
+                width: 100%;
+            }
+            .btn-banner-action, .btn-banner-secondary {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .kpi-grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <!-- =======================================
+         SIDEBAR (DESKTOP)
+    ======================================= -->
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                </div>
+                <div class="brand-text-wrap">
+                    <span class="brand-name" id="sidebarCafeName">Istanbul Cafe</span>
+                    <span class="brand-sub">Boshqaruv Paneli</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-section-lbl">Asosiy Bo'limlar</span>
+
+                <!-- 1. Bosh Sahifa (Bugungi hisobot) -->
+                <div class="nav-item active" id="navBoshSahifa" onclick="switchNav('bosh-sahifa')">
+                    <div class="nav-item-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        <span>Bosh Sahifa (Bugun)</span>
+                    </div>
+                </div>
+
+                <!-- 2. Buyurtmalar (Har kungi arxiv va tushumlar) -->
+                <div class="nav-item" id="navBuyurtmalar" onclick="switchNav('buyurtmalar')">
+                    <div class="nav-item-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span>Buyurtmalar Tarixi</span>
+                    </div>
+                    <span class="nav-badge-pill" id="sidebarPendingCount" style="display: none;">0</span>
+                </div>
+
+                <!-- 3. Menyu Boshqaruvi -->
+                <div class="nav-item" id="navMenyu" onclick="switchNav('menyu')">
+                    <div class="nav-item-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        <span>Menyu va Narxlar</span>
+                    </div>
+                </div>
+
+                <span class="nav-section-lbl" style="margin-top: 10px;">Boshqaruv & Tahlil</span>
+
+                <!-- 4. Hisobotlar & Kassa -->
+                <div class="nav-item" id="navHisobotlar" onclick="switchNav('hisobotlar')">
+                    <div class="nav-item-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        <span>Kassa & Hisobotlar</span>
+                    </div>
+                </div>
+
+                <!-- 5. Hodimlar -->
+                <div class="nav-item" id="navHodimlar" onclick="switchNav('hodimlar')">
+                    <div class="nav-item-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Hodimlar (Oshxona/Kuryer)</span>
+                    </div>
+                </div>
+
+                <!-- 6. Sozlamalar -->
+                <div class="nav-item" id="navSozlamalar" onclick="switchNav('sozlamalar')">
+                    <div class="nav-item-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <span>Sozlamalar</span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom-info">
+            <span id="sidebarStatusText"><span class="live-dot"></span>Kafe: Ochiq</span>
+            <span id="digitalClock" style="font-weight: 800; font-family: monospace;">--:--:--</span>
+        </div>
+    </aside>
+
+    <!-- =======================================
+         MAIN DASHBOARD CONTENT
+    ======================================= -->
+    <main class="main-wrapper">
+
+        <!-- Top Navigation Bar -->
+        <div class="top-bar">
+            <div class="top-bar-title-wrap">
+                <span class="top-bar-title" id="topHeaderTitle">Boshqaruv Paneli</span>
+                <span class="top-bar-date-pill">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span id="topLiveDate">Bugun</span>
+                </span>
+            </div>
+            <div class="top-bar-right">
+                <button class="icon-btn" onclick="toggleFullScreen()" title="To'liq ekran">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                </button>
+                <button class="icon-btn" onclick="switchNav('buyurtmalar'); setOrdersFilter('new');" title="Kutilayotgan buyurtmalar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="red-dot-badge" id="badgeCount">0</span>
+                </button>
+                <div class="icon-btn" title="Admin" style="background: var(--accent-red-light); color: var(--accent-red); border-color: rgba(225, 29, 72, 0.2);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================================
+             TAB 1: BOSH SAHIFA (BUGUNGI HISOBOT, TAOMLAR, JONLI BUYURTMALAR)
+        ============================================================== -->
+        <div class="tab-content active" id="tabBoshSahifa">
+            
+            <!-- Dashboard Banner -->
+            <div class="dashboard-header-banner">
+                <div class="banner-left">
+                    <h1 id="bannerGreeting">Bugungi Savdo va Buyurtmalar Ko'rsatkichi</h1>
+                    <p>Real vaqt rejimida bugungi tushum, sotilgan taomlar va joriy buyurtmalar holati</p>
+                </div>
+                <div class="banner-actions">
+                    <button class="btn-banner-action" onclick="switchNav('buyurtmalar')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span>Buyurtmalar Tarixi</span>
+                    </button>
+                    <button class="btn-banner-secondary" onclick="loadOrders()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                        <span>Yangilash</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4 KPI CARDS (BUGUNGI KO'RSATKICHLAR) -->
+            <div class="kpi-grid-4">
+                <!-- 1. Bugungi Tushum -->
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Bugungi Tushum</span>
+                        <div class="kpi-icon-badge green">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </div>
+                    </div>
+                    <span class="kpi-val green" id="kpiTodayRevenue">0 UZS</span>
+                    <div class="kpi-foot">
+                        <span style="color: #059669; font-weight: 800;" id="kpiTodayCompletedCount">0 ta yakunlangan</span>
+                    </div>
+                    <div class="kpi-card-accent-line green"></div>
+                </div>
+
+                <!-- 2. Bugungi Jami Buyurtmalar -->
+                <div class="kpi-card" onclick="switchNav('buyurtmalar'); setDateFilter('today');" style="cursor: pointer;">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Bugungi Buyurtmalar</span>
+                        <div class="kpi-icon-badge blue">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        </div>
+                    </div>
+                    <span class="kpi-val" id="kpiTodayTotalOrders">0 ta</span>
+                    <div class="kpi-foot">
+                        <span id="kpiTodayCancelledCount" style="color: var(--text-muted);">0 bekor qilingan</span>
+                    </div>
+                    <div class="kpi-card-accent-line blue"></div>
+                </div>
+
+                <!-- 3. Joriy Faol Jarayonda -->
+                <div class="kpi-card" onclick="switchNav('buyurtmalar'); setOrdersFilter('active');" style="cursor: pointer;">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Faol Jarayonda</span>
+                        <div class="kpi-icon-badge amber">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                    </div>
+                    <span class="kpi-val" style="color: #d97706;" id="kpiTodayActiveCount">0 ta</span>
+                    <div class="kpi-foot">
+                        <span id="kpiTodayActiveDesc">Oshxonada & Yetkazilmoqda</span>
+                    </div>
+                    <div class="kpi-card-accent-line amber"></div>
+                </div>
+
+                <!-- 4. Bugungi O'rtacha Chek -->
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">O'rtacha Chek</span>
+                        <div class="kpi-icon-badge red">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        </div>
+                    </div>
+                    <span class="kpi-val" id="kpiTodayAvgCheck">0 UZS</span>
+                    <div class="kpi-foot">
+                        <span style="color: var(--text-secondary);">Bir buyurtma o'rtacha</span>
+                    </div>
+                    <div class="kpi-card-accent-line red"></div>
+                </div>
+            </div>
+
+            <!-- TWO COLUMN LAYOUT: BUGUNGI JONLI BUYURTMALAR & BUGUNGI SOTILGAN TAOMLAR -->
+            <div class="dash-layout-grid">
+                
+                <!-- LEFT COLUMN: BUGUNGI JONLI BUYURTMALAR RO'YXATI -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-header-left">
+                            <span class="panel-title">Bugungi Jonli Buyurtmalar</span>
+                            <span class="panel-tag" id="todayOrdersCountBadge">0 ta</span>
+                        </div>
+                        <button class="f-pill active" onclick="switchNav('buyurtmalar')" style="font-size: 11.5px; padding: 4px 10px;">Barcha tarix &rarr;</button>
+                    </div>
+
+                    <div class="data-table-wrap">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>ID / VAQT</th>
+                                    <th>MIJOZ</th>
+                                    <th>TARKIBI</th>
+                                    <th>SUMMA</th>
+                                    <th>HOLATI & HARAKAT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todayOrdersTbody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                        Bugun hali buyurtmalar tushmadi.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: BUGUN SOTILGAN NARSALAR VA ULARNING NARXLARI -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-header-left">
+                            <span class="panel-title">Bugun Sotilgan Taomlar</span>
+                            <span class="panel-tag" id="todaySoldDishVarietyCount">0 xil</span>
+                        </div>
+                        <span style="font-size: 11.5px; font-weight: 800; color: #059669;" id="todaySoldTotalSum">0 UZS</span>
+                    </div>
+
+                    <div class="panel-body" style="max-height: 520px; overflow-y: auto;">
+                        <div id="todaySoldDishesList">
+                            <div style="text-align: center; color: var(--text-muted); padding: 30px 10px;">
+                                Bugun hali taom sotilmadi.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================================
+             TAB 2: BUYURTMALAR TARIXI (HAR KUNLIK BUYURTMALAR VA TUSHUMLAR)
+        ============================================================== -->
+        <div class="tab-content" id="tabBuyurtmalar">
+            
+            <!-- Filter & Search Controls Card -->
+            <div class="panel-card">
+                <div class="filter-header-bar">
+                    <!-- Date Filter Buttons -->
+                    <div class="filter-pills-list">
+                        <span style="font-size: 12px; font-weight: 800; color: var(--text-muted); margin-right: 4px;">Sana:</span>
+                        <button class="f-pill active" id="dateFilterAll" onclick="setDateFilter('all', this)">Barcha kunlar</button>
+                        <button class="f-pill" id="dateFilterToday" onclick="setDateFilter('today', this)">Bugun</button>
+                        <button class="f-pill" id="dateFilterYesterday" onclick="setDateFilter('yesterday', this)">Kecha</button>
+                        <button class="f-pill" id="dateFilter7Days" onclick="setDateFilter('7days', this)">Oxirgi 7 kun</button>
+                        <input type="date" id="customDatePicker" class="form-control-input" style="padding: 5px 10px; font-size: 12px; width: auto; height: 32px;" onchange="setDateFilter('custom', null, this.value)">
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="search-control-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="search-box-input" id="ordersSearchInput" placeholder="Qidiruv (ID, ism, tel, taom)..." oninput="renderOrdersHistory()">
+                    </div>
+                </div>
+
+                <!-- Status Filters Sub-bar -->
+                <div style="padding: 10px 18px; background: #f8fafc; border-bottom: 1px solid var(--border-color); display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 12px; font-weight: 800; color: var(--text-muted); margin-right: 4px;">Holat:</span>
+                    <button class="f-pill active" onclick="setOrdersFilter('all', this)">Barchasi <span class="f-pill-count" id="countAll">0</span></button>
+                    <button class="f-pill" onclick="setOrdersFilter('new', this)">Kutilmoqda <span class="f-pill-count" id="countNew">0</span></button>
+                    <button class="f-pill" onclick="setOrdersFilter('cooking', this)">Tayyorlanmoqda <span class="f-pill-count" id="countCooking">0</span></button>
+                    <button class="f-pill" onclick="setOrdersFilter('delivering', this)">Yetkazilmoqda/Tayyor <span class="f-pill-count" id="countDelivering">0</span></button>
+                    <button class="f-pill" onclick="setOrdersFilter('completed', this)">Yakunlandi <span class="f-pill-count" id="countCompleted">0</span></button>
+                    <button class="f-pill" onclick="setOrdersFilter('cancelled', this)">Bekor qilingan <span class="f-pill-count" id="countCancelled">0</span></button>
+                </div>
+            </div>
+
+            <!-- DAY-BY-DAY GROUPED ORDERS CONTAINER -->
+            <div id="dayByDayOrdersContainer">
+                <!-- Dynamically generated day groups with revenue & orders -->
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================================
+             TAB 3: MENYU BOSHQARUVI (MENU CRUD)
+        ============================================================== -->
+        <div class="tab-content" id="tabMenu">
+            <div class="menu-top-bar">
+                <div>
+                    <h2 style="font-size: 16px; font-weight: 900; color: var(--text-primary);">Kafe Menyusi va Narxlar</h2>
+                    <p style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">Taomlarni tahrirlash, yangi qo'shish va narxlarni boshqarish</p>
+                </div>
+                <button class="btn-add-item" onclick="openAddDishModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Yangi taom qo'shish</span>
+                </button>
+            </div>
+            
+            <div class="menu-grid-items" id="menuDishesContainer">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+
+
+        <!-- ==============================================================
+             TAB 4: KASSA & HISOBOTLAR
+        ============================================================== -->
+        <div class="tab-content" id="tabReports">
+            <div class="panel-card" style="padding: 24px;">
+                <h2 style="font-size: 17px; font-weight: 900; margin-bottom: 20px;">Umumiy Kassa va Savdo Ko'rsatkichlari</h2>
+                
+                <div class="kpi-grid-4" style="margin-bottom: 24px;">
+                    <div class="kpi-card">
+                        <span class="kpi-label">Jami Tarixiy Tushum</span>
+                        <span class="kpi-val green" id="repTotalRevenue">0 UZS</span>
+                        <div class="kpi-foot">Barcha vaqtlar bo'yicha</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Jami Buyurtmalar</span>
+                        <span class="kpi-val" id="repTotalOrders">0 ta</span>
+                        <div class="kpi-foot">Qabul qilingan</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Yakunlanganlar</span>
+                        <span class="kpi-val green" id="repCompletedOrders">0 ta</span>
+                        <div class="kpi-foot">Muvaffaqiyatli topshirilgan</div>
+                    </div>
+                    <div class="kpi-card">
+                        <span class="kpi-label">Bekor Qilinganlar</span>
+                        <span class="kpi-val red" id="repCancelledOrders">0 ta</span>
+                        <div class="kpi-foot">Rad etilgan buyurtmalar</div>
+                    </div>
+                </div>
+
+                <!-- Har bir kunlik tushumlar jamlanmasi jadvali -->
+                <h3 style="font-size: 15px; font-weight: 900; margin-bottom: 14px; color: var(--text-primary);">Har kunlik tushumlar balansi</h3>
+                <div class="data-table-wrap" style="border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                    <table class="clean-table">
+                        <thead>
+                            <tr>
+                                <th>SANA</th>
+                                <th>BUYURTMALAR SONI</th>
+                                <th>YAKUNLANGAN</th>
+                                <th>BEKOR QILINGAN</th>
+                                <th>KUNLIK SOF TUSHUM</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dailyRevenueSummaryTbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==============================================================
+             TAB 5: HODIMLAR (OSHXONA VA KURYER)
+        ============================================================== -->
+        <div class="tab-content" id="tabStaff">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <span class="panel-title">Hodimlar Nazorati va Yuklama</span>
+                </div>
+                <div class="data-table-wrap">
+                    <table class="clean-table">
+                        <thead>
+                            <tr>
+                                <th>HODIM / BO'LIM</th>
+                                <th>VAZIFASI</th>
+                                <th>HOLATI</th>
+                                <th>JORIY YUKLAMA (BUYURTMALAR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                                        <b>Oshxona (Bosh oshpaz)</b>
+                                    </div>
+                                </td>
+                                <td>Taomlarni tayyorlash</td>
+                                <td><span class="status-badge cooking"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Tayyorlamoqda</span></td>
+                                <td id="staffKitchenCount" style="font-weight: 800; color: #0284c7;">0 ta taom</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2.2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                        <b>Yetkazib berish (Kuryer)</b>
+                                    </div>
+                                </td>
+                                <td>Manzilga yetkazish</td>
+                                <td><span class="status-badge delivering"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Yo'lda</span></td>
+                                <td id="staffCourierCount" style="font-weight: 800; color: #6d28d9;">0 ta manzil</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                        <b>Kassa & Operator</b>
+                                    </div>
+                                </td>
+                                <td>Buyurtmalarni qabul qilish va tasdiqlash</td>
+                                <td><span class="status-badge new"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Navbatchilikda</span></td>
+                                <td id="staffOperatorCount" style="font-weight: 800; color: #b45309;">0 ta yangi</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==============================================================
+             TAB 6: SOZLAMALAR
+        ============================================================== -->
+        <div class="tab-content" id="tabSettings">
+            <div class="panel-card" style="padding: 24px; max-width: 620px;">
+                <h2 style="font-size: 17px; font-weight: 900; margin-bottom: 20px; color: var(--text-primary);">Kassa va Kafe Sozlamalari</h2>
+                
+                <form id="settingsForm" onsubmit="saveAdminSettings(event)" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="form-row">
+                        <span class="form-label-txt">Payme / Click Karta Raqami:</span>
+                        <input type="text" class="form-control-input" id="settingCardNumber" required placeholder="8600 1234 5678 9012">
+                    </div>
+
+                    <div class="form-row">
+                        <span class="form-label-txt">Karta Egasi Ismi:</span>
+                        <input type="text" class="form-control-input" id="settingCardOwner" required placeholder="Istanbul Cafe">
+                    </div>
+
+                    <div class="form-row">
+                        <span class="form-label-txt">Kafe Holati:</span>
+                        <select class="form-control-input" id="settingIsOpen">
+                            <option value="true">Kafe: Ochiq (Buyurtmalar qabul qilinadi)</option>
+                            <option value="false">Kafe: Yopiq (Vaqtinchalik to'xtatilgan)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <span class="form-label-txt">Kafe Nomi:</span>
+                        <input type="text" class="form-control-input" id="settingCafeName" value="Istanbul Cafe" placeholder="Istanbul Cafe">
+                    </div>
+
+                    <div id="settingsAlertBox" style="display: none; padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;"></div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <button type="submit" class="btn-add-item" style="justify-content: center; padding: 12px 20px;">
+                            <span>Sozlamalarni saqlash</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- =======================================
+         MOBILE BOTTOM NAVIGATION
+    ======================================= -->
+    <div class="mobile-bottom-nav">
+        <div class="m-nav-item active" id="mNavBosh" onclick="switchNav('bosh-sahifa')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Bosh Sahifa</span>
+        </div>
+        <div class="m-nav-item" id="mNavBuyurtmalar" onclick="switchNav('buyurtmalar')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span>Buyurtmalar</span>
+            <span class="m-badge-pill" id="mBadgeCount" style="display: none;">0</span>
+        </div>
+        <div class="m-nav-item" id="mNavMenyu" onclick="switchNav('menyu')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>Menyu</span>
+        </div>
+        <div class="m-nav-item" id="mNavHisobot" onclick="switchNav('hisobotlar')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Kassa</span>
+        </div>
+        <div class="m-nav-item" id="mNavSozlama" onclick="switchNav('sozlamalar')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Sozlamalar</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- =======================================
+     ORDER DETAILS MODAL
+======================================= -->
+<div class="modal-overlay" id="orderModal">
+    <div class="modal-box">
+        <div class="modal-top">
+            <span class="modal-heading" id="modalTitle">Buyurtma #--</span>
+            <button class="btn-modal-close" onclick="closeModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-lbl">Mijoz:</span>
+                <span class="detail-val" id="modalCustomer">-</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-lbl">Telefon:</span>
+                <span class="detail-val" id="modalPhone">-</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-lbl">Xizmat turi:</span>
+                <span class="detail-val" id="modalService">-</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-lbl">To'lov usuli:</span>
+                <span class="detail-val" id="modalPayment">-</span>
+            </div>
+            <div class="detail-item" style="grid-column: span 2;">
+                <span class="detail-lbl">Sana & Vaqt:</span>
+                <span class="detail-val" id="modalTime">-</span>
+            </div>
+            <div class="detail-item" style="grid-column: span 2;">
+                <span class="detail-lbl">Manzil:</span>
+                <span class="detail-val" id="modalAddress">-</span>
+            </div>
+        </div>
+
+        <div id="modalReceiptArea" style="display: none;">
+            <span class="detail-lbl" style="margin-bottom: 6px; display: block;">To'lov cheki (screenshot):</span>
+            <img src="" id="modalReceiptImg" class="receipt-image-view" onclick="window.open(this.src, '_blank')" title="Kattalashtirib ko'rish">
+        </div>
+
+        <div class="items-box-list" id="modalItems">
+            <!-- Items rendered dynamically -->
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px;">
+            <span style="font-weight: 800; color: var(--text-secondary);">Jami to'lov:</span>
+            <span style="font-size: 20px; font-weight: 900; color: #059669;" id="modalTotal">0 UZS</span>
+        </div>
+
+        <div class="modal-action-row" id="modalActions">
+            <!-- Progression buttons -->
+        </div>
+    </div>
+</div>
+
+<!-- =======================================
+     ADD / EDIT DISH MODAL
+======================================= -->
+<div class="modal-overlay" id="dishModal">
+    <div class="modal-box">
+        <div class="modal-top">
+            <span class="modal-heading" id="dishModalTitle">Yangi taom qo'shish</span>
+            <button class="btn-modal-close" onclick="closeDishModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <form id="dishForm" onsubmit="saveDish(event)" style="display: flex; flex-direction: column; gap: 14px;">
+            <input type="hidden" id="dishId">
+            <div class="form-row">
+                <span class="form-label-txt">Taom nomi:</span>
+                <input type="text" class="form-control-input" id="dishName" required placeholder="Masalan: Double Cheese Burger">
+            </div>
+            <div class="form-row">
+                <span class="form-label-txt">Narxi (so'mda):</span>
+                <input type="number" class="form-control-input" id="dishPrice" required placeholder="Masalan: 32000">
+            </div>
+            <div class="form-row">
+                <span class="form-label-txt">Kategoriyasi:</span>
+                <select class="form-control-input" id="dishCategory" required>
+                    <option value="burger">Burgerlar</option>
+                    <option value="pizza">Pitsalar</option>
+                    <option value="kebab">Kebablar</option>
+                    <option value="lavash">Lavash va Doner</option>
+                    <option value="drinks">Ichimliklar va gazaklar</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <button type="submit" class="btn-action-stage green">Saqlash</button>
+                <button type="button" class="btn-action-stage delete" onclick="closeDishModal()">Bekor qilish</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =======================================
+     JAVASCRIPT LOGIC
+======================================= -->
+<script>
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+        try {
+            tg.ready();
+            tg.expand();
+        } catch (e) {
+            console.warn("Telegram WebApp init:", e);
+        }
+    }
+
+    let ORDERS = [];
+    let CURRENT_NAV = 'bosh-sahifa';
+    let ORDERS_STATUS_FILTER = 'all';
+    let ORDERS_DATE_FILTER = 'all';
+    let CUSTOM_DATE_VAL = '';
+    let ACTIVE_ORDER_ID = null;
+
+    // Formatting helper
+    function fmtUZS(n) {
+        if (!n && n !== 0) return "0 UZS";
+        return Number(n).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' UZS';
+    }
+
+    // Live Clock & Date
+    function updateClockAndDate() {
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+        const el = document.getElementById('digitalClock');
+        if (el) el.textContent = timeStr;
+
+        const months = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
+        const dateStr = `${now.getDate()}-${months[now.getMonth()]}, ${now.getFullYear()}`;
+        const topDateEl = document.getElementById('topLiveDate');
+        if (topDateEl) topDateEl.textContent = dateStr;
+    }
+    setInterval(updateClockAndDate, 1000);
+    updateClockAndDate();
+
+    // Fullscreen Toggle
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {});
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    // Parse date helpers
+    function getOrderDateObj(order) {
+        if (!order || !order.timestamp) return new Date(0);
+        return new Date(order.timestamp);
+    }
+
+    function isSameDay(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+    }
+
+    function formatDateKey(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+
+    function formatHumanDate(d) {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        const months = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
+        const dateFormatted = `${d.getDate()}-${months[d.getMonth()]}, ${d.getFullYear()}`;
+
+        if (isSameDay(d, today)) {
+            return `Bugun — ${dateFormatted}`;
+        } else if (isSameDay(d, yesterday)) {
+            return `Kecha — ${dateFormatted}`;
+        }
+        return dateFormatted;
+    }
+
+    function formatTimeOnly(d) {
+        const h = String(d.getHours()).padStart(2, '0');
+        const m = String(d.getMinutes()).padStart(2, '0');
+        return `${h}:${m}`;
+    }
+
+    // Navigation Switcher
+    function switchNav(tabKey) {
+        CURRENT_NAV = tabKey;
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.m-nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+        const titleEl = document.getElementById('topHeaderTitle');
+
+        if (tabKey === 'bosh-sahifa') {
+            document.getElementById('navBoshSahifa')?.classList.add('active');
+            document.getElementById('mNavBosh')?.classList.add('active');
+            document.getElementById('tabBoshSahifa')?.classList.add('active');
+            if (titleEl) titleEl.textContent = "Bosh Sahifa (Bugungi Hisobot)";
+            renderTodayDashboard();
+        } else if (tabKey === 'buyurtmalar') {
+            document.getElementById('navBuyurtmalar')?.classList.add('active');
+            document.getElementById('mNavBuyurtmalar')?.classList.add('active');
+            document.getElementById('tabBuyurtmalar')?.classList.add('active');
+            if (titleEl) titleEl.textContent = "Buyurtmalar Tarixi & Har kunlik hisobot";
+            renderOrdersHistory();
+        } else if (tabKey === 'menyu') {
+            document.getElementById('navMenyu')?.classList.add('active');
+            document.getElementById('mNavMenyu')?.classList.add('active');
+            document.getElementById('tabMenu')?.classList.add('active');
+            if (titleEl) titleEl.textContent = 'Menyu va Narxlar Boshqaruvi';
+            loadAdminMenu();
+        } else if (tabKey === 'hisobotlar') {
+            document.getElementById('navHisobotlar')?.classList.add('active');
+            document.getElementById('mNavHisobot')?.classList.add('active');
+            document.getElementById('tabReports')?.classList.add('active');
+            if (titleEl) titleEl.textContent = 'Kassa & Hisobotlar';
+            renderReportsSummary();
+        } else if (tabKey === 'hodimlar') {
+            document.getElementById('navHodimlar')?.classList.add('active');
+            document.getElementById('tabStaff')?.classList.add('active');
+            if (titleEl) titleEl.textContent = 'Hodimlar Nazorati';
+            renderStaffCounts();
+        } else if (tabKey === 'sozlamalar') {
+            document.getElementById('navSozlamalar')?.classList.add('active');
+            document.getElementById('mNavSozlama')?.classList.add('active');
+            document.getElementById('tabSettings')?.classList.add('active');
+            if (titleEl) titleEl.textContent = 'Sozlamalar';
+            loadAdminSettings();
+        }
+    }
+
+    // ==========================================
+    // DATA FETCHING & AUTO REFRESH
+    // ==========================================
+    async function loadOrders() {
+        try {
+            const res = await fetch('/api/admin/orders');
+            const data = await res.json();
+            if (data.success && Array.isArray(data.orders)) {
+                ORDERS = data.orders;
+                updateGlobalBadges();
+                if (CURRENT_NAV === 'bosh-sahifa') {
+                    renderTodayDashboard();
+                } else if (CURRENT_NAV === 'buyurtmalar') {
+                    renderOrdersHistory();
+                } else if (CURRENT_NAV === 'hisobotlar') {
+                    renderReportsSummary();
+                } else if (CURRENT_NAV === 'hodimlar') {
+                    renderStaffCounts();
+                }
+            }
+        } catch (e) {
+            console.error('loadOrders error:', e);
+        }
+    }
+
+    function updateGlobalBadges() {
+        const newOrders = ORDERS.filter(o => o.status === 'new');
+        const badgeCount = document.getElementById('badgeCount');
+        const sidebarPending = document.getElementById('sidebarPendingCount');
+        const mBadge = document.getElementById('mBadgeCount');
+
+        if (badgeCount) badgeCount.textContent = newOrders.length;
+        if (sidebarPending) {
+            sidebarPending.textContent = newOrders.length;
+            sidebarPending.style.display = newOrders.length > 0 ? 'inline-block' : 'none';
+        }
+        if (mBadge) {
+            mBadge.textContent = newOrders.length;
+            mBadge.style.display = newOrders.length > 0 ? 'flex' : 'none';
+        }
+
+        // Update status counts on filter buttons
+        document.getElementById('countAll') && (document.getElementById('countAll').textContent = ORDERS.length);
+        document.getElementById('countNew') && (document.getElementById('countNew').textContent = newOrders.length);
+        document.getElementById('countCooking') && (document.getElementById('countCooking').textContent = ORDERS.filter(o => o.status === 'cooking').length);
+        document.getElementById('countDelivering') && (document.getElementById('countDelivering').textContent = ORDERS.filter(o => o.status === 'delivering').length);
+        document.getElementById('countCompleted') && (document.getElementById('countCompleted').textContent = ORDERS.filter(o => o.status === 'completed').length);
+        document.getElementById('countCancelled') && (document.getElementById('countCancelled').textContent = ORDERS.filter(o => o.status === 'cancelled').length);
+    }
+
+    // ==========================================
+    // TAB 1: BOSH SAHIFA (BUGUNGI HISOBOT VA TAOMLAR)
+    // ==========================================
+    function renderTodayDashboard() {
+        const today = new Date();
+        const todayOrders = ORDERS.filter(o => isSameDay(getOrderDateObj(o), today));
+
+        const todayCompleted = todayOrders.filter(o => o.status === 'completed');
+        const todayActive = todayOrders.filter(o => o.status === 'new' || o.status === 'cooking' || o.status === 'delivering');
+        const todayCancelled = todayOrders.filter(o => o.status === 'cancelled');
+
+        let todayRevenue = 0;
+        todayCompleted.forEach(o => todayRevenue += (Number(o.total) || 0));
+
+        const avgCheck = todayCompleted.length > 0 ? Math.round(todayRevenue / todayCompleted.length) : 0;
+
+        // KPI UI Updates
+        document.getElementById('kpiTodayRevenue').textContent = fmtUZS(todayRevenue);
+        document.getElementById('kpiTodayCompletedCount').textContent = `${todayCompleted.length} ta yakunlangan`;
+        document.getElementById('kpiTodayTotalOrders').textContent = `${todayOrders.length} ta`;
+        document.getElementById('kpiTodayCancelledCount').textContent = `${todayCancelled.length} bekor qilingan`;
+        document.getElementById('kpiTodayActiveCount').textContent = `${todayActive.length} ta`;
+        document.getElementById('kpiTodayAvgCheck').textContent = fmtUZS(avgCheck);
+        document.getElementById('todayOrdersCountBadge').textContent = `${todayOrders.length} ta`;
+
+        // 1. Render Today's Live Orders Table
+        const tbody = document.getElementById('todayOrdersTbody');
+        if (tbody) {
+            if (todayOrders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 35px 20px;">
+                            <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+                                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--text-muted);"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                            </div>
+                            Bugun hali buyurtmalar tushmadi. Yangi buyurtmalar avtomatik bu yerda ko'rinadi.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                let html = '';
+                todayOrders.forEach(o => {
+                    const d = getOrderDateObj(o);
+                    const timeStr = formatTimeOnly(d);
+
+                    const srv = String(o.service || '').toLowerCase();
+                    const loc = String(o.location || '').toLowerCase();
+                    const isPickup = (srv === 'pickup' || srv.includes('olib') || loc.includes('olib ketish') || loc.includes('filial'));
+
+                    let statusBadge = getStatusBadgeHtml(o.status, isPickup);
+                    let actionBtn = getFastActionBtnHtml(o, isPickup);
+
+                    let itemsSummary = '';
+                    if (Array.isArray(o.items) && o.items.length > 0) {
+                        itemsSummary = o.items.map(it => `${it.name} (${it.qty || 1})`).join(', ');
+                    }
+
+                    const serviceLabel = isPickup
+                        ? `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--text-secondary);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Olib ketish</span>`
+                        : `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--text-secondary);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Yetkazish</span>`;
+
+                    html += `
+                        <tr onclick="openOrder(${o.id})">
+                            <td>
+                                <div style="font-weight: 800; color: var(--text-primary);">#${o.id}</div>
+                                <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">${timeStr}</div>
+                            </td>
+                            <td>
+                                <div style="font-weight: 800;">${escapeHtml(o.customer || 'Mijoz')}</div>
+                                ${serviceLabel}
+                            </td>
+                            <td>
+                                <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; color: var(--text-secondary);" title="${itemsSummary}">
+                                    ${itemsSummary || '-'}
+                                </div>
+                            </td>
+                            <td>
+                                <span style="font-weight: 900; color: #059669;">${fmtUZS(o.total)}</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                    ${statusBadge}
+                                    ${actionBtn}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+            }
+        }
+
+        // 2. Render Today's Sold Items & Prices List ("Bugungi narsalar boladi narxi haammasi")
+        const soldDishesMap = {};
+        let totalDishesSoldRevenue = 0;
+
+        todayOrders.forEach(o => {
+            if (o.status !== 'cancelled' && Array.isArray(o.items)) {
+                o.items.forEach(it => {
+                    const name = it.name || 'Noma\'lum taom';
+                    const qty = Number(it.qty) || 1;
+                    const price = Number(it.price) || 0;
+                    const subtotal = qty * price;
+
+                    if (!soldDishesMap[name]) {
+                        soldDishesMap[name] = {
+                            name: name,
+                            qty: 0,
+                            price: price,
+                            total: 0
+                        };
+                    }
+                    soldDishesMap[name].qty += qty;
+                    soldDishesMap[name].total += subtotal;
+                    totalDishesSoldRevenue += subtotal;
+                });
+            }
+        });
+
+        const soldDishesArray = Object.values(soldDishesMap).sort((a, b) => b.qty - a.qty);
+        const dishesContainer = document.getElementById('todaySoldDishesList');
+        const varietyCountBadge = document.getElementById('todaySoldDishVarietyCount');
+        const soldTotalSumEl = document.getElementById('todaySoldTotalSum');
+
+        if (varietyCountBadge) varietyCountBadge.textContent = `${soldDishesArray.length} xil taom`;
+        if (soldTotalSumEl) soldTotalSumEl.textContent = fmtUZS(totalDishesSoldRevenue);
+
+        if (dishesContainer) {
+            if (soldDishesArray.length === 0) {
+                dishesContainer.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 40px 15px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--text-muted);"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                        </div>
+                        Bugun hali sotilgan taomlar mavjud emas.
+                    </div>
+                `;
+            } else {
+                let html = '';
+                soldDishesArray.forEach((item, index) => {
+                    let rankClass = '';
+                    if (index === 0) rankClass = 'gold';
+                    else if (index === 1) rankClass = 'silver';
+                    else if (index === 2) rankClass = 'bronze';
+
+                    html += `
+                        <div class="today-dish-item">
+                            <div class="today-dish-left">
+                                <div class="today-dish-rank ${rankClass}">${index + 1}</div>
+                                <div class="today-dish-info">
+                                    <span class="today-dish-title">${escapeHtml(item.name)}</span>
+                                    <span class="today-dish-sub">Bir dona: ${fmtUZS(item.price)}</span>
+                                </div>
+                            </div>
+                            <div class="today-dish-right">
+                                <span class="today-dish-qty-badge">${item.qty} dona sotildi</span>
+                                <span class="today-dish-total">${fmtUZS(item.total)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                dishesContainer.innerHTML = html;
+            }
+        }
+    }
+
+    // ==========================================
+    // TAB 2: BUYURTMALAR TARIXI (HAR KUNLIK ARXIV VA TUSHUMLAR)
+    // ==========================================
+    function setOrdersFilter(statusKey, btnEl) {
+        ORDERS_STATUS_FILTER = statusKey;
+        document.querySelectorAll('#tabBuyurtmalar .filter-pills-list .f-pill, #tabBuyurtmalar div:nth-child(2) .f-pill').forEach(b => {
+            if (b.getAttribute('onclick')?.includes('setOrdersFilter')) b.classList.remove('active');
+        });
+        if (btnEl) btnEl.classList.add('active');
+        renderOrdersHistory();
+    }
+
+    function setDateFilter(dateKey, btnEl, customDateVal = '') {
+        ORDERS_DATE_FILTER = dateKey;
+        CUSTOM_DATE_VAL = customDateVal;
+
+        document.querySelectorAll('#tabBuyurtmalar .filter-header-bar .f-pill').forEach(b => b.classList.remove('active'));
+        if (btnEl) {
+            btnEl.classList.add('active');
+        } else if (dateKey === 'custom') {
+            // custom date selected
+        }
+        renderOrdersHistory();
+    }
+
+    function renderOrdersHistory() {
+        const container = document.getElementById('dayByDayOrdersContainer');
+        if (!container) return;
+
+        const searchQ = (document.getElementById('ordersSearchInput')?.value || '').toLowerCase().trim();
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        // 1. Filter Orders
+        let filtered = ORDERS.filter(o => {
+            const d = getOrderDateObj(o);
+
+            // Date filtering
+            if (ORDERS_DATE_FILTER === 'today') {
+                if (!isSameDay(d, now)) return false;
+            } else if (ORDERS_DATE_FILTER === 'yesterday') {
+                if (!isSameDay(d, yesterday)) return false;
+            } else if (ORDERS_DATE_FILTER === '7days') {
+                if (d < sevenDaysAgo) return false;
+            } else if (ORDERS_DATE_FILTER === 'custom' && CUSTOM_DATE_VAL) {
+                const customD = new Date(CUSTOM_DATE_VAL);
+                if (!isSameDay(d, customD)) return false;
+            }
+
+            // Status filtering
+            if (ORDERS_STATUS_FILTER === 'active') {
+                if (o.status !== 'new' && o.status !== 'cooking' && o.status !== 'delivering') return false;
+            } else if (ORDERS_STATUS_FILTER !== 'all' && o.status !== ORDERS_STATUS_FILTER) {
+                return false;
+            }
+
+            // Search query
+            if (searchQ) {
+                const idMatch = String(o.id || '').toLowerCase().includes(searchQ);
+                const custMatch = String(o.customer || '').toLowerCase().includes(searchQ);
+                const phoneMatch = String(o.phone || '').toLowerCase().includes(searchQ);
+                let dishMatch = false;
+                if (Array.isArray(o.items)) {
+                    dishMatch = o.items.some(it => String(it.name || '').toLowerCase().includes(searchQ));
+                }
+                if (!idMatch && !custMatch && !phoneMatch && !dishMatch) return false;
+            }
+
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="panel-card" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                    <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--text-muted);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <h3 style="color: var(--text-primary); font-size: 16px; margin-bottom: 6px;">Mos keluvchi buyurtmalar topilmadi</h3>
+                    <p style="font-size: 13px;">Qidiruv yoki sanani o'zgartirib ko'ring.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // 2. Group by Day (YYYY-MM-DD)
+        const groupsByDate = {};
+        filtered.forEach(o => {
+            const d = getOrderDateObj(o);
+            const dateKey = formatDateKey(d);
+            if (!groupsByDate[dateKey]) {
+                groupsByDate[dateKey] = {
+                    dateObj: d,
+                    orders: [],
+                    totalRevenue: 0,
+                    completedCount: 0,
+                    cancelledCount: 0
+                };
+            }
+            groupsByDate[dateKey].orders.push(o);
+            if (o.status === 'completed') {
+                groupsByDate[dateKey].totalRevenue += (Number(o.total) || 0);
+                groupsByDate[dateKey].completedCount++;
+            } else if (o.status === 'cancelled') {
+                groupsByDate[dateKey].cancelledCount++;
+            }
+        });
+
+        // Sort dates descending
+        const sortedDateKeys = Object.keys(groupsByDate).sort((a, b) => b.localeCompare(a));
+
+        let html = '';
+        sortedDateKeys.forEach(dateKey => {
+            const group = groupsByDate[dateKey];
+            const humanDate = formatHumanDate(group.dateObj);
+
+            html += `
+                <div class="day-group-card">
+                    <!-- Day Header with Day Revenue & Summary -->
+                    <div class="day-group-header">
+                        <div class="day-title-box">
+                            <div class="day-calendar-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            </div>
+                            <div>
+                                <span class="day-name-txt">${humanDate}</span>
+                                <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Kunlik jami buyurtmalar: ${group.orders.length} ta</div>
+                            </div>
+                        </div>
+                        <div class="day-stats-pill-group">
+                            <div class="day-stat-pill revenue">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                <span>Kunlik tushum:</span>
+                                <span>${fmtUZS(group.totalRevenue)}</span>
+                            </div>
+                            <div class="day-stat-pill count">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                <span>Yakunlangan:</span>
+                                <span>${group.completedCount} ta</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day Orders Table -->
+                    <div class="data-table-wrap">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>VAQT</th>
+                                    <th>MIJOZ & TELEFON</th>
+                                    <th>XIZMAT & TO'LOV</th>
+                                    <th>TARKIBI (TAOMLAR)</th>
+                                    <th>SUMMA</th>
+                                    <th>HOLATI</th>
+                                    <th>HARAKAT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            group.orders.forEach(o => {
+                const d = getOrderDateObj(o);
+                const timeStr = formatTimeOnly(d);
+
+                const srv = String(o.service || '').toLowerCase();
+                const loc = String(o.location || '').toLowerCase();
+                const isPickup = (srv === 'pickup' || srv.includes('olib') || loc.includes('olib ketish') || loc.includes('filial'));
+
+                const serviceTag = isPickup 
+                    ? `<span class="service-badge pickup"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Olib ketish</span>`
+                    : `<span class="service-badge delivery"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Yetkazish</span>`;
+
+                const payTag = (o.payment_confirmed || o.receipt_url)
+                    ? `<span style="display:inline-flex; align-items:center; gap:4px; font-size: 11px; font-weight: 800; color: #0284c7;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Chek biriktirilgan</span>`
+                    : `<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">${escapeHtml(o.payment || 'Naqd')}</span>`;
+
+                let statusBadge = getStatusBadgeHtml(o.status, isPickup);
+                let actionBtn = getFastActionBtnHtml(o, isPickup);
+
+                let itemsListHtml = '';
+                if (Array.isArray(o.items) && o.items.length > 0) {
+                    itemsListHtml = o.items.map(it => `<b>${escapeHtml(it.name)}</b> x${it.qty || 1}`).join(', ');
+                } else {
+                    itemsListHtml = 'Fast Food';
+                }
+
+                html += `
+                    <tr onclick="openOrder(${o.id})">
+                        <td><span style="font-weight: 900; color: var(--text-primary);">#${o.id}</span></td>
+                        <td><span style="font-weight: 700; color: var(--text-muted); font-size: 12px;">${timeStr}</span></td>
+                        <td>
+                            <div style="font-weight: 800; color: var(--text-primary);">${escapeHtml(o.customer || 'Mijoz')}</div>
+                            <div style="font-size: 11.5px; color: var(--text-secondary);">${escapeHtml(o.phone || '-')}</div>
+                        </td>
+                        <td>
+                            <div style="display: flex; flex-direction: column; gap: 3px;">
+                                ${serviceTag}
+                                ${payTag}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; color: var(--text-secondary);" title="${itemsListHtml.replace(/<[^>]*>/g, '')}">
+                                ${itemsListHtml}
+                            </div>
+                        </td>
+                        <td><span style="font-size: 14px; font-weight: 900; color: #059669;">${fmtUZS(o.total)}</span></td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                ${actionBtn}
+                                <span style="color: var(--text-muted); font-weight: 900; font-size: 14px;">&rarr;</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // Helper: Status badge HTML
+    function getStatusBadgeHtml(status, isPickup) {
+        if (status === 'new') {
+            return `<span class="status-badge new"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Kutilmoqda</span>`;
+        } else if (status === 'cooking') {
+            return `<span class="status-badge cooking"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Tayyorlanmoqda</span>`;
+        } else if (status === 'delivering') {
+            return isPickup 
+                ? `<span class="status-badge delivering"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Tayyor (Olib ketish)</span>`
+                : `<span class="status-badge delivering"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Yetkazilmoqda</span>`;
+        } else if (status === 'completed') {
+            return `<span class="status-badge completed"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>Yakunlandi</span>`;
+        } else if (status === 'cancelled') {
+            return `<span class="status-badge cancelled"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>Bekor qilingan</span>`;
+        }
+        return `<span class="status-badge">${status}</span>`;
+    }
+
+    // Helper: Fast Action button HTML
+    function getFastActionBtnHtml(o, isPickup) {
+        if (o.status === 'new') {
+            return `<button class="btn-fast-advance amber" onclick="event.stopPropagation(); setStatus(${o.id}, 'cooking')">Tasdiqlash</button>`;
+        } else if (o.status === 'cooking') {
+            const lbl = isPickup ? 'Tayyor' : 'Kuryerga';
+            return `<button class="btn-fast-advance blue" onclick="event.stopPropagation(); setStatus(${o.id}, 'delivering')">${lbl}</button>`;
+        } else if (o.status === 'delivering') {
+            const lbl = isPickup ? 'Topshirildi' : 'Yetkazildi';
+            return `<button class="btn-fast-advance green" onclick="event.stopPropagation(); setStatus(${o.id}, 'completed')">${lbl}</button>`;
+        }
+        return '';
+    }
+
+    // ==========================================
+    // TAB 4: KASSA & HISOBOTLAR SUMMARY
+    // ==========================================
+    function renderReportsSummary() {
+        const completed = ORDERS.filter(o => o.status === 'completed');
+        const cancelled = ORDERS.filter(o => o.status === 'cancelled');
+
+        let totalRev = 0;
+        completed.forEach(o => totalRev += (Number(o.total) || 0));
+
+        document.getElementById('repTotalRevenue').textContent = fmtUZS(totalRev);
+        document.getElementById('repTotalOrders').textContent = `${ORDERS.length} ta`;
+        document.getElementById('repCompletedOrders').textContent = `${completed.length} ta`;
+        document.getElementById('repCancelledOrders').textContent = `${cancelled.length} ta`;
+
+        // Day by day table summary
+        const summaryByDate = {};
+        ORDERS.forEach(o => {
+            const d = getOrderDateObj(o);
+            const dateKey = formatDateKey(d);
+            if (!summaryByDate[dateKey]) {
+                summaryByDate[dateKey] = {
+                    dateObj: d,
+                    totalCount: 0,
+                    completedCount: 0,
+                    cancelledCount: 0,
+                    revenue: 0
+                };
+            }
+            summaryByDate[dateKey].totalCount++;
+            if (o.status === 'completed') {
+                summaryByDate[dateKey].completedCount++;
+                summaryByDate[dateKey].revenue += (Number(o.total) || 0);
+            } else if (o.status === 'cancelled') {
+                summaryByDate[dateKey].cancelledCount++;
+            }
+        });
+
+        const tbody = document.getElementById('dailyRevenueSummaryTbody');
+        if (tbody) {
+            const keys = Object.keys(summaryByDate).sort((a, b) => b.localeCompare(a));
+            if (keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">Ma'lumot mavjud emas</td></tr>`;
+            } else {
+                let html = '';
+                keys.forEach(k => {
+                    const row = summaryByDate[k];
+                    html += `
+                        <tr>
+                            <td><b>${formatHumanDate(row.dateObj)}</b></td>
+                            <td>${row.totalCount} ta</td>
+                            <td><span style="color: #059669; font-weight: 800;">${row.completedCount} ta</span></td>
+                            <td><span style="color: var(--accent-red); font-weight: 800;">${row.cancelledCount} ta</span></td>
+                            <td><span style="font-size: 15px; font-weight: 900; color: #059669;">${fmtUZS(row.revenue)}</span></td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+            }
+        }
+    }
+
+    // ==========================================
+    // TAB 5: HODIMLAR COUNTS
+    // ==========================================
+    function renderStaffCounts() {
+        const cookingCount = ORDERS.filter(o => o.status === 'cooking').length;
+        const deliveringCount = ORDERS.filter(o => o.status === 'delivering').length;
+        const newCount = ORDERS.filter(o => o.status === 'new').length;
+
+        document.getElementById('staffKitchenCount') && (document.getElementById('staffKitchenCount').textContent = `${cookingCount} ta taom tayyorlanmoqda`);
+        document.getElementById('staffCourierCount') && (document.getElementById('staffCourierCount').textContent = `${deliveringCount} ta manzilga yetkazilmoqda`);
+        document.getElementById('staffOperatorCount') && (document.getElementById('staffOperatorCount').textContent = `${newCount} ta tasdiqlash kutilmoqda`);
+    }
+
+    // ==========================================
+    // ORDER DETAILS MODAL
+    // ==========================================
+    function openOrder(orderId) {
+        const o = ORDERS.find(item => item.id === orderId);
+        if (!o) return;
+        ACTIVE_ORDER_ID = orderId;
+
+        const srv = String(o.service || '').toLowerCase();
+        const loc = String(o.location || '').toLowerCase();
+        const isPickup = (srv === 'pickup' || srv.includes('olib') || loc.includes('olib ketish') || loc.includes('filial'));
+
+        const d = getOrderDateObj(o);
+        const fullTimeStr = `${formatHumanDate(d)}, ${formatTimeOnly(d)}`;
+
+        document.getElementById('modalTitle').textContent = `Buyurtma #${o.id}`;
+        document.getElementById('modalCustomer').textContent = o.customer || 'Mijoz';
+        
+        const phoneEl = document.getElementById('modalPhone');
+        phoneEl.innerHTML = o.phone ? `<a href="tel:${o.phone}" style="display: inline-flex; align-items: center; gap: 5px; color: #0284c7; text-decoration: none; font-weight: 800;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>${o.phone}</a>` : '-';
+        
+        document.getElementById('modalService').innerHTML = isPickup 
+            ? '<span style="display: inline-flex; align-items: center; gap: 5px; color: #b45309; font-weight: 800;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Olib ketish (Filialdan)</span>' 
+            : '<span style="display: inline-flex; align-items: center; gap: 5px; color: #0284c7; font-weight: 800;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Yetkazib berish</span>';
+        document.getElementById('modalPayment').textContent = o.payment || 'Naqd pul';
+        document.getElementById('modalTime').textContent = fullTimeStr;
+        document.getElementById('modalAddress').textContent = o.location || (isPickup ? 'Filialdan olib ketish' : '-');
+
+        const receiptArea = document.getElementById('modalReceiptArea');
+        const receiptImg = document.getElementById('modalReceiptImg');
+        if (o.receipt_url) {
+            receiptImg.src = o.receipt_url;
+            receiptArea.style.display = 'block';
+        } else {
+            receiptArea.style.display = 'none';
+        }
+
+        const itemsEl = document.getElementById('modalItems');
+        let itemsHtml = '';
+        if (Array.isArray(o.items)) {
+            o.items.forEach(it => {
+                const sub = (it.price || 0) * (it.qty || 1);
+                itemsHtml += `
+                    <div class="item-line-row">
+                        <span><b>${escapeHtml(it.name || '-')}</b> x${it.qty || 1}</span>
+                        <span style="font-weight: 800; color: #059669;">${fmtUZS(sub)}</span>
+                    </div>
+                `;
+            });
+        }
+        itemsEl.innerHTML = itemsHtml || 'Taomlar mavjud emas';
+        document.getElementById('modalTotal').textContent = fmtUZS(o.total);
+
+        // Actions in modal
+        const actionsEl = document.getElementById('modalActions');
+        let btns = '';
+        if (o.status === 'new') {
+            btns += `<button class="btn-action-stage amber" onclick="setStatus(${o.id}, 'cooking')">Tasdiqlash (Oshxonaga)</button>`;
+            btns += `<button class="btn-action-stage red" onclick="setStatus(${o.id}, 'cancelled')">Bekor qilish</button>`;
+        } else if (o.status === 'cooking') {
+            const readyBtnLabel = isPickup ? "Tayyor (Olib ketishga)" : "Tayyor (Kuryerga)";
+            btns += `<button class="btn-action-stage blue" onclick="setStatus(${o.id}, 'delivering')">${readyBtnLabel}</button>`;
+            btns += `<button class="btn-action-stage red" onclick="setStatus(${o.id}, 'cancelled')">Bekor qilish</button>`;
+        } else if (o.status === 'delivering') {
+            const compBtnLabel = isPickup ? "Topshirildi (Yakunlash)" : "Yetkazildi (Yakunlash)";
+            btns += `<button class="btn-action-stage green" onclick="setStatus(${o.id}, 'completed')">${compBtnLabel}</button>`;
+            btns += `<button class="btn-action-stage red" onclick="setStatus(${o.id}, 'cancelled')">Bekor qilish</button>`;
+        }
+        btns += `<button class="btn-action-stage print" onclick="printReceipt(${o.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right: 4px; vertical-align: middle;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>Chek chop etish</button>`;
+        btns += `<button class="btn-action-stage delete" onclick="deleteOrd(${o.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right: 4px; vertical-align: middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>O'chirish</button>`;
+        actionsEl.innerHTML = btns;
+
+        document.getElementById('orderModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('orderModal').classList.remove('active');
+        ACTIVE_ORDER_ID = null;
+    }
+
+    async function setStatus(orderId, newStatus) {
+        try {
+            const res = await fetch(`/api/admin/order/${orderId}/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            const data = await res.json();
+            if (data.success) {
+                closeModal();
+                await loadOrders();
+            } else {
+                alert('Xatolik: ' + (data.error || 'Status o\'zgarmadi'));
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function deleteOrd(orderId) {
+        if (!confirm(`#${orderId} buyurtmani tizimdan o'chirishni tasdiqlaysizmi?`)) return;
+        try {
+            const res = await fetch(`/api/admin/order/${orderId}/delete`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                closeModal();
+                await loadOrders();
+            } else {
+                alert('Xatolik: ' + (data.error || 'O\'chirib bo\'lmadi'));
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function printReceipt(orderId) {
+        const o = ORDERS.find(item => item.id === orderId);
+        if (!o) return;
+        const printWindow = window.open('', '', 'width=420,height=620');
+        let itemsHtml = '';
+        if (Array.isArray(o.items)) {
+            o.items.forEach(it => {
+                itemsHtml += `<div style="display:flex; justify-content:space-between; margin: 4px 0;"><span>${escapeHtml(it.name)} x${it.qty}</span> <span>${fmtUZS((it.price || 0) * (it.qty || 1))}</span></div>`;
+            });
+        }
+        printWindow.document.write(`
+            <html>
+            <head><title>Chek #${o.id}</title></head>
+            <body style="font-family: monospace; padding: 20px; text-align: center; font-size: 13px;">
+                <h2 style="margin: 0 0 5px 0;">ISTANBUL CAFE</h2>
+                <div style="font-size: 11px; color: #555;">Fast Food & Cafe</div>
+                <hr style="border-top: 1px dashed #000; margin: 10px 0;">
+                <p style="text-align: left; margin: 3px 0;"><b>Buyurtma:</b> #${o.id}</p>
+                <p style="text-align: left; margin: 3px 0;"><b>Mijoz:</b> ${escapeHtml(o.customer || 'Mijoz')}</p>
+                <p style="text-align: left; margin: 3px 0;"><b>Tel:</b> ${escapeHtml(o.phone || '-')}</p>
+                <p style="text-align: left; margin: 3px 0;"><b>Manzil:</b> ${escapeHtml(o.location || '-')}</p>
+                <hr style="border-top: 1px dashed #000; margin: 10px 0;">
+                <div style="text-align: left;">${itemsHtml}</div>
+                <hr style="border-top: 1px dashed #000; margin: 10px 0;">
+                <h3 style="display: flex; justify-content: space-between; margin: 8px 0;"><span>JAMI:</span> <span>${fmtUZS(o.total)}</span></h3>
+                <p style="text-align: left; margin: 3px 0;"><b>To'lov turi:</b> ${escapeHtml(o.payment || 'Naqd')}</p>
+                <hr style="border-top: 1px dashed #000; margin: 10px 0;">
+                <p style="margin: 10px 0 0 0;">Xaridingiz uchun rahmat!</p>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }
+
+    // ==========================================
+    // MENU CRUD OPERATIONS
+    // ==========================================
+    async function loadAdminMenu() {
+        try {
+            const res = await fetch('/api/admin/menu');
+            const data = await res.json();
+            if (data.success && Array.isArray(data.items)) {
+                const container = document.getElementById('menuDishesContainer');
+                if (!container) return;
+                let html = '';
+                data.items.forEach(dish => {
+                    html += `
+                        <div class="menu-dish-card">
+                            <div>
+                                <span class="dish-cat-pill">${dish.category_name || dish.category}</span>
+                                <div class="dish-name-txt">${escapeHtml(dish.name)}</div>
+                            </div>
+                            <div class="dish-price-txt">${fmtUZS(dish.price)}</div>
+                            <div class="dish-actions-bar">
+                                <button class="btn-edit-dish" onclick="openEditDishModal('${dish.id}', '${escapeQuotes(dish.name)}', ${dish.price}, '${dish.category}')">Tahrirlash</button>
+                                <button class="btn-del-dish" onclick="deleteMenuDish('${dish.id}')">O'chirish</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+        } catch (e) {
+            console.error('loadAdminMenu error:', e);
+        }
+    }
+
+    function escapeQuotes(str) {
+        return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function openAddDishModal() {
+        document.getElementById('dishId').value = '';
+        document.getElementById('dishName').value = '';
+        document.getElementById('dishPrice').value = '';
+        document.getElementById('dishModalTitle').textContent = 'Yangi taom qo\'shish';
+        document.getElementById('dishModal').classList.add('active');
+    }
+
+    function openEditDishModal(id, name, price, category) {
+        document.getElementById('dishId').value = id;
+        document.getElementById('dishName').value = name;
+        document.getElementById('dishPrice').value = price;
+        document.getElementById('dishCategory').value = category;
+        document.getElementById('dishModalTitle').textContent = 'Taomni tahrirlash';
+        document.getElementById('dishModal').classList.add('active');
+    }
+
+    function closeDishModal() {
+        document.getElementById('dishModal').classList.remove('active');
+    }
+
+    async function saveDish(e) {
+        e.preventDefault();
+        const id = document.getElementById('dishId').value;
+        const name = document.getElementById('dishName').value.trim();
+        const price = document.getElementById('dishPrice').value;
+        const category = document.getElementById('dishCategory').value;
+
+        try {
+            const res = await fetch('/api/admin/menu/item', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, name, price, category })
+            });
+            const data = await res.json();
+            if (data.success) {
+                closeDishModal();
+                loadAdminMenu();
+            } else {
+                alert('Xatolik: ' + (data.error || 'Saqlab bo\'lmadi'));
+            }
+        } catch (err) {
+            console.error('saveDish error:', err);
+        }
+    }
+
+    async function deleteMenuDish(id) {
+        if (!confirm('Ushbu taomni menyudan o\'chirishni tasdiqlaysizmi?')) return;
+        try {
+            const res = await fetch(`/api/admin/menu/item/${id}/delete`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                loadAdminMenu();
+            } else {
+                alert('Xatolik: ' + (data.error || 'O\'chirib bo\'lmadi'));
+            }
+        } catch (err) {
+            console.error('deleteMenuDish error:', err);
+        }
+    }
+
+    // ==========================================
+    // SETTINGS OPERATIONS
+    // ==========================================
+    async function loadAdminSettings() {
+        try {
+            const res = await fetch('/api/admin/settings');
+            const data = await res.json();
+            if (data.success && data.settings) {
+                const s = data.settings;
+                const cardNumEl = document.getElementById('settingCardNumber');
+                const cardOwnEl = document.getElementById('settingCardOwner');
+                const isOpenEl = document.getElementById('settingIsOpen');
+                const cafeNameEl = document.getElementById('settingCafeName');
+                const sidebarCafeEl = document.getElementById('sidebarCafeName');
+                const sidebarStatusText = document.getElementById('sidebarStatusText');
+
+                if (cardNumEl) cardNumEl.value = s.card_number || '8600 1234 5678 9012';
+                if (cardOwnEl) cardOwnEl.value = s.card_owner || 'Istanbul Cafe';
+                if (isOpenEl) isOpenEl.value = s.is_open === false ? 'false' : 'true';
+                if (cafeNameEl) cafeNameEl.value = s.cafe_name || 'Istanbul Cafe';
+                if (sidebarCafeEl) sidebarCafeEl.textContent = s.cafe_name || 'Istanbul Cafe';
+                if (sidebarStatusText) {
+                    sidebarStatusText.innerHTML = s.is_open === false 
+                        ? `<span class="live-dot" style="background:#ef4444;"></span>Kafe: Yopiq`
+                        : `<span class="live-dot"></span>Kafe: Ochiq`;
+                }
+            }
+        } catch (e) {
+            console.error('loadAdminSettings error:', e);
+        }
+    }
+
+    async function saveAdminSettings(e) {
+        e.preventDefault();
+        const cardNumber = document.getElementById('settingCardNumber').value.trim();
+        const cardOwner = document.getElementById('settingCardOwner').value.trim();
+        const isOpen = document.getElementById('settingIsOpen').value === 'true';
+        const cafeName = document.getElementById('settingCafeName').value.trim();
+        const alertBox = document.getElementById('settingsAlertBox');
+
+        try {
+            const res = await fetch('/api/admin/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    card_number: cardNumber,
+                    card_owner: cardOwner,
+                    is_open: isOpen,
+                    cafe_name: cafeName
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                if (alertBox) {
+                    alertBox.style.display = 'block';
+                    alertBox.style.background = 'rgba(16, 185, 129, 0.12)';
+                    alertBox.style.color = '#047857';
+                    alertBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                    alertBox.textContent = 'Sozlamalar muvaffaqiyatli saqlandi!';
+                    setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+                }
+                loadAdminSettings();
+            } else {
+                alert('Xatolik: ' + (data.error || 'Saqlab bo\'lmadi'));
+            }
+        } catch (err) {
+            console.error('saveAdminSettings error:', err);
+            alert('Server bilan bog\'lanishda xatolik yuz berdi');
+        }
+    }
+
+    // Initial Load & polling
+    loadOrders();
+    loadAdminSettings();
+    setInterval(loadOrders, 4000);
+</script>
+
+</body>
+</html>

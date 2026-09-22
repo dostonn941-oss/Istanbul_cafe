@@ -1,0 +1,299 @@
+[
+  {
+    "id": 1,
+    "status": "completed",
+    "timestamp": "2026-09-19T08:38:31.855856",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "/uploads/receipt_1.jpg",
+    "items": [
+      {
+        "name": "BBQ Chicken Pizza",
+        "qty": 1,
+        "price": 48000
+      },
+      {
+        "name": "Veggie Delight Pizza",
+        "qty": 2,
+        "price": 42000
+      }
+    ],
+    "total": 132000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037
+  },
+  {
+    "id": 2,
+    "status": "cancelled",
+    "timestamp": "2026-09-19T08:41:50.716573",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "delivery",
+    "location": "Quvasoy, A. Azizov ko'chasi",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "/uploads/receipt_2.jpg",
+    "items": [
+      {
+        "name": "Bosphorus Burger",
+        "qty": 1,
+        "price": 28000
+      },
+      {
+        "name": "Sultan Cheese Burger",
+        "qty": 1,
+        "price": 34000
+      }
+    ],
+    "total": 62000,
+    "lat": 40.292646,
+    "lng": 71.987049,
+    "tg_user_id": 8469252037
+  },
+  {
+    "id": 3,
+    "status": "completed",
+    "timestamp": "2026-09-19T08:42:58.262903",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💵 Naqd pul",
+    "items": [
+      {
+        "name": "Adana Kebab",
+        "qty": 1,
+        "price": 28000
+      }
+    ],
+    "total": 28000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037,
+    "card_number": null,
+    "card_owner": null
+  },
+  {
+    "id": 4,
+    "status": "cancelled",
+    "timestamp": "2026-09-19T09:08:35.995055",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "/uploads/receipt_4.jpg",
+    "items": [
+      {
+        "name": "BBQ Chicken Pizza",
+        "qty": 2,
+        "price": 48000
+      }
+    ],
+    "total": 96000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037
+  },
+  {
+    "id": 5,
+    "status": "cancelled",
+    "timestamp": "2026-09-19T09:28:24.822263",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "/uploads/receipt_5.jpg",
+    "items": [
+      {
+        "name": "BBQ Chicken Pizza",
+        "qty": 1,
+        "price": 48000
+      }
+    ],
+    "total": 48000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037
+  },
+  {
+    "id": 6,
+    "status": "completed",
+    "timestamp": "2026-09-19T09:29:44.990982",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💵 Naqd pul",
+    "items": [
+      {
+        "name": "Veggie Delight Pizza",
+        "qty": 1,
+        "price": 42000
+      }
+    ],
+    "total": 42000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037,
+    "card_number": null,
+    "card_owner": null
+  },
+  {
+    "id": 7,
+    "status": "completed",
+    "timestamp": "2026-09-19T09:54:34.738527",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "/uploads/receipt_7.jpg",
+    "items": [
+      {
+        "name": "🍕 BBQ Chicken Pizza",
+        "qty": 1,
+        "price": 48000
+      },
+      {
+        "name": "🍕 Veggie Delight Pizza",
+        "qty": 1,
+        "price": 42000
+      },
+      {
+        "name": "🍕 Pepperoni Supreme",
+        "qty": 1,
+        "price": 52000
+      }
+    ],
+    "total": 142000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037
+  },
+  {
+    "id": 8,
+    "status": "completed",
+    "timestamp": "2026-09-19T09:56:52.363556",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "delivery",
+    "location": "Quvasoy, A. Azizov ko'chasi",
+    "payment": "💵 Naqd pul",
+    "items": [
+      {
+        "name": "🍕 Pepperoni Supreme",
+        "qty": 1,
+        "price": 52000
+      },
+      {
+        "name": "🍕 Margherita Classic",
+        "qty": 1,
+        "price": 38000
+      }
+    ],
+    "total": 90000,
+    "lat": 40.292538,
+    "lng": 71.987187,
+    "tg_user_id": 8469252037,
+    "card_number": null,
+    "card_owner": null
+  },
+  {
+    "id": 9,
+    "status": "completed",
+    "timestamp": "2026-09-20T21:06:32.417036",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "/uploads/receipt_9.jpg",
+    "items": [
+      {
+        "name": "🍕 BBQ Chicken Pizza",
+        "qty": 1,
+        "price": 48000
+      }
+    ],
+    "total": 48000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037
+  },
+  {
+    "id": 10,
+    "status": "completed",
+    "timestamp": "2026-09-22T09:18:41.689535",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💵 Naqd pul",
+    "items": [
+      {
+        "name": "🍔 Sultan Cheese Burger",
+        "qty": 1,
+        "price": 34000
+      },
+      {
+        "name": "🍔 Crispy Chicken Burger",
+        "qty": 1,
+        "price": 26000
+      }
+    ],
+    "total": 60000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037,
+    "card_number": null,
+    "card_owner": null
+  },
+  {
+    "id": 11,
+    "status": "completed",
+    "timestamp": "2026-09-22T09:33:24.595597",
+    "customer": "Doston Nematov",
+    "phone": "+998770300780",
+    "service": "delivery",
+    "location": "Quvasoy, A. Azizov ko'chasi",
+    "payment": "Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "/uploads/receipt_11.jpg",
+    "items": [
+      {
+        "name": "BBQ Chicken Pizza",
+        "price": 48000,
+        "qty": 1
+      }
+    ],
+    "total": 48000,
+    "lat": 40.2925281,
+    "lng": 71.9872462,
+    "tg_user_id": null
+  }
+]

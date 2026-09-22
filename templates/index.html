@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Istanbul Cafe - Toshkentdagi sevimli qahvaxonangiz. Yangi pitsalar, mazali turk kaboblari va shirali burgerlar.">
+    <meta name="theme-color" content="#121417">
+    <title>Istanbul Cafe — Premium Food Delivery</title>
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #121417;
+            --bg-card: #1c1e22;
+            --bg-sheet: #ffffff;
+            --bg-body: #ebedf2;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --text-light: #9ca3af;
+            --text-white: #ffffff;
+            --primary: #111827;
+            --accent-red: #e11d2e;
+            --accent-green: #10b981;
+            --pill-bg: #f3f4f6;
+            --pill-active: #111827;
+            --pill-active-text: #ffffff;
+            --card-border: #f1f2f6;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.14);
+            --radius-pill: 9999px;
+            --radius-card: 22px;
+            --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                background: 
+                    radial-gradient(circle at 80% 25%, rgba(244, 63, 94, 0.15) 0%, transparent 45%),
+                    radial-gradient(circle at 15% 75%, rgba(251, 146, 60, 0.12) 0%, transparent 40%),
+                    linear-gradient(135deg, #f3f4f8 0%, #e5e8f0 100%);
+                padding: 30px 20px;
+            }
+
+            .phone-wrapper {
+                width: 100%;
+                max-width: 1140px;
+                border-radius: 36px;
+                box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12);
+                overflow: hidden;
+                position: relative;
+                background: var(--bg-dark);
+            }
+
+            .desktop-controls {
+                position: fixed;
+                top: 20px;
+                right: 24px;
+                display: flex;
+                gap: 10px;
+                z-index: 9000;
+            }
+
+            .view-toggle-btn {
+                background: rgba(18, 20, 23, 0.85);
+                backdrop-filter: blur(10px);
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                padding: 10px 18px;
+                border-radius: 30px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .view-toggle-btn:hover {
+                background: #000;
+                transform: translateY(-1px);
+            }
+
+            body.phone-frame-mode {
+                padding: 40px 20px;
+            }
+
+            body.phone-frame-mode .phone-wrapper {
+                max-width: 430px;
+                border-radius: 48px;
+                box-shadow: 0 25px 70px -12px rgba(0, 0, 0, 0.35), 0 0 0 10px #181a1d;
+            }
+
+            body.phone-frame-mode .food-list {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .food-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 1080px) {
+            body:not(.phone-frame-mode) .food-list {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 22px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .desktop-controls { display: none; }
+            .phone-wrapper {
+                width: 100%;
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .food-list {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        .app-container {
+            width: 100%;
+            background: var(--bg-sheet);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 40px;
+        }
+
+        .hero-section {
+            background: var(--bg-dark);
+            color: var(--text-white);
+            padding: 20px 24px 45px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        .nav-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-pizza-wrap {
+            position: absolute;
+            right: -35px;
+            bottom: -45px;
+            width: 220px;
+            height: 220px;
+            z-index: 10;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.65));
+        }
+
+        .hero-pizza-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transform: rotate(-8deg);
+        }
+
+        .main-sheet {
+            background: var(--bg-sheet);
+            border-radius: 32px 32px 0 0;
+            position: relative;
+            z-index: 2;
+            margin-top: -26px;
+            padding: 24px 20px 20px;
+            box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.08);
+            flex: 1;
+        }
+
+        .service-toggle-wrap {
+            display: flex;
+            background: #f1f3f7;
+            padding: 5px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 22px;
+        }
+
+        .service-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .service-tab.active {
+            background: #ffffff;
+            color: var(--text-main);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        .categories-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 4px 0 18px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .categories-scroll::-webkit-scrollbar { display: none; }
+
+        .category-pill {
+            flex-shrink: 0;
+            padding: 10px 22px;
+            border-radius: var(--radius-pill);
+            background: var(--pill-bg);
+            color: #4b5563;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        .category-pill:hover {
+            background: #e5e7eb;
+        }
+
+        .category-pill.active {
+            background: var(--pill-active);
+            color: var(--pill-active-text);
+            box-shadow: 0 4px 14px rgba(17, 24, 39, 0.25);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0 16px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #f8f9fb;
+            border: 1px solid #e5e7eb;
+            padding: 13px 20px;
+            border-radius: var(--radius-pill);
+            font-size: 0.92rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            background: #fff;
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+        }
+
+        .food-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: #ffffff;
+            border: 1px solid #f1f2f6;
+            border-radius: 20px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .food-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            border-color: #cbd5e1;
+        }
+
+        .food-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .food-avatar-wrap {
+            position: relative;
+            width: 82px;
+            height: 82px;
+            flex-shrink: 0;
+        }
+
+        .food-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.25s ease;
+        }
+
+        .food-card:hover .food-avatar {
+            transform: scale(1.04);
+        }
+
+        .food-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .food-name {
+            font-size: 1.02rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .food-tag {
+            font-size: 0.76rem;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        .food-desc-text {
+            font-size: 0.78rem;
+            color: #6b7280;
+            line-height: 1.35;
+            margin: 2px 0 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .food-price {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.4px;
+            margin-top: 2px;
+        }
+
+        .food-action {
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+
+        .order-now-btn {
+            background: #111827;
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 0.86rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            box-shadow: 0 3px 10px rgba(17, 24, 39, 0.15);
+        }
+
+        .order-now-btn:hover {
+            background: #e11d2e;
+        }
+
+        .order-now-btn:active {
+            transform: scale(0.94);
+        }
+
+        .item-stepper {
+            display: flex;
+            align-items: center;
+            background: #111827;
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(17, 24, 39, 0.2);
+        }
+
+        .stepper-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        .stepper-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .stepper-qty {
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 800;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Fixed Floating Cart Bar (Invisible by default with ZERO peeking dark strip) */
+        .floating-cart-bar {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(250px);
+            width: calc(100% - 32px);
+            max-width: 440px;
+            background: #111827;
+            color: #ffffff;
+            border-radius: var(--radius-pill);
+            padding: 12px 16px 12px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+            z-index: 1000;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .floating-cart-bar.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .cart-bar-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-bar-count {
+            font-size: 0.78rem;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        .cart-bar-sum {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .cart-bar-btn {
+            background: var(--accent-red);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(225, 29, 46, 0.35);
+        }
+
+        .cart-bar-btn:hover {
+            background: #b91c1c;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 12000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .food-modal {
+            background: #ffffff;
+            border-radius: 28px;
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+            animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes modalPopIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(6px);
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(17, 24, 39, 0.9);
+        }
+
+        .modal-image-wrap {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            background: #111827;
+        }
+
+        .modal-food-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-food-badge {
+            position: absolute;
+            bottom: 14px;
+            left: 16px;
+            background: rgba(225, 29, 46, 0.9);
+            backdrop-filter: blur(6px);
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .modal-body {
+            padding: 22px 24px 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .modal-food-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.4px;
+            line-height: 1.2;
+        }
+
+        .modal-food-desc {
+            font-size: 0.88rem;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .modal-ingredients-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 2px 0;
+        }
+
+        .ingredient-pill {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 5px 11px;
+            border-radius: var(--radius-pill);
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        .modal-footer-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+            padding-top: 14px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .modal-price-wrap {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-price-label {
+            font-size: 0.74rem;
+            color: #9ca3af;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .modal-price-val {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .modal-stepper {
+            display: flex;
+            align-items: center;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: var(--radius-pill);
+            gap: 10px;
+        }
+
+        .m-stepper-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: #ffffff;
+            color: #111827;
+            font-size: 1.1rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: transform 0.15s;
+        }
+
+        .m-stepper-btn:active {
+            transform: scale(0.9);
+        }
+
+        .m-stepper-qty {
+            font-size: 1rem;
+            font-weight: 800;
+            min-width: 22px;
+            text-align: center;
+            color: #111827;
+        }
+
+        .modal-add-cart-btn {
+            width: 100%;
+            background: #111827;
+            color: #ffffff;
+            border: none;
+            padding: 15px;
+            border-radius: var(--radius-pill);
+            font-size: 0.98rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(17, 24, 39, 0.25);
+            transition: transform 0.15s, background 0.15s;
+        }
+
+        .modal-add-cart-btn:hover {
+            background: #e11d2e;
+        }
+
+        .modal-add-cart-btn:active {
+            transform: scale(0.98);
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 9000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .drawer-overlay.open {
+            display: block;
+            opacity: 1;
+        }
+
+        .checkout-drawer {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 100%;
+            max-width: 540px;
+            max-height: 90vh;
+            background: #ffffff;
+            border-radius: 32px 32px 0 0;
+            z-index: 10000;
+            overflow-y: auto;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.3);
+            padding: 24px;
+        }
+        .checkout-drawer.open {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .drawer-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .drawer-close-btn {
+            background: #f3f4f6;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 0.92rem;
+            outline: none;
+            background: #f9fafb;
+        }
+        .form-input:focus, .form-select:focus {
+            background: #fff;
+            border-color: #111827;
+        }
+
+        .checkout-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .checkout-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f9fafb;
+            border-radius: 14px;
+        }
+        .checkout-item-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .checkout-item-price {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .checkout-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding: 14px 0;
+            border-top: 2px dashed #e5e7eb;
+            margin-top: 10px;
+        }
+
+        .confirm-order-btn {
+            width: 100%;
+            background: var(--accent-red);
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: var(--radius-pill);
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(225, 29, 46, 0.3);
+            transition: background 0.2s;
+        }
+        .confirm-order-btn:hover {
+            background: #b91c1c;
+        }
+
+        .loc-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .loc-tab {
+            flex: 1;
+            padding: 9px 12px;
+            border-radius: 12px;
+            background: #f3f4f6;
+            border: 1px solid transparent;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #4b5563;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .loc-tab.active {
+            background: #111827;
+            color: #ffffff;
+        }
+
+        .gps-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-detect-gps {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .card-details-box {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1.5px solid rgba(59, 130, 246, 0.4);
+            border-radius: 18px;
+            padding: 16px;
+            margin-top: 12px;
+            display: none;
+            font-size: 0.88rem;
+            color: #f8fafc;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-details-box::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .card-number-row {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #60a5fa;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .copy-card-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s ease;
+        }
+        .copy-card-btn:active {
+            transform: scale(0.95);
+        }
+
+        .success-box {
+            text-align: center;
+            padding: 20px 10px;
+            display: none;
+        }
+        .success-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+        .success-desc { font-size: 0.9rem; color: #6b7280; margin-bottom: 20px; }
+
+        .toast-msg {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #111827;
+            color: #ffffff;
+            padding: 12px 22px;
+            border-radius: var(--radius-pill);
+            font-size: 0.88rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 15000;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+            opacity: 0;
+        }
+        .toast-msg.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="desktop-controls">
+        <button type="button" class="view-toggle-btn" onclick="toggleDesktopMode()">
+            <span id="viewModeText">Mobil ko'rinish</span>
+        </button>
+    </div>
+
+    <div class="phone-wrapper">
+        <div class="app-container">
+
+            <section class="hero-section">
+                <header class="top-nav">
+                    <div class="nav-title">
+                        Istanbul Cafe
+                    </div>
+                </header>
+
+                <div class="hero-pizza-wrap">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80" alt="Pizza" class="hero-pizza-img">
+                </div>
+            </section>
+
+            <main class="main-sheet">
+                <div class="service-toggle-wrap">
+                    <div class="service-tab active" id="tabDelivery" onclick="selectService('delivery')">
+                        Yetkazib berish
+                    </div>
+                    <div class="service-tab" id="tabPickup" onclick="selectService('pickup')">
+                        Olib ketish (Filial)
+                    </div>
+                </div>
+
+                <div class="categories-scroll">
+                    <div class="category-pill active" onclick="filterCategory('all', this)">Barchasi</div>
+                    <div class="category-pill" onclick="filterCategory('popular', this)">Ommabop</div>
+                    <div class="category-pill" onclick="filterCategory('pizza', this)">Pitsa</div>
+                    <div class="category-pill" onclick="filterCategory('kebab', this)">Kebab</div>
+                    <div class="category-pill" onclick="filterCategory('burger', this)">Burger</div>
+                    <div class="category-pill" onclick="filterCategory('lavash', this)">Lavash</div>
+                    <div class="category-pill" onclick="filterCategory('drinks', this)">Ichimliklar</div>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Taom nomi yoki masalliqlar bo'yicha qidiruv..." oninput="handleSearch()">
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title" id="sectionTitle">Barcha taomlar</h2>
+                    <span style="font-size: 0.8rem; color: #9ca3af; font-weight: 600;" id="itemsCountText">0 ta taom</span>
+                </div>
+
+                <div id="emptyState" style="display: none; text-align: center; padding: 40px 10px; color: #9ca3af;">
+                    <div style="font-size: 1rem; font-weight: 700; color: #374151;">Taom topilmadi</div>
+                    <div style="font-size: 0.82rem;">Iltimos, boshqa kalit so'z bilan izlab ko'ring.</div>
+                </div>
+
+                <div class="food-list" id="foodList"></div>
+            </main>
+
+        </div>
+    </div>
+
+    <!-- Floating Cart Bar (Fully hidden when empty - NO peeking dark strip) -->
+    <div class="floating-cart-bar" id="floatingCartBar">
+        <div class="cart-bar-left">
+            <span class="cart-bar-count"><span id="barItemCount">0</span> ta taom tanlandi</span>
+            <span class="cart-bar-sum" id="barTotalSum">0 so'm</span>
+        </div>
+        <button type="button" class="cart-bar-btn" onclick="openCheckoutDrawer()">
+            Buyurtma berish
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="foodModalOverlay" onclick="closeFoodDetailModal()">
+        <div class="food-modal" onclick="event.stopPropagation()">
+            <button type="button" class="modal-close-btn" onclick="closeFoodDetailModal()">✕</button>
+            <div class="modal-image-wrap">
+                <img id="modalFoodImg" src="" alt="" class="modal-food-img">
+                <span id="modalFoodBadge" class="modal-food-badge">Pitsalar</span>
+            </div>
+            <div class="modal-body">
+                <h2 id="modalFoodName" class="modal-food-name"></h2>
+                <p id="modalFoodDesc" class="modal-food-desc"></p>
+                
+                <div class="modal-ingredients-row">
+                    <span class="ingredient-pill">Yangi pishirilgan</span>
+                    <span class="ingredient-pill">Halol Sertifikatli</span>
+                    <span class="ingredient-pill">30 min yetkazish</span>
+                </div>
+
+                <div class="modal-footer-controls">
+                    <div class="modal-price-wrap">
+                        <span class="modal-price-label">Dona narxi:</span>
+                        <span id="modalFoodPrice" class="modal-price-val"></span>
+                    </div>
+
+                    <div class="modal-stepper">
+                        <button type="button" class="m-stepper-btn" onclick="changeModalQty(-1)">−</button>
+                        <span id="modalQtyVal" class="m-stepper-qty">1</span>
+                        <button type="button" class="m-stepper-btn" onclick="changeModalQty(1)">+</button>
+                    </div>
+                </div>
+
+                <button type="button" class="modal-add-cart-btn" id="modalAddCartBtn" onclick="submitModalAddToCart()">
+                    Savatga qo'shish — <span id="modalAddTotalSum">0 so'm</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeCheckoutDrawer()"></div>
+    <div class="checkout-drawer" id="checkoutDrawer">
+        <div class="drawer-header">
+            <h3 class="drawer-title">Sizning buyurtmangiz</h3>
+            <button type="button" class="drawer-close-btn" onclick="closeCheckoutDrawer()">✕</button>
+        </div>
+
+        <div id="checkoutFormContent">
+            <div class="checkout-items-list" id="checkoutItemsList"></div>
+
+            <div class="form-group">
+                <label class="form-label">Ismingiz *</label>
+                <input type="text" class="form-input" id="custName" placeholder="Ismingizni kiriting" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Telefon raqamingiz *</label>
+                <input type="tel" class="form-input" id="custPhone" placeholder="+998 90 123 45 67" required>
+            </div>
+
+            <div class="form-group" id="addressFormGroup">
+                <label class="form-label">Yetkazib berish manzili *</label>
+                
+                <div class="loc-tabs">
+                    <button type="button" class="loc-tab active" id="locTabCurrent" onclick="switchLocationMode('current')">1. Hozirgi turgan joyim</button>
+                    <button type="button" class="loc-tab" id="locTabManual" onclick="switchLocationMode('manual')">2. Boshqa manzil</button>
+                </div>
+
+                <div class="loc-panel" id="locPanelCurrent">
+                    <div class="gps-card">
+                        <button type="button" class="btn-detect-gps" id="gpsBtn" onclick="locateUserGPS()">
+                            <span id="gpsBtnText">Hozirgi turgan joyimni aniqlash</span>
+                        </button>
+                        <div class="gps-result-box" id="gpsResultBox" style="display: none; background: #ecfdf5; color: #065f46; padding: 10px; border-radius: 10px; font-size: 0.85rem; font-weight: 700;">
+                            Manzil: <span id="gpsDetectedAddress"></span>
+                        </div>
+                        <input type="text" class="form-input" id="gpsExtraNotes" placeholder="Xonadon, podyezd yoki qavat (ixtiyoriy)" oninput="updateAssembledAddress()">
+                    </div>
+                </div>
+
+                <div class="loc-panel" id="locPanelManual" style="display: none;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <select class="form-select" id="manualDistrict" onchange="updateManualPreview()">
+                            <option value="Quvasoy shahri">Quvasoy shahri</option>
+                        </select>
+                        <input type="text" class="form-input" id="manualStreet" placeholder="Ko'cha, mavze va uy raqami *" oninput="updateManualPreview()">
+                        <input type="text" class="form-input" id="manualNotes" placeholder="Mo'ljal yoki xonadon raqami (ixtiyoriy)" oninput="updateManualPreview()">
+                    </div>
+                </div>
+                <input type="hidden" id="custAddress" value="">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">To'lov turi *</label>
+                <select class="form-select" id="paymentSelect" onchange="handlePaymentChange()">
+                    <option value="Naqd pul">Naqd pul 💵</option>
+                    <option value="Click / Plastik karta">Click / Plastik karta 💳📲</option>
+                </select>
+
+                <div class="card-details-box" id="cardDetailsBox">
+                    <div style="font-weight: 800; color: #93c5fd; margin-bottom: 6px; font-size: 0.9rem;" id="cardTitleText">Karta raqami (Click / Plastik karta):</div>
+                    <div class="card-number-row">
+                        <span id="displayCardNum">8600 1234 5678 9012</span>
+                        <button type="button" class="copy-card-btn" onclick="copyCardNumber()">📋 Nusxalash</button>
+                    </div>
+                    <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 6px;">
+                        Karta egasi: <b style="color: #f1f5f9;">Istanbul Cafe</b>
+                    </div>
+
+                    <div style="margin-top: 14px; padding: 14px; background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(59, 130, 246, 0.5); border-radius: 14px;">
+                        <label style="font-size: 0.84rem; font-weight: 700; color: #60a5fa; display: block; margin-bottom: 8px;">
+                            📸 To'lov chekini (screenshot) yuklang:
+                        </label>
+                        <input type="file" id="receiptFileInput" accept="image/*" onchange="previewReceiptFile(this)" style="display: none;">
+                        <button type="button" class="btn-detect-gps" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); padding: 11px 14px; font-size: 0.85rem; width: 100%; border-radius: 10px; font-weight: 700;" onclick="document.getElementById('receiptFileInput').click()">
+                            📷 Chek rasmini tanlash
+                        </button>
+                        <div id="receiptPreviewWrap" style="display: none; margin-top: 10px; align-items: center; justify-content: space-between; background: rgba(15, 23, 42, 0.8); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);">
+                            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                                <img id="receiptPreviewImg" src="" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid #3b82f6;">
+                                <span id="receiptFileName" style="font-size: 0.78rem; font-weight: 700; color: #34d399; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+                            </div>
+                            <button type="button" onclick="removeReceiptFile()" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 5px 10px; font-weight: 800; font-size: 0.8rem; cursor: pointer;">✕ Bekor qilish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkout-total-row">
+                <span>Jami summa:</span>
+                <span id="checkoutTotalSum">0 so'm</span>
+            </div>
+
+            <button type="button" class="confirm-order-btn" id="confirmOrderBtn" onclick="submitFinalOrder()">
+                Buyurtmani tasdiqlash
+            </button>
+        </div>
+
+        <div class="success-box" id="successBox">
+            <h3 class="success-title">Buyurtmangiz qabul qilindi!</h3>
+            <p class="success-desc">
+                Buyurtmangiz muvaffaqiyatli qabul qilindi. Tez orada operatorimiz siz bilan bog'lanadi va taomingiz issiq holda yetkaziladi!
+            </p>
+            <button type="button" class="confirm-order-btn" onclick="resetAndClose()">
+                Tushunarli
+            </button>
+        </div>
+    </div>
+
+    <div class="toast-msg" id="toastMsg">Savatga qo'shildi!</div>
+
+    <script>
+        let API_BASE = "";
+        if (window.location.protocol === 'file:' || (!window.location.port && window.location.hostname === '') ||
+            ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '10000')) {
+            API_BASE = "http://127.0.0.1:10000";
+        }
+
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.expand();
+            tg.ready();
+            if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+        }
+
+        const MENU_DATA = [
+            {
+                id: "pz_bbq",
+                name: "BBQ Chicken Pizza",
+                cat: "pizza",
+                subcat: "Pitsalar",
+                popular: true,
+                price: 48000,
+                desc: "Yumshoq xamir, marinadlangan tovuq filesi, BBQ sousi va eritilgan mozzarella pishlog'i.",
+                img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "pz_veg",
+                name: "Veggie Delight Pizza",
+                cat: "pizza",
+                subcat: "Pitsalar",
+                popular: true,
+                price: 42000,
+                desc: "Yangi pomidorlar, bulg'or qalampiri, qo'ziqorin, qora zaytun va xushbo'y oregano.",
+                img: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "pz_pep",
+                name: "Pepperoni Supreme",
+                cat: "pizza",
+                subcat: "Pitsalar",
+                popular: true,
+                price: 52000,
+                desc: "Klassik italiyan pepperoni kolbasalari, pomidor sousi va ko'p mozzarella pishlog'i.",
+                img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "pz_mar",
+                name: "Margherita Classic",
+                cat: "pizza",
+                subcat: "Pitsalar",
+                popular: false,
+                price: 38000,
+                desc: "Klassik italyancha pitsa — xushbo'y pomidor sousi, yangi bazilik va ko'p mozzarella.",
+                img: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "kb_doner",
+                name: "Istanbul Doner Kebab",
+                cat: "kebab",
+                subcat: "Kebablar",
+                popular: true,
+                price: 24000,
+                desc: "Yumshoq yupqa non ichida shirali mol go'shti doner, pomidor, bodring va sarimsoq sousi.",
+                img: "https://images.unsplash.com/photo-1633321088355-d0f81134ca3b?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "kb_adana",
+                name: "Adana Kebab",
+                cat: "kebab",
+                subcat: "Kebablar",
+                popular: true,
+                price: 28000,
+                desc: "Olovda pishirilgan maxsus achchiq ziravorli qiymali turk kabobi.",
+                img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "kb_shish",
+                name: "Tovuq Shish Kebab",
+                cat: "kebab",
+                subcat: "Kebablar",
+                popular: false,
+                price: 26000,
+                desc: "Ziravorlarda yetiltirilgan tender tovuq go'shti, sixda ko'mirda qovurilgan.",
+                img: "https://images.unsplash.com/photo-1529563021893-cc83c992d75d?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "kb_iskender",
+                name: "Iskender Kebab",
+                cat: "kebab",
+                subcat: "Kebablar",
+                popular: false,
+                price: 36000,
+                desc: "Yupqa tilimlangan go'sht, sariyog'li qarsildoq non bo'laklari, iliq sous va qatiq bilan.",
+                img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "bg_bosphorus",
+                name: "Bosphorus Burger",
+                cat: "burger",
+                subcat: "Burgerlar",
+                popular: true,
+                price: 28000,
+                desc: "Shirali mol go'shti kotleti, yangi salat bargi, pomidor, qizil piyoz va maxsus burger sousi.",
+                img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "bg_sultan",
+                name: "Sultan Cheese Burger",
+                cat: "burger",
+                subcat: "Burgerlar",
+                popular: true,
+                price: 34000,
+                desc: "Ikki qavat mol go'shti kotleti, ikki qavat eritilgan cheddar pishlog'i va karamellangan piyoz.",
+                img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "bg_crispy",
+                name: "Crispy Chicken Burger",
+                cat: "burger",
+                subcat: "Burgerlar",
+                popular: false,
+                price: 26000,
+                desc: "Qarsildoq nonli tovuq filesi, aysberg salati va mayonez sousi.",
+                img: "https://images.unsplash.com/photo-1561758033-d89a9ad46330?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "lv_beef",
+                name: "Klassik Mol Go'shtli Lavash",
+                cat: "lavash",
+                subcat: "Lavash & Doner",
+                popular: true,
+                price: 28000,
+                desc: "Yumshoq yupqa xamir, marinadlangan shirali mol go'shti, kartoshka fri, bodring va maxsus sous.",
+                img: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "lv_chicken",
+                name: "Tovuqli Pishloqli Lavash",
+                cat: "lavash",
+                subcat: "Lavash & Doner",
+                popular: false,
+                price: 26000,
+                desc: "Tovuq filesi, eritilgan golland pishlog'i, qarsildoq chips va ajoyib oq sous.",
+                img: "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "lv_doner",
+                name: "Tandir Doner Lavash",
+                cat: "lavash",
+                subcat: "Lavash & Doner",
+                popular: true,
+                price: 29000,
+                desc: "Maxsus tandirda qizdirilgan go'shtli lavash, achchiq jalapeno va sous bilan.",
+                img: "https://images.unsplash.com/photo-1637806930600-37fa8892069d?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "sn_fries",
+                name: "French Fries",
+                cat: "drinks",
+                subcat: "Gazaklar",
+                popular: true,
+                price: 14000,
+                desc: "Oltin rangli, qarsildoq va issiq fri kartoshkalari.",
+                img: "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "dr_cola",
+                name: "Coca-Cola 0.5L",
+                cat: "drinks",
+                subcat: "Ichimliklar",
+                popular: true,
+                price: 9000,
+                desc: "Muzdek tetiklantiruvchi gazlangan klassik kola.",
+                img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "dr_ayran",
+                name: "Turk Ayrani",
+                cat: "drinks",
+                subcat: "Ichimliklar",
+                popular: false,
+                price: 7000,
+                desc: "Tabiiy turk ayrani, ko'pikli va chanqoqbosti.",
+                img: "https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "dr_fanta",
+                name: "Fanta Orange 0.5L",
+                cat: "drinks",
+                subcat: "Ichimliklar",
+                popular: false,
+                price: 9000,
+                desc: "Muzdek apelsinli tetiklantiruvchi Fanta ichimligi.",
+                img: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?auto=format&fit=crop&w=600&q=80"
+            }
+        ];
+
+        let cart = {};
+        let currentCategory = 'all';
+        let currentService = 'delivery';
+        let userLat = null;
+        let userLng = null;
+
+        function formatSum(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " so'm";
+        }
+
+        function showToast(text) {
+            const t = document.getElementById('toastMsg');
+            t.textContent = text;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        function renderMenu() {
+            const listEl = document.getElementById('foodList');
+            const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            let filtered = MENU_DATA.filter(item => {
+                if (currentCategory === 'popular' && !item.popular) return false;
+                if (currentCategory !== 'all' && currentCategory !== 'popular' && item.cat !== currentCategory) return false;
+                
+                if (searchVal && !item.name.toLowerCase().includes(searchVal) && !item.desc.toLowerCase().includes(searchVal)) {
+                    return false;
+                }
+                return true;
+            });
+
+            document.getElementById('itemsCountText').textContent = `${filtered.length} ta taom`;
+            document.getElementById('emptyState').style.display = filtered.length === 0 ? 'block' : 'none';
+
+            listEl.innerHTML = filtered.map(item => {
+                const inCart = cart[item.id];
+                const qty = inCart ? inCart.qty : 0;
+
+                let actionHtml = '';
+                if (qty === 0) {
+                    actionHtml = `
+                        <button class="order-now-btn" onclick="addToCart('${item.id}', event)">
+                            Order Now
+                        </button>
+                    `;
+                } else {
+                    actionHtml = `
+                        <div class="item-stepper" onclick="event.stopPropagation()">
+                            <button class="stepper-btn" onclick="updateQty('${item.id}', -1, event)" title="Kamaytirish">−</button>
+                            <span class="stepper-qty">${qty}</span>
+                            <button class="stepper-btn" onclick="updateQty('${item.id}', 1, event)" title="Ko'paytirish">+</button>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="food-card" data-id="${item.id}" onclick="openFoodDetailModal('${item.id}', event)">
+                        <div class="food-left">
+                            <div class="food-avatar-wrap">
+                                <img src="${item.img}" alt="${item.name}" class="food-avatar" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80'">
+                            </div>
+                            <div class="food-info">
+                                <div class="food-name">${item.name}</div>
+                                <div class="food-tag">${item.subcat}</div>
+                                <div class="food-desc-text">${item.desc}</div>
+                                <div class="food-price">${formatSum(item.price)}</div>
+                            </div>
+                        </div>
+                        <div class="food-action" onclick="event.stopPropagation()">
+                            ${actionHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        let modalCurrentItemId = null;
+        let modalCurrentQty = 1;
+
+        function openFoodDetailModal(itemId, e) {
+            if (e) {
+                if (e.target.closest('.order-now-btn') || e.target.closest('.item-stepper') || e.target.closest('.stepper-btn')) {
+                    return;
+                }
+            }
+
+            const item = MENU_DATA.find(i => i.id === itemId);
+            if (!item) return;
+
+            modalCurrentItemId = itemId;
+            modalCurrentQty = cart[itemId] ? cart[itemId].qty : 1;
+
+            document.getElementById('modalFoodImg').src = item.img;
+            document.getElementById('modalFoodName').textContent = item.name;
+            document.getElementById('modalFoodDesc').textContent = item.desc;
+            document.getElementById('modalFoodBadge').textContent = item.subcat;
+            document.getElementById('modalFoodPrice').textContent = formatSum(item.price);
+            
+            updateModalPriceUI();
+
+            document.getElementById('foodModalOverlay').classList.add('open');
+        }
+
+        function closeFoodDetailModal() {
+            document.getElementById('foodModalOverlay').classList.remove('open');
+        }
+
+        function changeModalQty(delta) {
+            modalCurrentQty += delta;
+            if (modalCurrentQty < 1) modalCurrentQty = 1;
+            updateModalPriceUI();
+        }
+
+        function updateModalPriceUI() {
+            const item = MENU_DATA.find(i => i.id === modalCurrentItemId);
+            if (!item) return;
+
+            document.getElementById('modalQtyVal').textContent = modalCurrentQty;
+            const total = item.price * modalCurrentQty;
+            document.getElementById('modalAddTotalSum').textContent = formatSum(total);
+        }
+
+        function submitModalAddToCart() {
+            if (!modalCurrentItemId) return;
+            const item = MENU_DATA.find(i => i.id === modalCurrentItemId);
+            if (!item) return;
+
+            cart[modalCurrentItemId] = { item: item, qty: modalCurrentQty };
+
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            showToast(`${item.name} (${modalCurrentQty} ta) savatga qo'shildi!`);
+            
+            updateCartUI();
+            renderMenu();
+            closeFoodDetailModal();
+        }
+
+        function filterCategory(cat, el) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            if (el) el.classList.add('active');
+            
+            const titles = {
+                'all': 'Barcha taomlar',
+                'popular': 'Ommabop taomlar',
+                'pizza': 'Mazali pitsalar',
+                'kebab': 'Turk kaboblari',
+                'burger': 'Shirali burgerlar',
+                'lavash': 'Lavash & Doner',
+                'drinks': 'Ichimliklar'
+            };
+            document.getElementById('sectionTitle').textContent = titles[cat] || 'Menyu';
+            renderMenu();
+        }
+
+        function handleSearch() {
+            renderMenu();
+        }
+
+        function addToCart(itemId, e) {
+            if (e) e.stopPropagation();
+            const item = MENU_DATA.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (!cart[itemId]) {
+                cart[itemId] = { item: item, qty: 1 };
+            } else {
+                cart[itemId].qty++;
+            }
+
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            showToast(`+ ${item.name}`);
+            updateCartUI();
+            renderMenu();
+        }
+
+        function updateQty(itemId, delta, e) {
+            if (e) e.stopPropagation();
+            if (!cart[itemId]) return;
+
+            cart[itemId].qty += delta;
+            if (cart[itemId].qty <= 0) {
+                delete cart[itemId];
+                showToast("Taom o'chirildi");
+            }
+
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            updateCartUI();
+            renderMenu();
+
+            if (document.getElementById('checkoutDrawer').classList.contains('open')) {
+                if (Object.keys(cart).length === 0) {
+                    closeCheckoutDrawer();
+                } else {
+                    openCheckoutDrawer();
+                }
+            }
+        }
+
+        function updateCartUI() {
+            const items = Object.values(cart);
+            const totalCount = items.reduce((acc, c) => acc + c.qty, 0);
+            const totalSum = items.reduce((acc, c) => acc + (c.qty * c.item.price), 0);
+
+            const bar = document.getElementById('floatingCartBar');
+            const countEl = document.getElementById('barItemCount');
+            const sumEl = document.getElementById('barTotalSum');
+
+            countEl.textContent = totalCount;
+            sumEl.textContent = formatSum(totalSum);
+
+            if (totalCount > 0) {
+                bar.classList.add('visible');
+            } else {
+                bar.classList.remove('visible');
+                const successBox = document.getElementById('successBox');
+                if (!successBox || successBox.style.display !== 'block') {
+                    closeCheckoutDrawer();
+                }
+            }
+        }
+
+        function selectService(type) {
+            currentService = type;
+            document.getElementById('tabDelivery').classList.toggle('active', type === 'delivery');
+            document.getElementById('tabPickup').classList.toggle('active', type === 'pickup');
+            
+            const addrGroup = document.getElementById('addressFormGroup');
+            if (addrGroup) {
+                addrGroup.style.display = type === 'pickup' ? 'none' : 'block';
+            }
+        }
+
+        function openCheckoutDrawer() {
+            const items = Object.values(cart);
+            if (items.length === 0) {
+                closeCheckoutDrawer();
+                return;
+            }
+
+            const listEl = document.getElementById('checkoutItemsList');
+            let total = 0;
+
+            listEl.innerHTML = items.map(c => {
+                const subtotal = c.qty * c.item.price;
+                total += subtotal;
+                return `
+                    <div class="checkout-item-row" data-id="${c.item.id}">
+                        <div class="checkout-item-info">
+                            <div class="checkout-item-name">${c.item.name}</div>
+                            <div class="checkout-item-price">${formatSum(c.item.price)} &times; ${c.qty} = <b>${formatSum(subtotal)}</b></div>
+                        </div>
+                        <div class="checkout-item-controls">
+                            <div class="item-stepper">
+                                <button type="button" class="stepper-btn" onclick="updateQty('${c.item.id}', -1, event)">−</button>
+                                <span class="stepper-qty">${c.qty}</span>
+                                <button type="button" class="stepper-btn" onclick="updateQty('${c.item.id}', 1, event)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('checkoutTotalSum').textContent = formatSum(total);
+            document.getElementById('checkoutFormContent').style.display = 'block';
+            document.getElementById('successBox').style.display = 'none';
+
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const u = tg.initDataUnsafe.user;
+                const nameInput = document.getElementById('custName');
+                if (nameInput && !nameInput.value) {
+                    nameInput.value = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'Mijoz';
+                }
+            }
+
+            document.getElementById('drawerOverlay').classList.add('open');
+            document.getElementById('checkoutDrawer').classList.add('open');
+        }
+
+        function closeCheckoutDrawer() {
+            document.getElementById('drawerOverlay').classList.remove('open');
+            document.getElementById('checkoutDrawer').classList.remove('open');
+        }
+
+        let activeLocationMode = 'current';
+        let detectedAddressText = '';
+
+        function switchLocationMode(mode) {
+            activeLocationMode = mode;
+            const tabCurrent = document.getElementById('locTabCurrent');
+            const tabManual = document.getElementById('locTabManual');
+            const panelCurrent = document.getElementById('locPanelCurrent');
+            const panelManual = document.getElementById('locPanelManual');
+
+            if (tabCurrent && tabManual && panelCurrent && panelManual) {
+                if (mode === 'current') {
+                    tabCurrent.classList.add('active');
+                    tabManual.classList.remove('active');
+                    panelCurrent.style.display = 'block';
+                    panelManual.style.display = 'none';
+                } else {
+                    tabCurrent.classList.remove('active');
+                    tabManual.classList.add('active');
+                    panelCurrent.style.display = 'none';
+                    panelManual.style.display = 'block';
+                }
+            }
+            updateAssembledAddress();
+        }
+
+        function updateManualPreview() {
+            updateAssembledAddress();
+        }
+
+        function updateAssembledAddress() {
+            const addrInput = document.getElementById('custAddress');
+            if (!addrInput) return;
+
+            if (activeLocationMode === 'current') {
+                const extra = (document.getElementById('gpsExtraNotes')?.value || '').trim();
+                if (detectedAddressText) {
+                    addrInput.value = detectedAddressText + (extra ? ` (${extra})` : '');
+                } else if (extra) {
+                    addrInput.value = `Hozirgi joylashuv: ${extra}`;
+                } else {
+                    addrInput.value = '';
+                }
+            } else {
+                const district = (document.getElementById('manualDistrict')?.value || '').trim();
+                const street = (document.getElementById('manualStreet')?.value || '').trim();
+                const notes = (document.getElementById('manualNotes')?.value || '').trim();
+
+                const parts = [];
+                if (district) parts.push(district);
+                if (street) parts.push(street);
+                if (notes) parts.push(`(${notes})`);
+                addrInput.value = parts.join(', ');
+            }
+        }
+
+        function locateUserGPS() {
+            const btn = document.getElementById('gpsBtn');
+            const btnText = document.getElementById('gpsBtnText');
+            const resultBox = document.getElementById('gpsResultBox');
+            const addressEl = document.getElementById('gpsDetectedAddress');
+
+            if (btn) btn.disabled = true;
+            if (btnText) btnText.textContent = "Joylashuv aniqlanmoqda... ";
+
+            function success(pos) {
+                userLat = pos.coords.latitude;
+                userLng = pos.coords.longitude;
+
+                if (btnText) btnText.textContent = "Manzil yuklanmoqda... ";
+
+                fetch(`${API_BASE}/api/reverse-geocode?lat=${userLat}&lon=${userLng}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.success && data.address) {
+                            detectedAddressText = data.address;
+                        } else {
+                            detectedAddressText = `Koordinata: ${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
+                        }
+                    })
+                    .catch(() => {
+                        detectedAddressText = `Koordinata: ${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
+                    })
+                    .finally(() => {
+                        if (resultBox && addressEl) {
+                            addressEl.textContent = detectedAddressText;
+                            resultBox.style.display = 'block';
+                        }
+                        if (btn) btn.disabled = false;
+                        if (btnText) btnText.textContent = "Qayta aniqlash";
+                        updateAssembledAddress();
+                        showToast("Turgan joyingiz aniqlandi!");
+                    });
+            }
+
+            function error(err) {
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.textContent = "Qayta urinib ko'rish";
+                showToast("Joylashuvni avtomatik aniqlab bo'lmadi. Qo'lda kiriting.");
+            }
+
+            if (tg && tg.requestLocation) {
+                tg.requestLocation((loc) => {
+                    if (loc) {
+                        success({ coords: { latitude: loc.latitude, longitude: loc.longitude } });
+                    } else {
+                        error();
+                    }
+                });
+                return;
+            }
+
+            if (!navigator.geolocation) {
+                error();
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(success, error, {
+                enableHighAccuracy: true,
+                timeout: 9000
+            });
+        }
+
+        let selectedReceiptB64 = null;
+
+        function previewReceiptFile(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedReceiptB64 = e.target.result;
+                const wrap = document.getElementById('receiptPreviewWrap');
+                const img = document.getElementById('receiptPreviewImg');
+                const name = document.getElementById('receiptFileName');
+                if (img) img.src = selectedReceiptB64;
+                if (name) name.textContent = file.name;
+                if (wrap) wrap.style.display = 'flex';
+                showToast("Chek rasmi tanlandi!");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeReceiptFile() {
+            selectedReceiptB64 = null;
+            const input = document.getElementById('receiptFileInput');
+            const wrap = document.getElementById('receiptPreviewWrap');
+            if (input) input.value = '';
+            if (wrap) wrap.style.display = 'none';
+        }
+
+        function handlePaymentChange() {
+            const val = document.getElementById('paymentSelect').value;
+            const box = document.getElementById('cardDetailsBox');
+            const title = document.getElementById('cardTitleText');
+            const isOnline = (val.includes('Click') || val.includes('Payme') || val.includes('Plastik'));
+            box.style.display = isOnline ? 'block' : 'none';
+            if (title) {
+                title.textContent = "Karta raqami (Click / Plastik karta):";
+            }
+        }
+
+        function copyCardNumber() {
+            const num = "8600123456789012";
+            navigator.clipboard.writeText(num).then(() => {
+                showToast("Karta raqami nusxalandi! (8600 1234 5678 9012)");
+            }).catch(() => {
+                showToast("Nusxalandi: 8600 1234 5678 9012");
+            });
+        }
+
+        function submitFinalOrder() {
+            updateAssembledAddress();
+
+            const name = document.getElementById('custName').value.trim() || 'Mijoz';
+            const phone = document.getElementById('custPhone').value.trim();
+            const address = currentService === 'pickup' 
+                ? 'Olib ketish (Filialdan)' 
+                : (document.getElementById('custAddress').value.trim());
+            const payment = document.getElementById('paymentSelect').value;
+
+            if (!phone) {
+                alert("Iltimos, telefon raqamingizni kiriting!");
+                document.getElementById('custPhone').focus();
+                return;
+            }
+
+            if (currentService === 'delivery' && !address) {
+                alert("Iltimos, yetkazib berish manzilini kiriting yoki GPS aniqlash tugmasini bosing!");
+                return;
+            }
+
+            const itemsArray = Object.values(cart).map(c => ({
+                name: c.item.name,
+                price: c.item.price,
+                qty: c.qty
+            }));
+
+            if (itemsArray.length === 0) {
+                alert("Savatingiz bo'sh!");
+                return;
+            }
+
+            const total = itemsArray.reduce((acc, c) => acc + (c.qty * c.price), 0);
+            const btn = document.getElementById('confirmOrderBtn');
+            btn.disabled = true;
+            btn.textContent = "Yuborilmoqda... ";
+
+            const tgUser = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+            const payload = {
+                name: name,
+                phone: phone,
+                location: address,
+                service: currentService,
+                payment: payment,
+                items: itemsArray,
+                total: total,
+                lat: userLat,
+                lng: userLng,
+                receipt_b64: selectedReceiptB64,
+                tg_user_id: tgUser ? tgUser.id : null,
+                tg_username: tgUser ? tgUser.username : null,
+                tg_first_name: tgUser ? tgUser.first_name : null
+            };
+
+            fetch(API_BASE + '/api/order', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Bypass-Tunnel-Reminder': '1'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.textContent = "Buyurtmani tasdiqlash";
+
+                if (data.success) {
+                    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+                    const descEl = document.querySelector('.success-desc');
+                    if (descEl) {
+                        if (currentService === 'pickup') {
+                            descEl.textContent = "Buyurtmangiz qabul qilindi! Taomingiz tayyor bo'lgach, filialimizdan olib ketishingiz mumkin.";
+                        } else {
+                            descEl.textContent = "Buyurtmangiz muvaffaqiyatli qabul qilindi. Tez orada operatorimiz siz bilan bog'lanadi va taomingiz issiq holda yetkaziladi!";
+                        }
+                    }
+
+                    document.getElementById('checkoutFormContent').style.display = 'none';
+                    document.getElementById('successBox').style.display = 'block';
+
+                    cart = {};
+                    removeReceiptFile();
+                    updateCartUI();
+                    renderMenu();
+                } else {
+                    alert("Xatolik yuz berdi: " + (data.error || "Qayta urinib ko'ring"));
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.textContent = "Buyurtmani tasdiqlash";
+                console.error(err);
+                alert("Serverga ulanishda xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+            });
+        }
+
+        function resetAndClose() {
+            closeCheckoutDrawer();
+            removeReceiptFile();
+            setTimeout(() => {
+                const form = document.getElementById('checkoutFormContent');
+                const succ = document.getElementById('successBox');
+                if (form) form.style.display = 'block';
+                if (succ) succ.style.display = 'none';
+            }, 300);
+        }
+
+        let isPhoneFrameMode = false;
+        function toggleDesktopMode() {
+            isPhoneFrameMode = !isPhoneFrameMode;
+            document.body.classList.toggle('phone-frame-mode', isPhoneFrameMode);
+            const text = document.getElementById('viewModeText');
+            if (isPhoneFrameMode) {
+                text.textContent = "Keng ekran";
+            } else {
+                text.textContent = "Mobil ko'rinish";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
+
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const u = tg.initDataUnsafe.user;
+                const nameInput = document.getElementById('custName');
+                if (nameInput && !nameInput.value) {
+                    nameInput.value = [u.first_name, u.last_name].filter(Boolean).join(' ');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

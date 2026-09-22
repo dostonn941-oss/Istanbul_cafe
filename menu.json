@@ -1,0 +1,101 @@
+{
+  "categories": {
+    "pizza": "🍕 Pitsalar",
+    "kebab": "🥩 Kebablar",
+    "burger": "🍔 Burgerlar",
+    "lavash": "🥙 Lavash va Doner",
+    "drinks": "🥤 Ichimliklar va gazaklar"
+  },
+  "items": {
+    "pz1": {
+      "name": "🍕 BBQ Chicken Pizza",
+      "price": 48000,
+      "category": "pizza"
+    },
+    "pz2": {
+      "name": "🍕 Veggie Delight Pizza",
+      "price": 42000,
+      "category": "pizza"
+    },
+    "pz3": {
+      "name": "🍕 Pepperoni Supreme",
+      "price": 52000,
+      "category": "pizza"
+    },
+    "pz4": {
+      "name": "🍕 Margherita Classic",
+      "price": 38000,
+      "category": "pizza"
+    },
+    "kb1": {
+      "name": "🥩 Istanbul Doner Kebab",
+      "price": 24000,
+      "category": "kebab"
+    },
+    "kb2": {
+      "name": "🥩 Adana Kebab",
+      "price": 28000,
+      "category": "kebab"
+    },
+    "kb3": {
+      "name": "🥩 Tovuq Shish Kebab",
+      "price": 26000,
+      "category": "kebab"
+    },
+    "kb4": {
+      "name": "🥩 Iskender Kebab",
+      "price": 36000,
+      "category": "kebab"
+    },
+    "bg1": {
+      "name": "🍔 Bosphorus Burger",
+      "price": 28000,
+      "category": "burger"
+    },
+    "bg2": {
+      "name": "🍔 Sultan Cheese Burger",
+      "price": 34000,
+      "category": "burger"
+    },
+    "bg3": {
+      "name": "🍔 Crispy Chicken Burger",
+      "price": 26000,
+      "category": "burger"
+    },
+    "lv1": {
+      "name": "🥙 Klassik Mol Go'shtli Lavash",
+      "price": 28000,
+      "category": "lavash"
+    },
+    "lv2": {
+      "name": "🥙 Tovuqli Pishloqli Lavash",
+      "price": 26000,
+      "category": "lavash"
+    },
+    "lv3": {
+      "name": "🥙 Tandir Doner Lavash",
+      "price": 29000,
+      "category": "lavash"
+    },
+    "sn1": {
+      "name": "🍟 French Fries",
+      "price": 14000,
+      "category": "drinks"
+    },
+    "ot4": {
+      "name": "🥤 Coca-Cola 0.5L",
+      "price": 9000,
+      "category": "drinks"
+    },
+    "ot5": {
+      "name": "🥤 Turk Ayrani",
+      "price": 7000,
+      "category": "drinks"
+    },
+    "ot6": {
+      "name": "🥤 Fanta Orange 0.5L",
+      "price": 9000,
+      "category": "drinks"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "istanbul-cafe",
+  "version": "1.0.0",
+  "description": "Istanbul Cafe Web & Telegram Bot",
+  "scripts": {
+    "start": "python istanbul_cafe_bot.py",
+    "star": "python istanbul_cafe_bot.py",
+    "dev": "python istanbul_cafe_bot.py"
+  }
+}
