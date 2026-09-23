@@ -35,7 +35,8 @@ logger = logging.getLogger(__name__)
 # ==========================
 TOKEN = os.environ.get("BOT_TOKEN", "8780942618:AAEM8JdnmV2vPyoFrYGIm7dbd7Z964zsaxg")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "8469252037"))
-WEB_APP_URL = (os.environ.get("WEB_URL") or os.environ.get("RENDER_EXTERNAL_URL") or "").strip()
+DEFAULT_RENDER_URL = "https://istanbul-cafe-bot.onrender.com"
+WEB_APP_URL = (os.environ.get("WEB_URL") or os.environ.get("RENDER_EXTERNAL_URL") or DEFAULT_RENDER_URL).strip()
 TUNNEL_PROCESS = None
 ACTUAL_FLASK_PORT = None
 
@@ -228,6 +229,26 @@ def reverse_geocode(lat: float, lon: float) -> Optional[str]:
 # FLASK VEB ILOVASI
 # ==========================
 flask_app = Flask(__name__)
+
+@flask_app.after_request
+def add_cors_and_security_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+    # Telegram WebApp iframe ichida to'siqsiz ochilishi uchun
+    response.headers.pop("X-Frame-Options", None)
+    return response
+
+
+@flask_app.route("/healthz")
+def health_check():
+    return jsonify({"status": "ok", "service": "istanbul-cafe"}), 200
+
+
+@flask_app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
+@flask_app.route('/<path:path>', methods=['OPTIONS'])
+def options_preflight(path):
+    return "", 204
 
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOADS_DIR, exist_ok=True)
@@ -790,7 +811,7 @@ def api_admin_save_settings():
 # TELEGRAM BOT LOGIKASI
 # ==========================
 def get_start_keyboard(user_id: Optional[int] = None):
-    web_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else None
+    web_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else DEFAULT_RENDER_URL
     buttons = [
         [KeyboardButton("🍽 Menular")]
     ]
@@ -867,26 +888,19 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply_text(update.message, "Bu bo'lim faqat bot administratori uchun!")
         return
 
-    web_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else None
-    admin_url = f"{WEB_APP_URL}/admin" if WEB_APP_URL else "http://127.0.0.1:10000/admin"
-    local_admin_url = "http://127.0.0.1:10000/admin"
+    web_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else DEFAULT_RENDER_URL
+    admin_url = f"{web_url}/admin"
     
-    if web_url:
-        buttons = [
-            [InlineKeyboardButton("📊 Admin Panelni ochish (Web App)", web_app=WebAppInfo(url=f"{web_url}/admin"))],
-            [InlineKeyboardButton("🌐 Brauzerda ochish", url=admin_url)]
-        ]
-    else:
-        buttons = [
-            [InlineKeyboardButton("📊 Admin Panelni ochish", url=admin_url)],
-        ]
+    buttons = [
+        [InlineKeyboardButton("📊 Admin Panelni ochish (Web App)", web_app=WebAppInfo(url=admin_url))],
+        [InlineKeyboardButton("🌐 Brauzerda ochish", url=admin_url)]
+    ]
     inline_markup = InlineKeyboardMarkup(buttons)
 
     await safe_reply_text(
         update.message,
         f"👑 <b>Istanbul Cafe — Admin Boshqaruv Paneli:</b>\n\n"
-        f"Havola: <a href=\"{admin_url}\">{admin_url}</a>\n"
-        f"(Lokal: <code>{local_admin_url}</code>)",
+        f"Havola: <a href=\"{admin_url}\">{admin_url}</a>",
         reply_markup=inline_markup,
         parse_mode="HTML"
     )
@@ -1211,16 +1225,11 @@ async def text_message_router(update: Update, context: ContextTypes.DEFAULT_TYPE
         return
 
     if text.startswith("Sayt") or text.startswith("🌐 Sayt"):
-        url_text = WEB_APP_URL if WEB_APP_URL else "http://127.0.0.1:10000"
-        if url_text.startswith("https://"):
-            inline_markup = InlineKeyboardMarkup([
-                [InlineKeyboardButton("📱 Saytni ochish (Web App)", web_app=WebAppInfo(url=url_text))],
-                [InlineKeyboardButton("🌐 Brauzerda ochish", url=url_text)]
-            ])
-        else:
-            inline_markup = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🌐 Brauzerda ochish", url=url_text)]
-            ])
+        url_text = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else DEFAULT_RENDER_URL
+        inline_markup = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📱 Saytni ochish (Web App)", web_app=WebAppInfo(url=url_text))],
+            [InlineKeyboardButton("🌐 Brauzerda ochish", url=url_text)]
+        ])
         msg_text = f"🌐 <b>Istanbul Cafe veb-sayti:</b>\n\nHavola: <a href=\"{url_text}\">{url_text}</a>\n\nQuyidagi tugma orqali fotosuratli qulay menyuni ochishingiz mumkin:"
         await safe_reply_text(
             update.message,
@@ -1718,6 +1727,19 @@ def setup_telegram_handlers(app):
     app.add_error_handler(error_handler)
 
 
+def keep_alive_worker():
+    """Render bepul servisi uxlab qolmasligi uchun har 8 daqiqada o'zini ping qiladi."""
+    import time
+    while True:
+        time.sleep(480)
+        try:
+            target_url = (os.environ.get("RENDER_EXTERNAL_URL") or os.environ.get("WEB_URL") or DEFAULT_RENDER_URL).strip()
+            if target_url and target_url.startswith("https://"):
+                requests.get(f"{target_url}/healthz", timeout=10)
+        except Exception:
+            pass
+
+
 async def main():
     global tg_application, MAIN_LOOP
     import threading
@@ -1730,6 +1752,9 @@ async def main():
 
     tunnel_thread = threading.Thread(target=start_tunnel_worker, args=(port,), daemon=True)
     tunnel_thread.start()
+
+    keep_alive_thread = threading.Thread(target=keep_alive_worker, daemon=True)
+    keep_alive_thread.start()
 
     request_config = HTTPXRequest(
         connect_timeout=60.0,
@@ -1748,12 +1773,13 @@ async def main():
                 await tg_application.updater.start_polling(drop_pending_updates=True)
                 logger.info("Telegram bot muvaffaqiyatli ishga tushdi!")
 
-                if WEB_APP_URL and WEB_APP_URL.startswith("https://"):
+                active_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else DEFAULT_RENDER_URL
+                if active_url and active_url.startswith("https://"):
                     try:
                         await tg_application.bot.set_chat_menu_button(
-                            menu_button=MenuButtonWebApp(text="🍽 Buyurtma", web_app=WebAppInfo(url=WEB_APP_URL))
+                            menu_button=MenuButtonWebApp(text="🍽 Buyurtma", web_app=WebAppInfo(url=active_url))
                         )
-                        logger.info(f"Telegram WebApp menyu tugmasi o'rnatildi: {WEB_APP_URL}")
+                        logger.info(f"Telegram WebApp menyu tugmasi o'rnatildi: {active_url}")
                     except Exception as e_mb:
                         logger.warning(f"Telegram MenuButton o'rnatishda ogohlantirish: {e_mb}")
 
