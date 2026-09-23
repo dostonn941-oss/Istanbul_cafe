@@ -13,6 +13,7 @@ from telegram import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
     WebAppInfo,
+    MenuButtonWebApp,
 )
 from telegram.request import HTTPXRequest
 from telegram.error import TimedOut, NetworkError
@@ -34,7 +35,7 @@ logger = logging.getLogger(__name__)
 # ==========================
 TOKEN = os.environ.get("BOT_TOKEN", "8780942618:AAEM8JdnmV2vPyoFrYGIm7dbd7Z964zsaxg")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "8469252037"))
-WEB_APP_URL = os.environ.get("WEB_URL", "")
+WEB_APP_URL = (os.environ.get("WEB_URL") or os.environ.get("RENDER_EXTERNAL_URL") or "").strip()
 TUNNEL_PROCESS = None
 ACTUAL_FLASK_PORT = None
 
@@ -1746,6 +1747,15 @@ async def main():
                 await tg_application.start()
                 await tg_application.updater.start_polling(drop_pending_updates=True)
                 logger.info("Telegram bot muvaffaqiyatli ishga tushdi!")
+
+                if WEB_APP_URL and WEB_APP_URL.startswith("https://"):
+                    try:
+                        await tg_application.bot.set_chat_menu_button(
+                            menu_button=MenuButtonWebApp(text="🍽 Buyurtma", web_app=WebAppInfo(url=WEB_APP_URL))
+                        )
+                        logger.info(f"Telegram WebApp menyu tugmasi o'rnatildi: {WEB_APP_URL}")
+                    except Exception as e_mb:
+                        logger.warning(f"Telegram MenuButton o'rnatishda ogohlantirish: {e_mb}")
 
                 stop_signal = asyncio.Event()
                 await stop_signal.wait()
