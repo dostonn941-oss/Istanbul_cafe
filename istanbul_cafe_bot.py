@@ -88,6 +88,31 @@ def fmt_price(n: int) -> str:
     return f"{n:,}".replace(",", " ") + " so'm"
 
 
+def get_category_sticker(cat_key: str) -> str:
+    """Kategoriyadan uning birinchi emojisi (stikerini) ajratib oladi."""
+    cat_text = CATEGORY_NAMES.get(cat_key, "").strip()
+    if not cat_text:
+        return "🍽"
+    parts = cat_text.split(" ", 1)
+    if parts and any(ord(c) > 127 for c in parts[0]):
+        return parts[0]
+    return "🍽"
+
+
+def ensure_dish_sticker(name: str, cat_key: str, custom_sticker: str = "") -> str:
+    """Taom nomiga kategoriya yoki berilgan stikerni avtomatik biriktiradi."""
+    name = (name or "").strip()
+    if not name:
+        return name
+    # Agar nom boshida allaqachon emoji (stiker) bo'lsa, o'zgartirmaymiz
+    if ord(name[0]) > 127:
+        return name
+    sticker = custom_sticker.strip() if custom_sticker else get_category_sticker(cat_key)
+    if not sticker:
+        sticker = get_category_sticker(cat_key)
+    return f"{sticker} {name}".strip()
+
+
 MENU_FILE = os.path.join(os.path.dirname(__file__), "menu.json")
 
 def load_menu():
@@ -97,13 +122,17 @@ def load_menu():
         try:
             with open(MENU_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                if "categories" in data:
+                if "categories" in data and isinstance(data["categories"], dict):
                     CATEGORY_NAMES = data["categories"]
-                if "items" in data:
+                if "items" in data and isinstance(data["items"], dict):
                     new_menu = {}
                     for k, v in data["items"].items():
                         p_num = int(v.get("price", 0))
-                        new_menu[k] = (v.get("name", ""), fmt_price(p_num), p_num, v.get("category", "other"))
+                        cat = v.get("category", "other")
+                        raw_name = v.get("name", "")
+                        # Taom stikerini kafolatlaymiz
+                        name = ensure_dish_sticker(raw_name, cat)
+                        new_menu[k] = (name, fmt_price(p_num), p_num, cat)
                     if new_menu:
                         MENU_ITEMS = new_menu
         except Exception:
@@ -227,9 +256,10 @@ def api_menu():
             "price_text": price_text,
             "price": price_num,
             "category": cat,
-            "category_name": CATEGORY_NAMES.get(cat, cat)
+            "category_name": CATEGORY_NAMES.get(cat, cat),
+            "category_sticker": get_category_sticker(cat)
         })
-    return jsonify({"success": True, "items": items})
+    return jsonify({"success": True, "items": items, "categories": CATEGORY_NAMES})
 
 
 @flask_app.route("/api/reverse-geocode")
@@ -602,7 +632,8 @@ def api_admin_menu():
             "price": price_num,
             "price_text": price_text,
             "category": cat,
-            "category_name": CATEGORY_NAMES.get(cat, cat)
+            "category_name": CATEGORY_NAMES.get(cat, cat),
+            "category_sticker": get_category_sticker(cat)
         })
     return jsonify({
         "success": True,
@@ -618,6 +649,7 @@ def api_admin_save_menu_item():
     price = data.get("price")
     category = (data.get("category") or "").strip()
     item_id = (data.get("id") or "").strip()
+    custom_sticker = (data.get("sticker") or "").strip()
 
     if not name or price is None or not category:
         return jsonify({"success": False, "error": "Nomi, narxi va toifasi to'ldirilishi shart!"}), 400
@@ -627,13 +659,21 @@ def api_admin_save_menu_item():
     except (ValueError, TypeError):
         return jsonify({"success": False, "error": "Narx to'g'ri son bo'lishi kerak"}), 400
 
+    # Taomga kategoriya yoki berilgan stikerni avtomatik biriktiramiz
+    name = ensure_dish_sticker(name, category, custom_sticker=custom_sticker)
+
     if not item_id:
         import time
         item_id = f"it_{int(time.time()*1000)}"
 
     MENU_ITEMS[item_id] = (name, fmt_price(price_num), price_num, category)
     save_menu()
-    return jsonify({"success": True, "message": "Taom muvaffaqiyatli saqlandi!", "item_id": item_id})
+    return jsonify({
+        "success": True,
+        "message": "Taom muvaffaqiyatli saqlandi!",
+        "item_id": item_id,
+        "name": name
+    })
 
 
 @flask_app.route("/api/admin/menu/item/<string:item_id>/delete", methods=["POST", "DELETE"])
@@ -644,6 +684,70 @@ def api_admin_delete_menu_item(item_id: str):
         save_menu()
         return jsonify({"success": True, "message": "Taom muvaffaqiyatli o'chirildi!"})
     return jsonify({"success": False, "error": "Taom topilmadi"}), 404
+
+
+@flask_app.route("/api/admin/menu/category", methods=["POST"])
+def api_admin_save_category():
+    global CATEGORY_NAMES
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
+    sticker = (data.get("sticker") or "").strip()
+    cat_id = (data.get("id") or "").strip().lower()
+
+    if not name:
+        return jsonify({"success": False, "error": "Kategoriya nomi kiritilishi shart!"}), 400
+
+    # Agar nom boshida emoji bo'lmasa va stiker tanlangan bo'lsa, ularni birlashtiramiz
+    if sticker and not any(ord(c) > 127 for c in name[:2]):
+        full_name = f"{sticker} {name}".strip()
+    else:
+        full_name = name
+
+    # ID bo'lmasa, slug yoki vaqt belgisi orqali kalit yaratamiz
+    if not cat_id:
+        import time, re
+        slug = re.sub(r'[^a-zA-Z0-9]+', '_', name.lower()).strip('_')
+        if slug and len(slug) >= 2 and slug not in CATEGORY_NAMES:
+            cat_id = slug
+        else:
+            cat_id = f"cat_{int(time.time())}"
+
+    CATEGORY_NAMES[cat_id] = full_name
+    save_menu()
+    return jsonify({
+        "success": True,
+        "message": "Kategoriya muvaffaqiyatli saqlandi!",
+        "category": {
+            "id": cat_id,
+            "name": full_name,
+            "sticker": get_category_sticker(cat_id)
+        },
+        "categories": CATEGORY_NAMES
+    })
+
+
+@flask_app.route("/api/admin/menu/category/<string:cat_id>/delete", methods=["POST", "DELETE"])
+@flask_app.route("/api/admin/menu/category/<string:cat_id>", methods=["DELETE"])
+def api_admin_delete_category(cat_id: str):
+    global CATEGORY_NAMES, MENU_ITEMS
+    if cat_id in CATEGORY_NAMES:
+        if len(CATEGORY_NAMES) <= 1:
+            return jsonify({"success": False, "error": "Eng kamida bitta kategoriya qolishi shart!"}), 400
+
+        del CATEGORY_NAMES[cat_id]
+        # Ushbu toifadagi taomlarni boshqa qolgan toifaga o'tkazish
+        remaining_cat = next(iter(CATEGORY_NAMES.keys()))
+        for item_id, item_val in list(MENU_ITEMS.items()):
+            dish_name, price_str, price_num, c = item_val
+            if c == cat_id:
+                MENU_ITEMS[item_id] = (dish_name, price_str, price_num, remaining_cat)
+        save_menu()
+        return jsonify({
+            "success": True,
+            "message": "Kategoriya muvaffaqiyatli o'chirildi!",
+            "categories": CATEGORY_NAMES
+        })
+    return jsonify({"success": False, "error": "Kategoriya topilmadi"}), 404
 
 
 @flask_app.route("/api/admin/settings", methods=["GET"])
@@ -1520,10 +1624,18 @@ def run_flask_server(port: int = 10000):
 
 def start_tunnel_worker(port: int = 10000):
     global WEB_APP_URL, TUNNEL_PROCESS
-    env_url = os.environ.get("WEB_URL", "").strip()
+    import sys
+    env_url = (os.environ.get("WEB_URL") or os.environ.get("RENDER_EXTERNAL_URL") or "").strip()
     if env_url.startswith("https://"):
         WEB_APP_URL = env_url
-        logger.info(f"Maxsus HTTPS havola o'rnatilgan: {WEB_APP_URL}")
+        logger.info(f"Maxsus / Render HTTPS havola o'rnatilgan: {WEB_APP_URL}")
+        return
+
+    # Render bulut muhitida (Linux) tashqi tunnel ochish shart emas
+    if os.environ.get("RENDER"):
+        if env_url:
+            WEB_APP_URL = env_url
+        logger.info(f"Render muhiti aniqlandi. WEB_APP_URL: {WEB_APP_URL}")
         return
 
     import subprocess
@@ -1539,7 +1651,7 @@ def start_tunnel_worker(port: int = 10000):
     cf_path = os.path.join(os.path.dirname(__file__), "cloudflared.exe")
 
     while True:
-        if os.path.exists(cf_path):
+        if sys.platform == "win32" and os.path.exists(cf_path):
             try:
                 proc = subprocess.Popen(
                     [cf_path, "tunnel", "--no-autoupdate", "--url", f"http://127.0.0.1:{target_port}"],

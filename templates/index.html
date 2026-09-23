@@ -1059,7 +1059,7 @@
                     </div>
                 </div>
 
-                <div class="categories-scroll">
+                <div class="categories-scroll" id="categoriesScroll">
                     <div class="category-pill active" onclick="filterCategory('all', this)">Barchasi</div>
                     <div class="category-pill" onclick="filterCategory('popular', this)">Ommabop</div>
                     <div class="category-pill" onclick="filterCategory('pizza', this)">Pitsa</div>
@@ -2020,8 +2020,62 @@
             }
         }
 
+        async function loadDynamicMenu() {
+            try {
+                const res = await fetch(`${API_BASE}/api/menu`);
+                const data = await res.json();
+                if (data.success && Array.isArray(data.items) && data.items.length > 0) {
+                    const fallbackImgs = {
+                        pizza: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
+                        burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+                        kebab: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80",
+                        lavash: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+                        drinks: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80"
+                    };
+                    const defaultImg = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80";
+
+                    const newItems = data.items.map(it => {
+                        const existing = MENU_DATA.find(x => x.id === it.id);
+                        return {
+                            id: it.id,
+                            name: it.name,
+                            cat: it.category,
+                            subcat: it.category_name || it.category,
+                            popular: existing ? existing.popular : false,
+                            price: it.price,
+                            desc: existing ? existing.desc : `${it.name} — eng sara masalliqlardan yangi tayyorlangan.`,
+                            img: existing ? existing.img : (fallbackImgs[it.category] || defaultImg)
+                        };
+                    });
+                    MENU_DATA.length = 0;
+                    MENU_DATA.push(...newItems);
+
+                    if (data.categories && typeof data.categories === 'object') {
+                        const catScroll = document.getElementById('categoriesScroll');
+                        if (catScroll) {
+                            let pillsHtml = `
+                                <div class="category-pill ${currentCategory === 'all' ? 'active' : ''}" onclick="filterCategory('all', this)">Barchasi</div>
+                            `;
+                            Object.keys(data.categories).forEach(k => {
+                                const catTitle = data.categories[k];
+                                pillsHtml += `
+                                    <div class="category-pill ${currentCategory === k ? 'active' : ''}" onclick="filterCategory('${k}', this)">${catTitle}</div>
+                                `;
+                            });
+                            catScroll.innerHTML = pillsHtml;
+                        }
+                    }
+
+                    renderMenu();
+                }
+            } catch (err) {
+                console.warn("loadDynamicMenu error:", err);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             renderMenu();
+            loadDynamicMenu();
 
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const u = tg.initDataUnsafe.user;

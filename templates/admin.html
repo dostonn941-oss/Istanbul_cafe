@@ -1023,6 +1023,64 @@
             width: fit-content;
         }
 
+        .sticker-opt-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 5px 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.15s, border-color 0.15s;
+        }
+        .sticker-opt-btn:hover {
+            transform: scale(1.2);
+            border-color: var(--accent-red);
+            background: var(--accent-red-light);
+        }
+
+        .cat-filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-full);
+            font-size: 12.5px;
+            font-weight: 800;
+            cursor: pointer;
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .cat-filter-btn:hover {
+            border-color: var(--accent-red);
+        }
+        .cat-filter-btn.active {
+            background: var(--accent-red);
+            color: #ffffff;
+            border-color: var(--accent-red);
+            box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25);
+        }
+        .cat-del-icon {
+            margin-left: 4px;
+            opacity: 0.65;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            border-radius: 50%;
+            transition: opacity 0.15s, background 0.15s;
+        }
+        .cat-del-icon:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.12);
+        }
+        .cat-filter-btn.active .cat-del-icon:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
         .dish-name-txt {
             font-size: 15.5px;
             font-weight: 800;
@@ -1666,15 +1724,26 @@
              TAB 3: MENYU BOSHQARUVI (MENU CRUD)
         ============================================================== -->
         <div class="tab-content" id="tabMenu">
-            <div class="menu-top-bar">
+            <div class="menu-top-bar" style="margin-bottom: 14px;">
                 <div>
-                    <h2 style="font-size: 16px; font-weight: 900; color: var(--text-primary);">Kafe Menyusi va Narxlar</h2>
-                    <p style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">Taomlarni tahrirlash, yangi qo'shish va narxlarni boshqarish</p>
+                    <h2 style="font-size: 16px; font-weight: 900; color: var(--text-primary);">Kafe Menyusi va Kategoriyalar</h2>
+                    <p style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">Kategoriyalar va taomlarni boshqarish, stikerlar va narxlar</p>
                 </div>
-                <button class="btn-add-item" onclick="openAddDishModal()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    <span>Yangi taom qo'shish</span>
-                </button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-add-item" style="background: var(--bg-card); color: var(--text-primary); border: 1.5px solid var(--border-color); box-shadow: var(--shadow-xs);" onclick="openCategoryModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>+ Yangi kategoriya</span>
+                    </button>
+                    <button class="btn-add-item" onclick="openAddDishModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>+ Yangi taom qo'shish</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KATEGORIYALAR PANELI VA SARALASH -->
+            <div id="adminCategoryBar" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center;">
+                <!-- Dinamik ravishda yuklanadi -->
             </div>
             
             <div class="menu-grid-items" id="menuDishesContainer">
@@ -1940,26 +2009,91 @@
         <form id="dishForm" onsubmit="saveDish(event)" style="display: flex; flex-direction: column; gap: 14px;">
             <input type="hidden" id="dishId">
             <div class="form-row">
+                <span class="form-label-txt">Kategoriyasi:</span>
+                <select class="form-control-input" id="dishCategory" required onchange="onDishCategoryChanged()">
+                    <!-- Dinamik ravishda yuklanadi -->
+                </select>
+            </div>
+            <div class="form-row">
+                <span class="form-label-txt">Kategoriya stikeri:</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="dishSticker" class="form-control-input" style="width: 65px; text-align: center; font-size: 22px; padding: 6px;" maxlength="4" placeholder="🍔" oninput="updateDishPreview()">
+                    <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">(Toifadan avtomatik olinadi, o'zgartirishingiz ham mumkin)</span>
+                </div>
+            </div>
+            <div class="form-row">
                 <span class="form-label-txt">Taom nomi:</span>
-                <input type="text" class="form-control-input" id="dishName" required placeholder="Masalan: Double Cheese Burger">
+                <input type="text" class="form-control-input" id="dishName" required placeholder="Masalan: Double Cheese Burger" oninput="updateDishPreview()">
             </div>
             <div class="form-row">
                 <span class="form-label-txt">Narxi (so'mda):</span>
                 <input type="number" class="form-control-input" id="dishPrice" required placeholder="Masalan: 32000">
             </div>
-            <div class="form-row">
-                <span class="form-label-txt">Kategoriyasi:</span>
-                <select class="form-control-input" id="dishCategory" required>
-                    <option value="burger">Burgerlar</option>
-                    <option value="pizza">Pitsalar</option>
-                    <option value="kebab">Kebablar</option>
-                    <option value="lavash">Lavash va Doner</option>
-                    <option value="drinks">Ichimliklar va gazaklar</option>
-                </select>
+            <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--text-primary); border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                <span>Menyuda ko'rinishi:</span>
+                <span id="dishPreviewTxt" style="color: var(--accent-red); font-size: 14.5px; font-weight: 800;">-</span>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 8px;">
                 <button type="submit" class="btn-action-stage green">Saqlash</button>
                 <button type="button" class="btn-action-stage delete" onclick="closeDishModal()">Bekor qilish</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =======================================
+     ADD / EDIT CATEGORY MODAL
+======================================= -->
+<div class="modal-overlay" id="categoryModal">
+    <div class="modal-box">
+        <div class="modal-top">
+            <span class="modal-heading" id="categoryModalTitle">Yangi kategoriya qo'shish</span>
+            <button class="btn-modal-close" onclick="closeCategoryModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <form id="categoryForm" onsubmit="saveCategory(event)" style="display: flex; flex-direction: column; gap: 14px;">
+            <input type="hidden" id="categoryKey">
+            <div class="form-row">
+                <span class="form-label-txt">Kategoriya stikeri (emoji):</span>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" class="form-control-input" id="catStickerInput" style="width: 70px; text-align: center; font-size: 24px; padding: 6px;" required value="🍽" maxlength="4" oninput="updateCatPreview()">
+                    <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Pastdagi stikerni bosing yoki o'zingiz yozing</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; padding: 8px; background: var(--bg-surface); border-radius: 8px; border: 1px solid var(--border-color);">
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍕')">🍕</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🥩')">🥩</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍔')">🍔</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🥙')">🥙</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍟')">🍟</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🥤')">🥤</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍰')">🍰</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍦')">🍦</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🥗')">🥗</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('☕')">☕</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍲')">🍲</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍗')">🍗</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🥪')">🥪</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🌮')">🌮</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍣')">🍣</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍩')">🍩</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🥟')">🥟</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍧')">🍧</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🧃')">🧃</button>
+                    <button type="button" class="sticker-opt-btn" onclick="selectCatEmoji('🍱')">🍱</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <span class="form-label-txt">Kategoriya nomi:</span>
+                <input type="text" class="form-control-input" id="catNameInput" required placeholder="Masalan: Desertlar va shirinliklar" oninput="updateCatPreview()">
+            </div>
+            <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--text-primary); border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                <span>Kategoriya ko'rinishi:</span>
+                <span id="catPreviewTxt" style="color: var(--accent-red); font-size: 14.5px; font-weight: 800;">🍽 Kategoriya</span>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <button type="submit" class="btn-action-stage green">Saqlash</button>
+                <button type="button" class="btn-action-stage delete" onclick="closeCategoryModal()">Bekor qilish</button>
             </div>
         </form>
     </div>
@@ -2813,35 +2947,154 @@
     }
 
     // ==========================================
-    // MENU CRUD OPERATIONS
+    // MENU & CATEGORY OPERATIONS
     // ==========================================
+    let adminMenuDishes = [];
+    let adminMenuCategories = {};
+    let adminSelectedCatFilter = 'all';
+
     async function loadAdminMenu() {
         try {
             const res = await fetch('/api/admin/menu');
             const data = await res.json();
-            if (data.success && Array.isArray(data.items)) {
-                const container = document.getElementById('menuDishesContainer');
-                if (!container) return;
-                let html = '';
-                data.items.forEach(dish => {
-                    html += `
-                        <div class="menu-dish-card">
-                            <div>
-                                <span class="dish-cat-pill">${dish.category_name || dish.category}</span>
-                                <div class="dish-name-txt">${escapeHtml(dish.name)}</div>
-                            </div>
-                            <div class="dish-price-txt">${fmtUZS(dish.price)}</div>
-                            <div class="dish-actions-bar">
-                                <button class="btn-edit-dish" onclick="openEditDishModal('${dish.id}', '${escapeQuotes(dish.name)}', ${dish.price}, '${dish.category}')">Tahrirlash</button>
-                                <button class="btn-del-dish" onclick="deleteMenuDish('${dish.id}')">O'chirish</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
+            if (data.success) {
+                adminMenuDishes = Array.isArray(data.items) ? data.items : [];
+                adminMenuCategories = data.categories || {};
+
+                renderAdminCategoryBar();
+                populateDishCategorySelect();
+                renderAdminDishes();
             }
         } catch (e) {
             console.error('loadAdminMenu error:', e);
+        }
+    }
+
+    function renderAdminCategoryBar() {
+        const catBar = document.getElementById('adminCategoryBar');
+        if (!catBar) return;
+
+        const totalDishes = adminMenuDishes.length;
+        let html = `
+            <button class="cat-filter-btn ${adminSelectedCatFilter === 'all' ? 'active' : ''}" onclick="filterAdminMenu('all')">
+                <span>🍽 Barchasi</span>
+                <span style="opacity: 0.75; font-size: 11px;">(${totalDishes})</span>
+            </button>
+        `;
+
+        Object.keys(adminMenuCategories).forEach(catKey => {
+            const catName = adminMenuCategories[catKey];
+            const count = adminMenuDishes.filter(d => d.category === catKey).length;
+            const isActive = adminSelectedCatFilter === catKey;
+
+            html += `
+                <div class="cat-filter-btn ${isActive ? 'active' : ''}" onclick="filterAdminMenu('${catKey}')">
+                    <span>${escapeHtml(catName)}</span>
+                    <span style="opacity: 0.75; font-size: 11px;">(${count})</span>
+                    <span class="cat-del-icon" title="Kategoriyani o'chirish" onclick="event.stopPropagation(); deleteCategory('${catKey}')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </span>
+                </div>
+            `;
+        });
+
+        catBar.innerHTML = html;
+    }
+
+    function filterAdminMenu(catKey) {
+        adminSelectedCatFilter = catKey;
+        renderAdminCategoryBar();
+        renderAdminDishes();
+    }
+
+    function renderAdminDishes() {
+        const container = document.getElementById('menuDishesContainer');
+        if (!container) return;
+
+        const filtered = adminSelectedCatFilter === 'all' 
+            ? adminMenuDishes 
+            : adminMenuDishes.filter(d => d.category === adminSelectedCatFilter);
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 45px 20px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1.5px dashed var(--border-color); color: var(--text-muted); font-size: 13.5px; font-weight: 700;">
+                    Ushbu toifada hozircha taomlar mavjud emas.<br>
+                    <button class="btn-add-item" style="margin: 14px auto 0 auto;" onclick="openAddDishModal()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>Yangi taom qo'shish</span>
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        filtered.forEach(dish => {
+            html += `
+                <div class="menu-dish-card">
+                    <div>
+                        <span class="dish-cat-pill">${dish.category_name || dish.category}</span>
+                        <div class="dish-name-txt">${escapeHtml(dish.name)}</div>
+                    </div>
+                    <div class="dish-price-txt">${fmtUZS(dish.price)}</div>
+                    <div class="dish-actions-bar">
+                        <button class="btn-edit-dish" onclick="openEditDishModal('${dish.id}', '${escapeQuotes(dish.name)}', ${dish.price}, '${dish.category}')">Tahrirlash</button>
+                        <button class="btn-del-dish" onclick="deleteMenuDish('${dish.id}')">O'chirish</button>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function populateDishCategorySelect(selectedKey) {
+        const sel = document.getElementById('dishCategory');
+        if (!sel) return;
+        sel.innerHTML = '';
+        const keys = Object.keys(adminMenuCategories);
+        keys.forEach(k => {
+            const opt = document.createElement('option');
+            opt.value = k;
+            opt.textContent = adminMenuCategories[k];
+            if (selectedKey && selectedKey === k) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    function getCategoryEmoji(catKey) {
+        const title = adminMenuCategories[catKey] || '';
+        const parts = title.trim().split(' ');
+        if (parts.length > 0 && parts[0].charCodeAt(0) > 127) {
+            return parts[0];
+        }
+        return '🍽';
+    }
+
+    function onDishCategoryChanged() {
+        const cat = document.getElementById('dishCategory').value;
+        const stickerInput = document.getElementById('dishSticker');
+        if (stickerInput) {
+            stickerInput.value = getCategoryEmoji(cat);
+        }
+        updateDishPreview();
+    }
+
+    function updateDishPreview() {
+        const nameVal = (document.getElementById('dishName').value || '').trim();
+        const cat = document.getElementById('dishCategory').value;
+        const stickerVal = (document.getElementById('dishSticker').value || '').trim() || getCategoryEmoji(cat);
+        const previewEl = document.getElementById('dishPreviewTxt');
+        if (!previewEl) return;
+
+        if (!nameVal) {
+            previewEl.textContent = `${stickerVal} (Taom nomi...)`;
+            return;
+        }
+
+        if (nameVal.charCodeAt(0) > 127) {
+            previewEl.textContent = nameVal;
+        } else {
+            previewEl.textContent = `${stickerVal} ${nameVal}`;
         }
     }
 
@@ -2858,16 +3111,31 @@
         document.getElementById('dishId').value = '';
         document.getElementById('dishName').value = '';
         document.getElementById('dishPrice').value = '';
+        populateDishCategorySelect(adminSelectedCatFilter !== 'all' ? adminSelectedCatFilter : undefined);
+        const selCat = document.getElementById('dishCategory').value;
+        document.getElementById('dishSticker').value = getCategoryEmoji(selCat);
         document.getElementById('dishModalTitle').textContent = 'Yangi taom qo\'shish';
+        updateDishPreview();
         document.getElementById('dishModal').classList.add('active');
     }
 
     function openEditDishModal(id, name, price, category) {
         document.getElementById('dishId').value = id;
-        document.getElementById('dishName').value = name;
-        document.getElementById('dishPrice').value = price;
+        populateDishCategorySelect(category);
         document.getElementById('dishCategory').value = category;
+        document.getElementById('dishPrice').value = price;
+
+        let cleanName = name;
+        let sticker = getCategoryEmoji(category);
+        if (name && name.charCodeAt(0) > 127) {
+            const parts = name.split(' ');
+            sticker = parts[0];
+            cleanName = parts.slice(1).join(' ');
+        }
+        document.getElementById('dishSticker').value = sticker;
+        document.getElementById('dishName').value = cleanName;
         document.getElementById('dishModalTitle').textContent = 'Taomni tahrirlash';
+        updateDishPreview();
         document.getElementById('dishModal').classList.add('active');
     }
 
@@ -2878,15 +3146,22 @@
     async function saveDish(e) {
         e.preventDefault();
         const id = document.getElementById('dishId').value;
-        const name = document.getElementById('dishName').value.trim();
+        let name = document.getElementById('dishName').value.trim();
         const price = document.getElementById('dishPrice').value;
         const category = document.getElementById('dishCategory').value;
+        const sticker = (document.getElementById('dishSticker').value || '').trim();
+
+        // Agar taom nomi oldida stiker bo'lmasa, tanlangan stikerni qo'shamiz
+        if (name && name.charCodeAt(0) <= 127) {
+            const st = sticker || getCategoryEmoji(category);
+            name = `${st} ${name}`;
+        }
 
         try {
             const res = await fetch('/api/admin/menu/item', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, name, price, category })
+                body: JSON.stringify({ id, name, price, category, sticker })
             });
             const data = await res.json();
             if (data.success) {
@@ -2912,6 +3187,82 @@
             }
         } catch (err) {
             console.error('deleteMenuDish error:', err);
+        }
+    }
+
+    // ==========================================
+    // CATEGORY CRUD OPERATIONS
+    // ==========================================
+    function openCategoryModal() {
+        document.getElementById('categoryKey').value = '';
+        document.getElementById('catStickerInput').value = '🍕';
+        document.getElementById('catNameInput').value = '';
+        document.getElementById('categoryModalTitle').textContent = 'Yangi kategoriya qo\'shish';
+        updateCatPreview();
+        document.getElementById('categoryModal').classList.add('active');
+    }
+
+    function closeCategoryModal() {
+        document.getElementById('categoryModal').classList.remove('active');
+    }
+
+    function selectCatEmoji(emoji) {
+        document.getElementById('catStickerInput').value = emoji;
+        updateCatPreview();
+    }
+
+    function updateCatPreview() {
+        const st = (document.getElementById('catStickerInput').value || '').trim() || '🍽';
+        const nm = (document.getElementById('catNameInput').value || '').trim() || 'Kategoriya nomi';
+        document.getElementById('catPreviewTxt').textContent = `${st} ${nm}`;
+    }
+
+    async function saveCategory(e) {
+        e.preventDefault();
+        const id = document.getElementById('categoryKey').value;
+        const sticker = (document.getElementById('catStickerInput').value || '').trim();
+        const name = (document.getElementById('catNameInput').value || '').trim();
+
+        if (!name) {
+            alert('Kategoriya nomini kiriting!');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/admin/menu/category', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, name, sticker })
+            });
+            const data = await res.json();
+            if (data.success) {
+                closeCategoryModal();
+                loadAdminMenu();
+            } else {
+                alert('Xatolik: ' + (data.error || 'Kategoriyani saqlab bo\'lmadi'));
+            }
+        } catch (err) {
+            console.error('saveCategory error:', err);
+        }
+    }
+
+    async function deleteCategory(catKey) {
+        const catName = adminMenuCategories[catKey] || catKey;
+        if (!confirm(`"${catName}" kategoriyasini o'chirishni tasdiqlaysizmi?\nUshbu toifadagi taomlar boshqa toifaga o'tkaziladi.`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/menu/category/${catKey}/delete`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                if (adminSelectedCatFilter === catKey) adminSelectedCatFilter = 'all';
+                loadAdminMenu();
+            } else {
+                alert('Xatolik: ' + (data.error || 'O\'chirib bo\'lmadi'));
+            }
+        } catch (err) {
+            console.error('deleteCategory error:', err);
         }
     }
 
