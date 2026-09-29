@@ -26,6 +26,15 @@ from telegram.ext import (
     filters,
 )
 
+# .env yuklash
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+import supabase_db
+
 # Logging sozlamalari
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,12 +42,20 @@ logger = logging.getLogger(__name__)
 # ==========================
 # SOZLAMALAR (SETTINGS)
 # ==========================
-TOKEN = os.environ.get("BOT_TOKEN", "8780942618:AAEM8JdnmV2vPyoFrYGIm7dbd7Z964zsaxg")
+TOKEN = os.environ.get("BOT_TOKEN", "8728959771:AAE7gczpAq26lFuHMQfigxwzF6n3Ix6_06Y")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "8469252037"))
-DEFAULT_RENDER_URL = "https://istanbul-cafe-bot.onrender.com"
+DEFAULT_RENDER_URL = "https://korolevskiy-center.onrender.com"
 WEB_APP_URL = (os.environ.get("WEB_URL") or os.environ.get("RENDER_EXTERNAL_URL") or DEFAULT_RENDER_URL).strip()
 TUNNEL_PROCESS = None
 ACTUAL_FLASK_PORT = None
+
+# Supabase
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://jtzuytfxeakexupudxoy.supabase.co").strip()
+SUPABASE_KEY = (
+    os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    or os.environ.get("SUPABASE_KEY")
+    or "sb_publishable_0yEdTo2GGH0slSNwSB91sA_Zt8p75Xb"
+).strip()
 
 if not TOKEN:
     raise RuntimeError(
@@ -53,31 +70,34 @@ MAIN_LOOP = None
 # MENYU MA'LUMOTLARI (Telegram va Veb uchun - Emojilar bilan)
 # ==========================
 MENU_ITEMS = {
-    "pz1": ("🍕 BBQ Chicken Pizza", "48 000 so'm", 48000, "pizza"),
-    "pz2": ("🍕 Veggie Delight Pizza", "42 000 so'm", 42000, "pizza"),
-    "pz3": ("🍕 Pepperoni Supreme", "52 000 so'm", 52000, "pizza"),
-    "pz4": ("🍕 Margherita Classic", "38 000 so'm", 38000, "pizza"),
-    "kb1": ("🥩 Istanbul Doner Kebab", "24 000 so'm", 24000, "kebab"),
-    "kb2": ("🥩 Adana Kebab", "28 000 so'm", 28000, "kebab"),
-    "kb3": ("🥩 Tovuq Shish Kebab", "26 000 so'm", 26000, "kebab"),
-    "kb4": ("🥩 Iskender Kebab", "36 000 so'm", 36000, "kebab"),
-    "bg1": ("🍔 Bosphorus Burger", "28 000 so'm", 28000, "burger"),
-    "bg2": ("🍔 Sultan Cheese Burger", "34 000 so'm", 34000, "burger"),
-    "bg3": ("🍔 Crispy Chicken Burger", "26 000 so'm", 26000, "burger"),
-    "lv1": ("🥙 Klassik Mol Go'shtli Lavash", "28 000 so'm", 28000, "lavash"),
-    "lv2": ("🥙 Tovuqli Pishloqli Lavash", "26 000 so'm", 26000, "lavash"),
-    "lv3": ("🥙 Tandir Doner Lavash", "29 000 so'm", 29000, "lavash"),
-    "sn1": ("🍟 French Fries", "14 000 so'm", 14000, "drinks"),
-    "ot4": ("🥤 Coca-Cola 0.5L", "9 000 so'm", 9000, "drinks"),
-    "ot5": ("🥤 Turk Ayrani", "7 000 so'm", 7000, "drinks"),
-    "ot6": ("🥤 Fanta Orange 0.5L", "9 000 so'm", 9000, "drinks"),
+    "bg1": ("🍔 Korolevskiy Burger", "36 000 so'm", 36000, "burger"),
+    "bg2": ("🍔 Korolevskiy Cheese Burger", "32 000 so'm", 32000, "burger"),
+    "bg3": ("🍔 Korolevskiy Big Burger", "38 000 so'm", 38000, "burger"),
+    "bg4": ("🍔 Crispy Chicken Burger", "28 000 so'm", 28000, "burger"),
+    "lv1": ("🥙 Korolevskiy Lavash (Mol go'shti)", "32 000 so'm", 32000, "lavash"),
+    "lv2": ("🥙 Korolevskiy Pishloqli Lavash", "35 000 so'm", 35000, "lavash"),
+    "lv3": ("🥙 Korolevskiy Tovuqli Lavash", "28 000 so'm", 28000, "lavash"),
+    "lv4": ("🥙 Tandir Doner Lavash", "30 000 so'm", 30000, "lavash"),
+    "pz1": ("🍕 Korolevskiy Pizza", "55 000 so'm", 55000, "pizza"),
+    "pz2": ("🍕 Pepperoni Supreme", "50 000 so'm", 50000, "pizza"),
+    "pz3": ("🍕 BBQ Chicken Pizza", "48 000 so'm", 48000, "pizza"),
+    "pz4": ("🍕 4 Pishloqli Pizza", "52 000 so'm", 52000, "pizza"),
+    "kb1": ("🥩 Korolevskiy Doner Kebab", "28 000 so'm", 28000, "kebab"),
+    "kb2": ("🥩 Iskender Kebab", "38 000 so'm", 38000, "kebab"),
+    "kb3": ("🥩 Tovuq Shish Kebab", "28 000 so'm", 28000, "kebab"),
+    "kb4": ("🥩 Qiymali Kebab", "30 000 so'm", 30000, "kebab"),
+    "sn1": ("🍟 Fri kartoshkasi", "15 000 so'm", 15000, "drinks"),
+    "sn2": ("🍗 Qarsildoq Naggets (6 dona)", "18 000 so'm", 18000, "drinks"),
+    "ot4": ("🥤 Coca-Cola 0.5L", "10 000 so'm", 10000, "drinks"),
+    "ot5": ("🥤 Fanta Orange 0.5L", "10 000 so'm", 10000, "drinks"),
+    "ot6": ("🥤 Muzdek Ayron", "7 000 so'm", 7000, "drinks"),
 }
 
 CATEGORY_NAMES = {
-    "pizza": "🍕 Pitsalar",
-    "kebab": "🥩 Kebablar",
     "burger": "🍔 Burgerlar",
     "lavash": "🥙 Lavash va Doner",
+    "pizza": "🍕 Pitsalar",
+    "kebab": "🥩 Doner & Kebablar",
     "drinks": "🥤 Ichimliklar va gazaklar",
 }
 
@@ -119,42 +139,18 @@ MENU_FILE = os.path.join(os.path.dirname(__file__), "menu.json")
 
 def load_menu():
     global MENU_ITEMS, CATEGORY_NAMES
-    import json
-    if os.path.exists(MENU_FILE):
-        try:
-            with open(MENU_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                if "categories" in data and isinstance(data["categories"], dict):
-                    CATEGORY_NAMES = data["categories"]
-                if "items" in data and isinstance(data["items"], dict):
-                    new_menu = {}
-                    for k, v in data["items"].items():
-                        p_num = int(v.get("price", 0))
-                        cat = v.get("category", "other")
-                        raw_name = v.get("name", "")
-                        # Taom stikerini kafolatlaymiz
-                        name = ensure_dish_sticker(raw_name, cat)
-                        new_menu[k] = (name, fmt_price(p_num), p_num, cat)
-                    if new_menu:
-                        MENU_ITEMS = new_menu
-        except Exception:
-            logger.exception("menu.json o'qishda xatolik")
+    try:
+        items, categories = supabase_db.get_menu()
+        if items:
+            MENU_ITEMS = items
+        if categories:
+            CATEGORY_NAMES = categories
+    except Exception:
+        logger.exception("Menyuni yuklashda xatolik")
 
 def save_menu():
-    import json
     try:
-        data = {
-            "categories": CATEGORY_NAMES,
-            "items": {}
-        }
-        for k, (name, price_str, price_num, cat) in MENU_ITEMS.items():
-            data["items"][k] = {
-                "name": name,
-                "price": price_num,
-                "category": cat
-            }
-        with open(MENU_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+        supabase_db.save_menu_to_local(MENU_ITEMS, CATEGORY_NAMES)
     except Exception:
         logger.exception("menu.json yozishda xatolik")
 
@@ -162,40 +158,33 @@ def save_menu():
 load_menu()
 
 # ==========================
-# SOZLAMALAR FAYLI (SETTINGS.JSON)
+# SOZLAMALAR (SETTINGS)
 # ==========================
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), "settings.json")
 CAFE_SETTINGS = {
     "card_number": os.environ.get("PAYME_CARD", "8600 1234 5678 9012"),
-    "card_owner": os.environ.get("PAYME_OWNER", "Istanbul Cafe"),
+    "card_owner": os.environ.get("PAYME_OWNER", "Korolevskiy Center"),
     "is_open": True,
-    "cafe_name": "Istanbul Cafe",
+    "cafe_name": "Korolevskiy Center",
 }
 
 def load_settings():
     global CAFE_SETTINGS, PAYME_CARD, PAYME_OWNER
-    import json
-    if os.path.exists(SETTINGS_FILE):
-        try:
-            with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                if isinstance(data, dict):
-                    CAFE_SETTINGS.update(data)
-        except Exception:
-            logger.exception("settings.json o'qishda xatolik")
-    PAYME_CARD = CAFE_SETTINGS.get("card_number", "8600 1234 5678 9012")
-    PAYME_OWNER = CAFE_SETTINGS.get("card_owner", "Istanbul Cafe")
+    try:
+        CAFE_SETTINGS = supabase_db.get_settings()
+        PAYME_CARD = CAFE_SETTINGS.get("card_number", "8600 1234 5678 9012")
+        PAYME_OWNER = CAFE_SETTINGS.get("card_owner", "Korolevskiy Center")
+    except Exception:
+        logger.exception("Sozlamalarni yuklashda xatolik")
 
 def save_settings():
-    import json
     try:
-        with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
-            json.dump(CAFE_SETTINGS, f, ensure_ascii=False, indent=2)
+        supabase_db.save_settings(CAFE_SETTINGS)
     except Exception:
-        logger.exception("settings.json yozishda xatolik")
+        logger.exception("settings saqlashda xatolik")
 
 PAYME_CARD = "8600 1234 5678 9012"
-PAYME_OWNER = "Istanbul Cafe"
+PAYME_OWNER = "Korolevskiy Center"
 load_settings()
 
 
@@ -205,7 +194,7 @@ def reverse_geocode(lat: float, lon: float) -> Optional[str]:
         resp = requests.get(
             "https://nominatim.openstreetmap.org/reverse",
             params={"lat": lat, "lon": lon, "format": "json", "addressdetails": 1},
-            headers={"User-Agent": "IstanbulCafeBot/2.0"},
+            headers={"User-Agent": "KorolevskiyCenterBot/2.0"},
             timeout=5
         )
         if resp.status_code == 200:
@@ -242,7 +231,7 @@ def add_cors_and_security_headers(response):
 
 @flask_app.route("/healthz")
 def health_check():
-    return jsonify({"status": "ok", "service": "istanbul-cafe"}), 200
+    return jsonify({"status": "ok", "service": "korolevskiy-center"}), 200
 
 
 @flask_app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
@@ -260,7 +249,7 @@ def index():
     if os.path.exists(template_path):
         with open(template_path, "r", encoding="utf-8") as f:
             return f.read()
-    return "<h1>Istanbul Cafe</h1><p>Veb-sahifa topilmadi.</p>"
+    return "<h1>Korolevskiy Center</h1><p>Veb-sahifa topilmadi.</p>"
 
 
 @flask_app.route("/uploads/<path:filename>")
@@ -410,64 +399,45 @@ def api_order():
     photo_bytes = None
 
     order_id = 1
-    orders_file = os.path.join(os.path.dirname(__file__), "orders.json")
-    try:
-        import datetime
-        import json
-        import base64
-        orders_history = []
-        if os.path.exists(orders_file):
-            try:
-                with open(orders_file, "r", encoding="utf-8") as f:
-                    orders_history = json.load(f)
-            except Exception:
-                orders_history = []
+    import datetime
+    import base64
+    import time
 
-        order_id = len(orders_history) + 1
+    if receipt_b64:
+        try:
+            if "," in receipt_b64:
+                header, b64_str = receipt_b64.split(",", 1)
+            else:
+                b64_str = receipt_b64
+            photo_bytes = base64.b64decode(b64_str)
+            img_filename = f"receipt_{int(time.time()*1000)}.jpg"
+            receipt_url = supabase_db.upload_receipt(photo_bytes, img_filename)
+        except Exception:
+            logger.exception("Chek rasmini yuklashda xatolik")
 
-        if receipt_b64:
-            try:
-                if "," in receipt_b64:
-                    header, b64_str = receipt_b64.split(",", 1)
-                else:
-                    b64_str = receipt_b64
-                photo_bytes = base64.b64decode(b64_str)
-                img_filename = f"receipt_{order_id}.jpg"
-                img_filepath = os.path.join(UPLOADS_DIR, img_filename)
-                with open(img_filepath, "wb") as img_f:
-                    img_f.write(photo_bytes)
-                receipt_url = f"/uploads/{img_filename}"
-            except Exception:
-                logger.exception("Chek rasmini saqlashda xatolik")
-
-        payment_val = data.get("payment", "-")
-        order_obj = {
-            "id": order_id,
-            "status": "new",
-            "timestamp": datetime.datetime.now().isoformat(),
-            "customer": data.get("name", "Mijoz"),
-            "phone": phone,
-            "service": service,
-            "location": location,
-            "payment": payment_val,
-            "card_number": PAYME_CARD if ("Click" in payment_val or "Payme" in payment_val or "Plastik" in payment_val) else None,
-            "card_owner": PAYME_OWNER if ("Click" in payment_val or "Payme" in payment_val or "Plastik" in payment_val) else None,
-            "payment_confirmed": bool(receipt_url),
-            "receipt_url": receipt_url,
-            "items": items,
-            "total": total,
-            "lat": lat,
-            "lng": lng,
-            "tg_user_id": data.get("tg_user_id")
-        }
-        orders_history.append(order_obj)
-        with open(orders_file, "w", encoding="utf-8") as f:
-            json.dump(orders_history, f, ensure_ascii=False, indent=2)
-    except Exception:
-        logger.exception("Buyurtmani orders.json fayliga yozishda xatolik")
+    payment_val = data.get("payment", "-")
+    order_obj = {
+        "status": "new",
+        "timestamp": datetime.datetime.now().isoformat(),
+        "customer": data.get("name", "Mijoz"),
+        "phone": phone,
+        "service": service,
+        "location": location,
+        "payment": payment_val,
+        "card_number": PAYME_CARD if ("Click" in payment_val or "Payme" in payment_val or "Plastik" in payment_val) else None,
+        "card_owner": PAYME_OWNER if ("Click" in payment_val or "Payme" in payment_val or "Plastik" in payment_val) else None,
+        "payment_confirmed": bool(receipt_url),
+        "receipt_url": receipt_url,
+        "items": items,
+        "total": total,
+        "lat": lat,
+        "lng": lng,
+        "tg_user_id": data.get("tg_user_id")
+    }
+    order_id = supabase_db.create_order(order_obj)
 
     admin_msg = (
-        f"<b>ISTANBUL CAFE - YANGI BUYURTMA (№{order_id})</b>\n"
+        f"👑 <b>KOROLEVSKIY CENTER - YANGI BUYURTMA (№{order_id})</b>\n"
         f"{'<i>To\'lov cheki (screenshot) biriktirilgan</i>\n' if receipt_url else ''}\n"
         f"<b>Mahsulotlar:</b>\n{items_text}\n\n"
         f"<b>Jami:</b> {fmt_price(total)}\n\n"
@@ -523,30 +493,16 @@ def admin_page():
 
 @flask_app.route("/api/admin/orders")
 def api_admin_orders():
-    import json
-    orders_file = os.path.join(os.path.dirname(__file__), "orders.json")
-    orders = []
-    if os.path.exists(orders_file):
-        try:
-            with open(orders_file, "r", encoding="utf-8") as f:
-                raw = json.load(f)
-                for idx, o in enumerate(raw, 1):
-                    if not o.get("id"):
-                        o["id"] = idx
-                    if not o.get("status"):
-                        o["status"] = "new"
-                    orders.append(o)
-        except Exception as e:
-            logger.exception("Orders o'qishda xatolik")
-            return jsonify({"success": False, "error": str(e)}), 500
-
-    orders.reverse()
-    return jsonify({"success": True, "orders": orders})
+    try:
+        orders = supabase_db.get_orders()
+        return jsonify({"success": True, "orders": orders})
+    except Exception as e:
+        logger.exception("Orders o'qishda xatolik")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @flask_app.route("/api/admin/order/<int:order_id>/status", methods=["POST"])
 def api_admin_order_status(order_id: int):
-    import json
     import threading
 
     data = request.get_json(silent=True) or {}
@@ -554,27 +510,7 @@ def api_admin_order_status(order_id: int):
     if not new_status:
         return jsonify({"success": False, "error": "Status ko'rsatilmadi"}), 400
 
-    orders_file = os.path.join(os.path.dirname(__file__), "orders.json")
-    if not os.path.exists(orders_file):
-        return jsonify({"success": False, "error": "Buyurtmalar fayli topilmadi"}), 404
-
-    target_order = None
-    try:
-        with open(orders_file, "r", encoding="utf-8") as f:
-            raw = json.load(f)
-
-        for idx, o in enumerate(raw, 1):
-            if o.get("id") == order_id or idx == order_id:
-                o["id"] = order_id
-                o["status"] = new_status
-                target_order = o
-                break
-
-        with open(orders_file, "w", encoding="utf-8") as f:
-            json.dump(raw, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
+    target_order = supabase_db.update_order_status(order_id, new_status)
     if not target_order:
         return jsonify({"success": False, "error": "Buyurtma topilmadi"}), 404
 
@@ -613,35 +549,16 @@ def api_admin_order_status(order_id: int):
 
 @flask_app.route("/api/admin/order/<int:order_id>/delete", methods=["POST", "DELETE"])
 def api_admin_order_delete(order_id: int):
-    import json
+    ok = supabase_db.delete_order(order_id)
+    if ok:
+        return jsonify({"success": True, "message": f"№{order_id} buyurtma muvaffaqiyatli o'chirildi!"})
+    return jsonify({"success": False, "error": "Buyurtma topilmadi"}), 404
 
-    orders_file = os.path.join(os.path.dirname(__file__), "orders.json")
-    if not os.path.exists(orders_file):
-        return jsonify({"success": False, "error": "Buyurtmalar fayli topilmadi"}), 404
 
-    found = False
-    try:
-        with open(orders_file, "r", encoding="utf-8") as f:
-            raw = json.load(f)
-
-        new_orders = []
-        for idx, o in enumerate(raw, 1):
-            cur_id = o.get("id") or idx
-            if cur_id == order_id:
-                found = True
-            else:
-                new_orders.append(o)
-
-        if not found:
-            return jsonify({"success": False, "error": "Buyurtma topilmadi"}), 404
-
-        with open(orders_file, "w", encoding="utf-8") as f:
-            json.dump(new_orders, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        logger.exception("Buyurtmani o'chirishda xatolik")
-        return jsonify({"success": False, "error": str(e)}), 500
-
-    return jsonify({"success": True, "message": f"№{order_id} buyurtma muvaffaqiyatli o'chirildi!"})
+@flask_app.route("/api/admin/supabase-status", methods=["GET"])
+def api_admin_supabase_status():
+    status = supabase_db.check_supabase_connection()
+    return jsonify({"success": True, "supabase": status})
 
 
 @flask_app.route("/api/admin/menu", methods=["GET"])
@@ -689,6 +606,7 @@ def api_admin_save_menu_item():
         item_id = f"it_{int(time.time()*1000)}"
 
     MENU_ITEMS[item_id] = (name, fmt_price(price_num), price_num, category)
+    supabase_db.save_menu_item(item_id, name, price_num, category)
     save_menu()
     return jsonify({
         "success": True,
@@ -703,6 +621,7 @@ def api_admin_save_menu_item():
 def api_admin_delete_menu_item(item_id: str):
     if item_id in MENU_ITEMS:
         del MENU_ITEMS[item_id]
+        supabase_db.delete_menu_item(item_id)
         save_menu()
         return jsonify({"success": True, "message": "Taom muvaffaqiyatli o'chirildi!"})
     return jsonify({"success": False, "error": "Taom topilmadi"}), 404
@@ -735,6 +654,7 @@ def api_admin_save_category():
             cat_id = f"cat_{int(time.time())}"
 
     CATEGORY_NAMES[cat_id] = full_name
+    supabase_db.save_category(cat_id, full_name, sticker)
     save_menu()
     return jsonify({
         "success": True,
@@ -757,12 +677,14 @@ def api_admin_delete_category(cat_id: str):
             return jsonify({"success": False, "error": "Eng kamida bitta kategoriya qolishi shart!"}), 400
 
         del CATEGORY_NAMES[cat_id]
+        supabase_db.delete_category(cat_id)
         # Ushbu toifadagi taomlarni boshqa qolgan toifaga o'tkazish
         remaining_cat = next(iter(CATEGORY_NAMES.keys()))
         for item_id, item_val in list(MENU_ITEMS.items()):
             dish_name, price_str, price_num, c = item_val
             if c == cat_id:
                 MENU_ITEMS[item_id] = (dish_name, price_str, price_num, remaining_cat)
+                supabase_db.save_menu_item(item_id, dish_name, price_num, remaining_cat)
         save_menu()
         return jsonify({
             "success": True,
@@ -867,9 +789,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     is_admin = (uid == ADMIN_ID)
 
     welcome_text = (
-        "🇹🇷 <b>Istanbul Cafe botiga xush kelibsiz!</b>\n\n"
+        "👑 <b>Korolevskiy Center botiga xush kelibsiz!</b>\n\n"
         "🍽 <b>Menular</b> — Telegram ichida qisqa menyu orqali buyurtma berish.\n"
-        "🌐 <b>Sayt orqali buyurtma</b> — Fotosuratli to'liq menyu orqali qulay buyurtma berish! 🍕 🥙"
+        "🌐 <b>Sayt orqali buyurtma</b> — Fotosuratli to'liq menyu orqali qulay buyurtma berish! 🍔 🍕 🥙"
     )
     if is_admin:
         welcome_text += "\n\n👑 <b>Siz tizim administratorisiz!</b>\nAdmin Panel orqali barcha tushgan buyurtmalarni boshqarishingiz mumkin."
@@ -899,7 +821,7 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await safe_reply_text(
         update.message,
-        f"👑 <b>Istanbul Cafe — Admin Boshqaruv Paneli:</b>\n\n"
+        f"👑 <b>Korolevskiy Center — Admin Boshqaruv Paneli:</b>\n\n"
         f"Havola: <a href=\"{admin_url}\">{admin_url}</a>",
         reply_markup=inline_markup,
         parse_mode="HTML"
@@ -1230,7 +1152,7 @@ async def text_message_router(update: Update, context: ContextTypes.DEFAULT_TYPE
             [InlineKeyboardButton("📱 Saytni ochish (Web App)", web_app=WebAppInfo(url=url_text))],
             [InlineKeyboardButton("🌐 Brauzerda ochish", url=url_text)]
         ])
-        msg_text = f"🌐 <b>Istanbul Cafe veb-sayti:</b>\n\nHavola: <a href=\"{url_text}\">{url_text}</a>\n\nQuyidagi tugma orqali fotosuratli qulay menyuni ochishingiz mumkin:"
+        msg_text = f"🌐 <b>Korolevskiy Center veb-sayti:</b>\n\nHavola: <a href=\"{url_text}\">{url_text}</a>\n\nQuyidagi tugma orqali fotosuratli qulay menyuni ochishingiz mumkin:"
         await safe_reply_text(
             update.message,
             msg_text,
@@ -1387,7 +1309,7 @@ async def payme_screenshot_received(update: Update, context: ContextTypes.DEFAUL
 
     admin_caption = (
         f"<b>CLICK / PLASTIK TO'LOV CHEKI KELDI</b>\n\n"
-        f"<b>ISTANBUL CAFE — YANGI BUYURTMA (Telegram orqali)</b>\n\n"
+        f"👑 <b>KOROLEVSKIY CENTER — YANGI BUYURTMA (Telegram orqali)</b>\n\n"
         f"<b>Mahsulotlar:</b>\n{items_text}\n\n"
         f"<b>Jami:</b> {fmt_price(total)}\n"
         f"<b>Mijoz:</b> {esc(client_name)}\n"
@@ -1400,62 +1322,45 @@ async def payme_screenshot_received(update: Update, context: ContextTypes.DEFAUL
 
     order_id = 1
     receipt_url = None
+    import datetime, time
+
     try:
-        import datetime, json
-        orders_file = os.path.join(os.path.dirname(__file__), "orders.json")
-        orders_history = []
-        if os.path.exists(orders_file):
-            try:
-                with open(orders_file, "r", encoding="utf-8") as f:
-                    orders_history = json.load(f)
-            except Exception:
-                orders_history = []
-
-        order_id = len(orders_history) + 1
-
-        try:
-            tg_file_obj = None
-            if photo:
-                tg_file_obj = await photo[-1].get_file()
-            elif document:
-                tg_file_obj = await document.get_file()
-            
-            if tg_file_obj:
-                img_filename = f"receipt_{order_id}.jpg"
-                img_filepath = os.path.join(UPLOADS_DIR, img_filename)
-                await tg_file_obj.download_to_drive(img_filepath)
-                receipt_url = f"/uploads/{img_filename}"
-        except Exception:
-            logger.exception("Telegram rasmini serverga saqlashda xatolik")
-
-        order_items = [
-            {"name": c["name"], "qty": c["qty"], "price": c["price_num"]}
-            for c in cart.values()
-        ]
-        new_order = {
-            "id": order_id,
-            "status": "new",
-            "timestamp": datetime.datetime.now().isoformat(),
-            "customer": client_name,
-            "phone": phone,
-            "service": service,
-            "location": location,
-            "payment": payment_label,
-            "card_number": PAYME_CARD,
-            "card_owner": PAYME_OWNER,
-            "payment_confirmed": True,
-            "receipt_url": receipt_url,
-            "items": order_items,
-            "total": total,
-            "lat": lat,
-            "lng": lon,
-            "tg_user_id": user.id if user else None,
-        }
-        orders_history.append(new_order)
-        with open(orders_file, "w", encoding="utf-8") as f:
-            json.dump(orders_history, f, ensure_ascii=False, indent=2)
+        tg_file_obj = None
+        if photo:
+            tg_file_obj = await photo[-1].get_file()
+        elif document:
+            tg_file_obj = await document.get_file()
+        
+        if tg_file_obj:
+            img_filename = f"receipt_{int(time.time()*1000)}.jpg"
+            p_bytes = await tg_file_obj.download_as_bytearray()
+            receipt_url = supabase_db.upload_receipt(bytes(p_bytes), img_filename)
     except Exception:
-        logger.exception("Payme buyurtmani orders.json ga yozishda xatolik")
+        logger.exception("Telegram rasmini serverga saqlashda xatolik")
+
+    order_items = [
+        {"name": c["name"], "qty": c["qty"], "price": c["price_num"]}
+        for c in cart.values()
+    ]
+    new_order = {
+        "status": "new",
+        "timestamp": datetime.datetime.now().isoformat(),
+        "customer": client_name,
+        "phone": phone,
+        "service": service,
+        "location": location,
+        "payment": payment_label,
+        "card_number": PAYME_CARD,
+        "card_owner": PAYME_OWNER,
+        "payment_confirmed": True,
+        "receipt_url": receipt_url,
+        "items": order_items,
+        "total": total,
+        "lat": lat,
+        "lng": lon,
+        "tg_user_id": user.id if user else None,
+    }
+    order_id = supabase_db.create_order(new_order)
 
     try:
         if photo:
@@ -1521,7 +1426,7 @@ async def _finalize_telegram_order(update: Update, context: ContextTypes.DEFAULT
     maps_line = f"\nXarita: https://maps.google.com/?q={lat},{lon}" if lat is not None and lon is not None else ""
 
     msg = (
-        f"<b>ISTANBUL CAFE - YANGI BUYURTMA (Telegram orqali)</b>\n\n"
+        f"👑 <b>KOROLEVSKIY CENTER - YANGI BUYURTMA (Telegram orqali)</b>\n\n"
         f"<b>Mahsulotlar:</b>\n{items_text}\n\n"
         f"<b>Jami narx:</b> {fmt_price(total)}\n\n"
         f"<b>Mijoz:</b> {esc(client_name)}\n"
@@ -1533,44 +1438,28 @@ async def _finalize_telegram_order(update: Update, context: ContextTypes.DEFAULT
     )
 
     order_id = 1
-    try:
-        import datetime, json
-        orders_file = os.path.join(os.path.dirname(__file__), "orders.json")
-        orders_history = []
-        if os.path.exists(orders_file):
-            try:
-                with open(orders_file, "r", encoding="utf-8") as f:
-                    orders_history = json.load(f)
-            except Exception:
-                orders_history = []
-
-        order_id = len(orders_history) + 1
-        order_items = [
-            {"name": c["name"], "qty": c["qty"], "price": c["price_num"]}
-            for c in cart.values()
-        ]
-        new_order = {
-            "id": order_id,
-            "status": "new",
-            "timestamp": datetime.datetime.now().isoformat(),
-            "customer": client_name,
-            "phone": phone,
-            "service": service,
-            "location": location,
-            "payment": payment_label,
-            "items": order_items,
-            "total": total,
-            "lat": lat,
-            "lng": lon,
-            "tg_user_id": user.id if user else None,
-            "card_number": None,
-            "card_owner": None,
-        }
-        orders_history.append(new_order)
-        with open(orders_file, "w", encoding="utf-8") as f:
-            json.dump(orders_history, f, ensure_ascii=False, indent=2)
-    except Exception:
-        logger.exception("Buyurtmani orders.json ga yozishda xatolik")
+    import datetime
+    order_items = [
+        {"name": c["name"], "qty": c["qty"], "price": c["price_num"]}
+        for c in cart.values()
+    ]
+    new_order = {
+        "status": "new",
+        "timestamp": datetime.datetime.now().isoformat(),
+        "customer": client_name,
+        "phone": phone,
+        "service": service,
+        "location": location,
+        "payment": payment_label,
+        "items": order_items,
+        "total": total,
+        "lat": lat,
+        "lng": lon,
+        "tg_user_id": user.id if user else None,
+        "card_number": None,
+        "card_owner": None,
+    }
+    order_id = supabase_db.create_order(new_order)
 
     try:
         await safe_send_message(context.bot, ADMIN_ID, msg, parse_mode="HTML")

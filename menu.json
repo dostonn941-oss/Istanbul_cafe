@@ -1,100 +1,115 @@
 {
   "categories": {
-    "pizza": "🍕 Pitsalar",
-    "kebab": "🥩 Kebablar",
     "burger": "🍔 Burgerlar",
     "lavash": "🥙 Lavash va Doner",
+    "pizza": "🍕 Pitsalar",
+    "kebab": "🥩 Doner & Kebablar",
     "drinks": "🥤 Ichimliklar va gazaklar"
   },
   "items": {
+    "bg1": {
+      "name": "🍔 Korolevskiy Burger",
+      "price": 36000,
+      "category": "burger"
+    },
+    "bg2": {
+      "name": "🍔 Korolevskiy Cheese Burger",
+      "price": 32000,
+      "category": "burger"
+    },
+    "bg3": {
+      "name": "🍔 Korolevskiy Big Burger",
+      "price": 38000,
+      "category": "burger"
+    },
+    "bg4": {
+      "name": "🍔 Crispy Chicken Burger",
+      "price": 28000,
+      "category": "burger"
+    },
+    "lv1": {
+      "name": "🥙 Korolevskiy Lavash (Mol go'shti)",
+      "price": 32000,
+      "category": "lavash"
+    },
+    "lv2": {
+      "name": "🥙 Korolevskiy Pishloqli Lavash",
+      "price": 35000,
+      "category": "lavash"
+    },
+    "lv3": {
+      "name": "🥙 Korolevskiy Tovuqli Lavash",
+      "price": 28000,
+      "category": "lavash"
+    },
+    "lv4": {
+      "name": "🥙 Tandir Doner Lavash",
+      "price": 30000,
+      "category": "lavash"
+    },
     "pz1": {
+      "name": "🍕 Korolevskiy Pizza",
+      "price": 55000,
+      "category": "pizza"
+    },
+    "pz2": {
+      "name": "🍕 Pepperoni Supreme",
+      "price": 50000,
+      "category": "pizza"
+    },
+    "pz3": {
       "name": "🍕 BBQ Chicken Pizza",
       "price": 48000,
       "category": "pizza"
     },
-    "pz2": {
-      "name": "🍕 Veggie Delight Pizza",
-      "price": 42000,
-      "category": "pizza"
-    },
-    "pz3": {
-      "name": "🍕 Pepperoni Supreme",
+    "pz4": {
+      "name": "🍕 4 Pishloqli Pizza",
       "price": 52000,
       "category": "pizza"
     },
-    "pz4": {
-      "name": "🍕 Margherita Classic",
-      "price": 38000,
-      "category": "pizza"
-    },
     "kb1": {
-      "name": "🥩 Istanbul Doner Kebab",
-      "price": 24000,
+      "name": "🥩 Korolevskiy Doner Kebab",
+      "price": 28000,
       "category": "kebab"
     },
     "kb2": {
-      "name": "🥩 Adana Kebab",
-      "price": 28000,
+      "name": "🥩 Iskender Kebab",
+      "price": 38000,
       "category": "kebab"
     },
     "kb3": {
       "name": "🥩 Tovuq Shish Kebab",
-      "price": 26000,
+      "price": 28000,
       "category": "kebab"
     },
     "kb4": {
-      "name": "🥩 Iskender Kebab",
-      "price": 36000,
+      "name": "🥩 Qiymali Kebab",
+      "price": 30000,
       "category": "kebab"
     },
-    "bg1": {
-      "name": "🍔 Bosphorus Burger",
-      "price": 28000,
-      "category": "burger"
-    },
-    "bg2": {
-      "name": "🍔 Sultan Cheese Burger",
-      "price": 34000,
-      "category": "burger"
-    },
-    "bg3": {
-      "name": "🍔 Crispy Chicken Burger",
-      "price": 26000,
-      "category": "burger"
-    },
-    "lv1": {
-      "name": "🥙 Klassik Mol Go'shtli Lavash",
-      "price": 28000,
-      "category": "lavash"
-    },
-    "lv2": {
-      "name": "🥙 Tovuqli Pishloqli Lavash",
-      "price": 26000,
-      "category": "lavash"
-    },
-    "lv3": {
-      "name": "🥙 Tandir Doner Lavash",
-      "price": 29000,
-      "category": "lavash"
-    },
     "sn1": {
-      "name": "🍟 French Fries",
-      "price": 14000,
+      "name": "🍟 Fri kartoshkasi",
+      "price": 15000,
+      "category": "drinks"
+    },
+    "sn2": {
+      "name": "🍗 Qarsildoq Naggets (6 dona)",
+      "price": 18000,
       "category": "drinks"
     },
     "ot4": {
       "name": "🥤 Coca-Cola 0.5L",
-      "price": 9000,
+      "price": 10000,
       "category": "drinks"
     },
     "ot5": {
-      "name": "🥤 Turk Ayrani",
-      "price": 7000,
+      "name": "🥤 Fanta Orange 0.5L",
+      "price": 10000,
       "category": "drinks"
     },
     "ot6": {
-      "name": "🥤 Fanta Orange 0.5L",
-      "price": 9000,
+      "name": "🥤 Muzdek Ayron",
+      "price": 7000,
       "category": "drinks"
     }
   }

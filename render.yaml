@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: istanbul-cafe-bot
+    name: korolevskiy-center-bot
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
@@ -12,5 +12,9 @@ services:
         sync: false
       - key: WEB_URL
         sync: false
+      - key: SUPABASE_URL
+        value: https://jtzuytfxeakexupudxoy.supabase.co
+      - key: SUPABASE_KEY
+        value: sb_publishable_0yEdTo2GGH0slSNwSB91sA_Zt8p75Xb
       - key: PORT
         value: 10000

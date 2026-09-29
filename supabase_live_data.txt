@@ -1,0 +1,33 @@
+JAMI KATEGORIYALAR: 5 ta
+JAMI TAOMLAR: 21 ta
+
+[burger] 🍔 Burgerlar (4 ta taom):
+   - 🍔 Korolevskiy Big Burger: 38,000 so'm
+   - 🍔 Korolevskiy Burger: 36,000 so'm
+   - 🍔 Korolevskiy Cheese Burger: 32,000 so'm
+   - 🍔 Crispy Chicken Burger: 28,000 so'm
+
+[lavash] 🥙 Lavash va Doner (4 ta taom):
+   - 🥙 Korolevskiy Pishloqli Lavash: 35,000 so'm
+   - 🥙 Korolevskiy Lavash (Mol go'shti): 32,000 so'm
+   - 🥙 Tandir Doner Lavash: 30,000 so'm
+   - 🥙 Korolevskiy Tovuqli Lavash: 28,000 so'm
+
+[pizza] 🍕 Pitsalar (4 ta taom):
+   - 🍕 Korolevskiy Pizza: 55,000 so'm
+   - 🍕 4 Pishloqli Pizza: 52,000 so'm
+   - 🍕 Pepperoni Supreme: 50,000 so'm
+   - 🍕 BBQ Chicken Pizza: 48,000 so'm
+
+[kebab] 🥩 Doner & Kebablar (4 ta taom):
+   - 🥩 Iskender Kebab: 38,000 so'm
+   - 🥩 Qiymali Kebab: 30,000 so'm
+   - 🥩 Tovuq Shish Kebab: 28,000 so'm
+   - 🥩 Korolevskiy Doner Kebab: 28,000 so'm
+
+[drinks] 🥤 Ichimliklar va gazaklar (5 ta taom):
+   - 🍗 Qarsildoq Naggets (6 dona): 18,000 so'm
+   - 🍟 Fri kartoshkasi: 15,000 so'm
+   - 🥤 Fanta Orange 0.5L: 10,000 so'm
+   - 🥤 Coca-Cola 0.5L: 10,000 so'm
+   - 🥤 Muzdek Ayron: 7,000 so'm

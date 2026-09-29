@@ -9,7 +9,7 @@
     "location": "Filialdan olib ketish",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Cafe",
+    "card_owner": "Korolevskiy Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_1.jpg",
     "items": [
@@ -39,7 +39,7 @@
     "location": "Quvasoy, A. Azizov ko'chasi",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Cafe",
+    "card_owner": "Korolevskiy Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_2.jpg",
     "items": [
@@ -92,7 +92,7 @@
     "location": "Filialdan olib ketish",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Cafe",
+    "card_owner": "Korolevskiy Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_4.jpg",
     "items": [
@@ -117,7 +117,7 @@
     "location": "Filialdan olib ketish",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Cafe",
+    "card_owner": "Korolevskiy Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_5.jpg",
     "items": [
@@ -154,94 +154,6 @@
     "tg_user_id": 8469252037,
     "card_number": null,
     "card_owner": null
-  },
-  {
-    "id": 7,
-    "status": "completed",
-    "timestamp": "2026-09-19T09:54:34.738527",
-    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
-    "phone": "998770300780",
-    "service": "pickup",
-    "location": "Filialdan olib ketish",
-    "payment": "💳 Click / Plastik karta",
-    "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Cafe",
-    "payment_confirmed": true,
-    "receipt_url": "/uploads/receipt_7.jpg",
-    "items": [
-      {
-        "name": "🍕 BBQ Chicken Pizza",
-        "qty": 1,
-        "price": 48000
-      },
-      {
-        "name": "🍕 Veggie Delight Pizza",
-        "qty": 1,
-        "price": 42000
-      },
-      {
-        "name": "🍕 Pepperoni Supreme",
-        "qty": 1,
-        "price": 52000
-      }
-    ],
-    "total": 142000,
-    "lat": null,
-    "lng": null,
-    "tg_user_id": 8469252037
-  },
-  {
-    "id": 8,
-    "status": "completed",
-    "timestamp": "2026-09-19T09:56:52.363556",
-    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
-    "phone": "998770300780",
-    "service": "delivery",
-    "location": "Quvasoy, A. Azizov ko'chasi",
-    "payment": "💵 Naqd pul",
-    "items": [
-      {
-        "name": "🍕 Pepperoni Supreme",
-        "qty": 1,
-        "price": 52000
-      },
-      {
-        "name": "🍕 Margherita Classic",
-        "qty": 1,
-        "price": 38000
-      }
-    ],
-    "total": 90000,
-    "lat": 40.292538,
-    "lng": 71.987187,
-    "tg_user_id": 8469252037,
-    "card_number": null,
-    "card_owner": null
-  },
-  {
-    "id": 9,
-    "status": "completed",
-    "timestamp": "2026-09-20T21:06:32.417036",
-    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
-    "phone": "998770300780",
-    "service": "pickup",
-    "location": "Filialdan olib ketish",
-    "payment": "💳 Click / Plastik karta",
-    "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Cafe",
-    "payment_confirmed": true,
-    "receipt_url": "/uploads/receipt_9.jpg",
-    "items": [
-      {
-        "name": "🍕 BBQ Chicken Pizza",
-        "qty": 1,
-        "price": 48000
-      }
-    ],
-    "total": 48000,
-    "lat": null,
-    "lng": null,
-    "tg_user_id": 8469252037
   },
   {
     "id": 10,
@@ -281,7 +193,7 @@
     "location": "Quvasoy, A. Azizov ko'chasi",
     "payment": "Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Cafe",
+    "card_owner": "Korolevskiy Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_11.jpg",
     "items": [

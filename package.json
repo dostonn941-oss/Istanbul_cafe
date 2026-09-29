@@ -1,7 +1,7 @@
 {
-  "name": "istanbul-cafe",
+  "name": "korolevskiy-center",
   "version": "1.0.0",
-  "description": "Istanbul Cafe Web & Telegram Bot",
+  "description": "Korolevskiy Center Web & Telegram Bot",
   "scripts": {
     "start": "python istanbul_cafe_bot.py",
     "star": "python istanbul_cafe_bot.py",

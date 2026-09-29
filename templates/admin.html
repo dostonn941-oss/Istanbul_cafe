@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boshqaruv Paneli — Istanbul Cafe</title>
+    <title>Boshqaruv Paneli — Korolevskiy Center</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1435,7 +1435,7 @@
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
                 </div>
                 <div class="brand-text-wrap">
-                    <span class="brand-name" id="sidebarCafeName">Istanbul Cafe</span>
+                    <span class="brand-name" id="sidebarCafeName">Korolevskiy Center</span>
                     <span class="brand-sub">Boshqaruv Paneli</span>
                 </div>
             </div>
@@ -1878,7 +1878,7 @@
 
                     <div class="form-row">
                         <span class="form-label-txt">Karta Egasi Ismi:</span>
-                        <input type="text" class="form-control-input" id="settingCardOwner" required placeholder="Istanbul Cafe">
+                        <input type="text" class="form-control-input" id="settingCardOwner" required placeholder="Korolevskiy Center">
                     </div>
 
                     <div class="form-row">
@@ -1891,7 +1891,7 @@
 
                     <div class="form-row">
                         <span class="form-label-txt">Kafe Nomi:</span>
-                        <input type="text" class="form-control-input" id="settingCafeName" value="Istanbul Cafe" placeholder="Istanbul Cafe">
+                        <input type="text" class="form-control-input" id="settingCafeName" value="Korolevskiy Center" placeholder="Korolevskiy Center">
                     </div>
 
                     <div id="settingsAlertBox" style="display: none; padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;"></div>
@@ -1902,6 +1902,31 @@
                         </button>
                     </div>
                 </form>
+            </div>
+
+            <div class="panel-card" style="padding: 24px; max-width: 620px; margin-top: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                        <h2 style="font-size: 16px; font-weight: 900; color: var(--text-primary); margin: 0;">Supabase Bulutli Baza (Cloud DB)</h2>
+                    </div>
+                    <button type="button" class="btn-fast-advance" onclick="checkSupabaseStatus()" style="padding: 6px 14px; font-size: 12px; cursor: pointer;">Tekshirish</button>
+                </div>
+
+                <div id="supabaseStatusContent" style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+                        <span style="color: var(--text-secondary); font-weight: 600;">Loyiha URL:</span>
+                        <span style="font-family: monospace; font-weight: 700; color: var(--text-primary); font-size: 12px;">https://jtzuytfxeakexupudxoy.supabase.co</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+                        <span style="color: var(--text-secondary); font-weight: 600;">Server bilan aloqa:</span>
+                        <span id="sbConnBadge" style="font-weight: 800; color: #10b981;">● Bog'langan</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+                        <span style="color: var(--text-secondary); font-weight: 600;">Jadvallar holati:</span>
+                        <span id="sbTablesBadge" style="font-weight: 700; color: var(--text-secondary);">Tekshirilmoqda...</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2923,8 +2948,8 @@
             <html>
             <head><title>Chek #${o.id}</title></head>
             <body style="font-family: monospace; padding: 20px; text-align: center; font-size: 13px;">
-                <h2 style="margin: 0 0 5px 0;">ISTANBUL CAFE</h2>
-                <div style="font-size: 11px; color: #555;">Fast Food & Cafe</div>
+                <h2 style="margin: 0 0 5px 0;">KOROLEVSKIY CENTER</h2>
+                <div style="font-size: 11px; color: #555;">Fast Food & Center</div>
                 <hr style="border-top: 1px dashed #000; margin: 10px 0;">
                 <p style="text-align: left; margin: 3px 0;"><b>Buyurtma:</b> #${o.id}</p>
                 <p style="text-align: left; margin: 3px 0;"><b>Mijoz:</b> ${escapeHtml(o.customer || 'Mijoz')}</p>
@@ -3283,18 +3308,47 @@
                 const sidebarStatusText = document.getElementById('sidebarStatusText');
 
                 if (cardNumEl) cardNumEl.value = s.card_number || '8600 1234 5678 9012';
-                if (cardOwnEl) cardOwnEl.value = s.card_owner || 'Istanbul Cafe';
+                if (cardOwnEl) cardOwnEl.value = s.card_owner || 'Korolevskiy Center';
                 if (isOpenEl) isOpenEl.value = s.is_open === false ? 'false' : 'true';
-                if (cafeNameEl) cafeNameEl.value = s.cafe_name || 'Istanbul Cafe';
-                if (sidebarCafeEl) sidebarCafeEl.textContent = s.cafe_name || 'Istanbul Cafe';
+                if (cafeNameEl) cafeNameEl.value = s.cafe_name || 'Korolevskiy Center';
+                if (sidebarCafeEl) sidebarCafeEl.textContent = s.cafe_name || 'Korolevskiy Center';
                 if (sidebarStatusText) {
                     sidebarStatusText.innerHTML = s.is_open === false 
                         ? `<span class="live-dot" style="background:#ef4444;"></span>Kafe: Yopiq`
                         : `<span class="live-dot"></span>Kafe: Ochiq`;
                 }
             }
+            checkSupabaseStatus();
         } catch (e) {
             console.error('loadAdminSettings error:', e);
+        }
+    }
+
+    async function checkSupabaseStatus() {
+        try {
+            const res = await fetch('/api/admin/supabase-status');
+            const data = await res.json();
+            const connBadge = document.getElementById('sbConnBadge');
+            const tablesBadge = document.getElementById('sbTablesBadge');
+            if (data.success && data.supabase) {
+                const sb = data.supabase;
+                if (sb.connected) {
+                    if (connBadge) connBadge.innerHTML = '<span style="color:#10b981; font-weight:800;">● Bog\'langan (Auth OK)</span>';
+                } else {
+                    if (connBadge) connBadge.innerHTML = '<span style="color:#ef4444; font-weight:800;">● Ulanmadi</span>';
+                }
+                if (tablesBadge) {
+                    const tbl = sb.tables || {};
+                    const ready = tbl.orders && tbl.menu_items && tbl.menu_categories && tbl.cafe_settings;
+                    if (ready) {
+                        tablesBadge.innerHTML = '<span style="color:#10b981; font-weight:800;">✓ Barcha jadvallar tayyor</span>';
+                    } else {
+                        tablesBadge.innerHTML = '<span style="color:#f59e0b; font-weight:700;">SQL migratsiya talab etiladi (Zaxira JSON faol)</span>';
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('checkSupabaseStatus error:', e);
         }
     }
 
