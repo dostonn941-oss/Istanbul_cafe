@@ -1,5 +1,5 @@
 -- ==============================================================================
--- KOROLEVSKIY CENTER - SUPABASE MA'LUMOTLAR BAZASI STRUKTURASI (SCHEMA)
+-- ISTANBUL CAFE - SUPABASE MA'LUMOTLAR BAZASI STRUKTURASI (SCHEMA)
 -- Ushbu SQL kodni Supabase Dashboard -> SQL Editor bo'limiga nusxalab, "Run" qiling.
 -- ==============================================================================
 
@@ -49,58 +49,61 @@ CREATE TABLE IF NOT EXISTS public.orders (
 CREATE TABLE IF NOT EXISTS public.cafe_settings (
     id INT PRIMARY KEY DEFAULT 1,
     card_number TEXT DEFAULT '8600 1234 5678 9012',
-    card_owner TEXT DEFAULT 'Korolevskiy Center',
+    card_owner TEXT DEFAULT 'Istanbul Cafe',
     is_open BOOLEAN DEFAULT true,
-    cafe_name TEXT DEFAULT 'Korolevskiy Center',
+    cafe_name TEXT DEFAULT 'Istanbul Cafe',
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==============================================================================
--- BOSHLLANG'ICH MA'LUMOTLARNI KIRITISH (SEED DATA)
+-- ISTANBUL CAFE MENYUSINI YUKLASH (SEED DATA)
 -- ==============================================================================
 
 -- Kategoriya ma'lumotlari
 INSERT INTO public.menu_categories (id, name, sticker, sort_order) VALUES
 ('burger', '🍔 Burgerlar', '🍔', 1),
 ('lavash', '🥙 Lavash va Doner', '🥙', 2),
-('pizza', '🍕 Pitsalar', '🍕', 3),
-('kebab', '🥩 Doner & Kebablar', '🥩', 4),
-('drinks', '🥤 Ichimliklar va gazaklar', '🥤', 5)
-ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, sticker = EXCLUDED.sticker;
+('hotdog', '🌭 Hot-doglar', '🌭', 3),
+('pizza', '🍕 Pitsalar', '🍕', 4),
+('kebab', '🥩 Doner & Kebablar', '🥩', 5),
+('drinks', '🥤 Ichimliklar va gazaklar', '🥤', 6)
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, sticker = EXCLUDED.sticker, sort_order = EXCLUDED.sort_order;
 
 -- Taomlar ma'lumotlari
 INSERT INTO public.menu_items (id, name, price, category) VALUES
-('bg1', '🍔 Korolevskiy Burger', 36000, 'burger'),
-('bg2', '🍔 Korolevskiy Cheese Burger', 32000, 'burger'),
-('bg3', '🍔 Korolevskiy Big Burger', 38000, 'burger'),
+('bg1', '🍔 Istanbul Burger', 36000, 'burger'),
+('bg2', '🍔 Istanbul Cheese Burger', 32000, 'burger'),
+('bg3', '🍔 Istanbul Big Burger', 38000, 'burger'),
 ('bg4', '🍔 Crispy Chicken Burger', 28000, 'burger'),
-('lv1', '🥙 Korolevskiy Lavash (Mol go''shti)', 32000, 'lavash'),
-('lv2', '🥙 Korolevskiy Pishloqli Lavash', 35000, 'lavash'),
-('lv3', '🥙 Korolevskiy Tovuqli Lavash', 28000, 'lavash'),
+('lv1', '🥙 Istanbul Lavash (Mol go''shti)', 32000, 'lavash'),
+('lv2', '🥙 Istanbul Pishloqli Lavash', 35000, 'lavash'),
+('lv3', '🥙 Istanbul Tovuqli Lavash', 28000, 'lavash'),
 ('lv4', '🥙 Tandir Doner Lavash', 30000, 'lavash'),
-('pz1', '🍕 Korolevskiy Pizza', 55000, 'pizza'),
+('hd1', '🌭 Istanbul Klassik Hot-Dog', 18000, 'hotdog'),
+('hd2', '🌭 Istanbul Pishloqli Hot-Dog', 22000, 'hotdog'),
+('hd3', '🌭 Istanbul Double Hot-Dog', 25000, 'hotdog'),
+('pz1', '🍕 Istanbul Maxsus Pizza', 55000, 'pizza'),
 ('pz2', '🍕 Pepperoni Supreme', 50000, 'pizza'),
 ('pz3', '🍕 BBQ Chicken Pizza', 48000, 'pizza'),
 ('pz4', '🍕 4 Pishloqli Pizza', 52000, 'pizza'),
-('kb1', '🥩 Korolevskiy Doner Kebab', 28000, 'kebab'),
+('kb1', '🥩 Istanbul Doner Kebab', 28000, 'kebab'),
 ('kb2', '🥩 Iskender Kebab', 38000, 'kebab'),
-('kb3', '🥩 Tovuq Shish Kebab', 28000, 'kebab'),
-('kb4', '🥩 Qiymali Kebab', 30000, 'kebab'),
+('kb3', '🥩 Adana Kebab', 32000, 'kebab'),
+('kb4', '🥩 Tovuq Shish Kebab', 28000, 'kebab'),
 ('sn1', '🍟 Fri kartoshkasi', 15000, 'drinks'),
 ('sn2', '🍗 Qarsildoq Naggets (6 dona)', 18000, 'drinks'),
 ('ot4', '🥤 Coca-Cola 0.5L', 10000, 'drinks'),
 ('ot5', '🥤 Fanta Orange 0.5L', 10000, 'drinks'),
-('ot6', '🥤 Muzdek Ayron', 7000, 'drinks')
+('ot6', '🥤 Muzdek Turk Ayrani', 7000, 'drinks')
 ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, price = EXCLUDED.price, category = EXCLUDED.category;
 
 -- Standart sozlamalar
 INSERT INTO public.cafe_settings (id, card_number, card_owner, is_open, cafe_name)
-VALUES (1, '8600 1234 5678 9012', 'Korolevskiy Center', true, 'Korolevskiy Center')
-ON CONFLICT (id) DO NOTHING;
+VALUES (1, '8600 1234 5678 9012', 'Istanbul Cafe', true, 'Istanbul Cafe')
+ON CONFLICT (id) DO UPDATE SET cafe_name = EXCLUDED.cafe_name, card_owner = EXCLUDED.card_owner;
 
 -- ==============================================================================
 -- XAVFSIZLIK VA RUXSATLAR (ROW LEVEL SECURITY - RLS)
--- Anon (Publishable key) orqali o'qish, qo'shish, yangilash va o'chirishga ruxsat
 -- ==============================================================================
 
 ALTER TABLE public.menu_categories ENABLE ROW LEVEL SECURITY;
@@ -133,3 +136,8 @@ CREATE POLICY "Public access to receipts storage" ON storage.objects
 FOR ALL TO anon, authenticated
 USING (bucket_id = 'receipts')
 WITH CHECK (bucket_id = 'receipts');
+
+DROP POLICY IF EXISTS "Allow public to view buckets" ON storage.buckets;
+CREATE POLICY "Allow public to view buckets" ON storage.buckets
+FOR SELECT TO anon, authenticated
+USING (public = true);

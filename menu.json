@@ -2,23 +2,24 @@
   "categories": {
     "burger": "🍔 Burgerlar",
     "lavash": "🥙 Lavash va Doner",
+    "hotdog": "🌭 Hot-doglar",
     "pizza": "🍕 Pitsalar",
     "kebab": "🥩 Doner & Kebablar",
     "drinks": "🥤 Ichimliklar va gazaklar"
   },
   "items": {
     "bg1": {
-      "name": "🍔 Korolevskiy Burger",
+      "name": "🍔 Istanbul Burger",
       "price": 36000,
       "category": "burger"
     },
     "bg2": {
-      "name": "🍔 Korolevskiy Cheese Burger",
+      "name": "🍔 Istanbul Cheese Burger",
       "price": 32000,
       "category": "burger"
     },
     "bg3": {
-      "name": "🍔 Korolevskiy Big Burger",
+      "name": "🍔 Istanbul Big Burger",
       "price": 38000,
       "category": "burger"
     },
@@ -28,17 +29,17 @@
       "category": "burger"
     },
     "lv1": {
-      "name": "🥙 Korolevskiy Lavash (Mol go'shti)",
+      "name": "🥙 Istanbul Lavash (Mol go'shti)",
       "price": 32000,
       "category": "lavash"
     },
     "lv2": {
-      "name": "🥙 Korolevskiy Pishloqli Lavash",
+      "name": "🥙 Istanbul Pishloqli Lavash",
       "price": 35000,
       "category": "lavash"
     },
     "lv3": {
-      "name": "🥙 Korolevskiy Tovuqli Lavash",
+      "name": "🥙 Istanbul Tovuqli Lavash",
       "price": 28000,
       "category": "lavash"
     },
@@ -47,8 +48,23 @@
       "price": 30000,
       "category": "lavash"
     },
+    "hd1": {
+      "name": "🌭 Istanbul Klassik Hot-Dog",
+      "price": 18000,
+      "category": "hotdog"
+    },
+    "hd2": {
+      "name": "🌭 Istanbul Pishloqli Hot-Dog",
+      "price": 22000,
+      "category": "hotdog"
+    },
+    "hd3": {
+      "name": "🌭 Istanbul Double Hot-Dog",
+      "price": 25000,
+      "category": "hotdog"
+    },
     "pz1": {
-      "name": "🍕 Korolevskiy Pizza",
+      "name": "🍕 Istanbul Maxsus Pizza",
       "price": 55000,
       "category": "pizza"
     },
@@ -68,7 +84,7 @@
       "category": "pizza"
     },
     "kb1": {
-      "name": "🥩 Korolevskiy Doner Kebab",
+      "name": "🥩 Istanbul Doner Kebab",
       "price": 28000,
       "category": "kebab"
     },
@@ -78,13 +94,13 @@
       "category": "kebab"
     },
     "kb3": {
-      "name": "🥩 Tovuq Shish Kebab",
-      "price": 28000,
+      "name": "🥩 Adana Kebab",
+      "price": 32000,
       "category": "kebab"
     },
     "kb4": {
-      "name": "🥩 Qiymali Kebab",
-      "price": 30000,
+      "name": "🥩 Tovuq Shish Kebab",
+      "price": 28000,
       "category": "kebab"
     },
     "sn1": {
@@ -108,7 +124,7 @@
       "category": "drinks"
     },
     "ot6": {
-      "name": "🥤 Muzdek Ayron",
+      "name": "🥤 Muzdek Turk Ayrani",
       "price": 7000,
       "category": "drinks"
     }

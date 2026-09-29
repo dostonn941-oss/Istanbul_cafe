@@ -9,7 +9,7 @@
     "location": "Filialdan olib ketish",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Korolevskiy Center",
+    "card_owner": "Istanbul Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_1.jpg",
     "items": [
@@ -39,7 +39,7 @@
     "location": "Quvasoy, A. Azizov ko'chasi",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Korolevskiy Center",
+    "card_owner": "Istanbul Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_2.jpg",
     "items": [
@@ -92,7 +92,7 @@
     "location": "Filialdan olib ketish",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Korolevskiy Center",
+    "card_owner": "Istanbul Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_4.jpg",
     "items": [
@@ -117,7 +117,7 @@
     "location": "Filialdan olib ketish",
     "payment": "💳 Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Korolevskiy Center",
+    "card_owner": "Istanbul Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_5.jpg",
     "items": [
@@ -193,7 +193,7 @@
     "location": "Quvasoy, A. Azizov ko'chasi",
     "payment": "Click / Plastik karta",
     "card_number": "8600 1234 5678 9012",
-    "card_owner": "Korolevskiy Center",
+    "card_owner": "Istanbul Center",
     "payment_confirmed": true,
     "receipt_url": "/uploads/receipt_11.jpg",
     "items": [

@@ -1,6 +1,6 @@
-# Korolevskiy Center Bot & Web Management
+# Istanbul Cafe Bot & Web Management
 
-Korolevskiy Center uchun Telegram Bot, Veb Menyu (WebApp) va Admin Boshqaruv Paneli.
+Istanbul Cafe uchun Telegram Bot, Veb Menyu (WebApp) va Admin Boshqaruv Paneli.
 
 ## Xususiyatlari
 - 🤖 **Telegram Bot**: Taomlarni ko'rish, savatga qo'shish va buyurtma berish.

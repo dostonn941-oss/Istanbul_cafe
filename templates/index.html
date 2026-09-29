@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Korolevskiy Center - Sevimli maskaningiz. Mazali burgerlar, korolevskiy lavashlar, yangi pishgan pitsalar va salqin ichimliklar.">
+    <meta name="description" content="Istanbul Cafe - Sevimli maskaningiz. Mazali burgerlar, lavashlar, turk donerlari, hot-doglar va pitsalar.">
     <meta name="theme-color" content="#121417">
-    <title>Korolevskiy Center — Premium Food & Delivery</title>
+    <title>Istanbul Cafe — Fast Food & Turkish Taste</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1040,7 +1040,7 @@
             <section class="hero-section">
                 <header class="top-nav">
                     <div class="nav-title">
-                        👑 Korolevskiy Center
+                        ☕ Istanbul Cafe
                     </div>
                 </header>
 
@@ -1203,7 +1203,7 @@
                         <button type="button" class="copy-card-btn" onclick="copyCardNumber()">📋 Nusxalash</button>
                     </div>
                     <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 6px;">
-                        Karta egasi: <b style="color: #f1f5f9;">Korolevskiy Center</b>
+                        Karta egasi: <b style="color: #f1f5f9;" id="displayCardOwner">Istanbul Cafe</b>
                     </div>
 
                     <div style="margin-top: 14px; padding: 14px; background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(59, 130, 246, 0.5); border-radius: 14px;">
@@ -1265,17 +1265,17 @@
         const MENU_DATA = [
             {
                 id: "bg1",
-                name: "Korolevskiy Burger",
+                name: "Istanbul Burger",
                 cat: "burger",
                 subcat: "Burgerlar",
                 popular: true,
                 price: 36000,
-                desc: "Qirollik maxsus burgeri — 2 qavat shirali mol go'shti kotleti, erigan pishloq, yangi sabzavotlar va maxsus sous.",
+                desc: "Istanbul maxsus burgeri — 2 qavat shirali mol go'shti kotleti, erigan pishloq, yangi sabzavotlar va maxsus sous.",
                 img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80"
             },
             {
                 id: "bg2",
-                name: "Korolevskiy Cheese Burger",
+                name: "Istanbul Cheese Burger",
                 cat: "burger",
                 subcat: "Burgerlar",
                 popular: true,
@@ -1285,12 +1285,12 @@
             },
             {
                 id: "bg3",
-                name: "Korolevskiy Big Burger",
+                name: "Istanbul Big Burger",
                 cat: "burger",
                 subcat: "Burgerlar",
                 popular: false,
                 price: 38000,
-                desc: "Katta qirollik burgeri — qo'shimcha go'sht, tuxum, maxsus pomidor va aysberg salati bilan.",
+                desc: "Katta Istanbul burgeri — qo'shimcha go'sht, tuxum, maxsus pomidor va aysberg salati bilan.",
                 img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80"
             },
             {
@@ -1305,17 +1305,17 @@
             },
             {
                 id: "lv1",
-                name: "Korolevskiy Lavash (Mol go'shti)",
+                name: "Istanbul Lavash (Mol go'shti)",
                 cat: "lavash",
                 subcat: "Lavash & Doner",
                 popular: true,
                 price: 32000,
-                desc: "Yupqa xamir, marinadlangan shirali mol go'shti, kartoshka fri, bodring va maxsus korolevskiy sous.",
+                desc: "Yupqa xamir, marinadlangan shirali mol go'shti, kartoshka fri, bodring va maxsus Istanbul sousi.",
                 img: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80"
             },
             {
                 id: "lv2",
-                name: "Korolevskiy Pishloqli Lavash",
+                name: "Istanbul Pishloqli Lavash",
                 cat: "lavash",
                 subcat: "Lavash & Doner",
                 popular: true,
@@ -1325,7 +1325,7 @@
             },
             {
                 id: "lv3",
-                name: "Korolevskiy Tovuqli Lavash",
+                name: "Istanbul Tovuqli Lavash",
                 cat: "lavash",
                 subcat: "Lavash & Doner",
                 popular: false,
@@ -1344,13 +1344,43 @@
                 img: "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80"
             },
             {
+                id: "hd1",
+                name: "Istanbul Klassik Hot-Dog",
+                cat: "hotdog",
+                subcat: "Hot-doglar",
+                popular: true,
+                price: 18000,
+                desc: "Yumshoq bulkada sosiska, bodring, pomidor, xantal va mayonez.",
+                img: "https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "hd2",
+                name: "Istanbul Pishloqli Hot-Dog",
+                cat: "hotdog",
+                subcat: "Hot-doglar",
+                popular: true,
+                price: 22000,
+                desc: "Yumshoq bulkada sosiska, ko'p eritilgan cheddar pishlog'i va chips.",
+                img: "https://images.unsplash.com/photo-1627054234594-e0cfa5c27bf4?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "hd3",
+                name: "Istanbul Double Hot-Dog",
+                cat: "hotdog",
+                subcat: "Hot-doglar",
+                popular: false,
+                price: 25000,
+                desc: "Katta bulka, 2 dona shirali sosiska, maxsus Istanbul sousi va pishloq.",
+                img: "https://images.unsplash.com/photo-1541214113241-21578d2d9b62?auto=format&fit=crop&w=600&q=80"
+            },
+            {
                 id: "pz1",
-                name: "Korolevskiy Pizza",
+                name: "Istanbul Maxsus Pizza",
                 cat: "pizza",
                 subcat: "Pitsalar",
                 popular: true,
                 price: 55000,
-                desc: "Maxsus qirollik pitsasi — go'shtli assorti, dudlangan kolbasa, tovuq filesi, qo'ziqorin va ko'p mozzarella.",
+                desc: "Maxsus Istanbul pitsasi — go'shtli assorti, dudlangan kolbasa, tovuq filesi, qo'ziqorin va ko'p mozzarella.",
                 img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80"
             },
             {
@@ -1385,7 +1415,7 @@
             },
             {
                 id: "kb1",
-                name: "Korolevskiy Doner Kebab",
+                name: "Istanbul Doner Kebab",
                 cat: "kebab",
                 subcat: "Doner & Kebablar",
                 popular: true,
@@ -1405,6 +1435,16 @@
             },
             {
                 id: "kb3",
+                name: "Adana Kebab",
+                cat: "kebab",
+                subcat: "Doner & Kebablar",
+                popular: true,
+                price: 32000,
+                desc: "An'anaviy turkcha achchiq qiyma six kabobi, maxsus lavash va sabzavotlar.",
+                img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: "kb4",
                 name: "Tovuq Shish Kebab",
                 cat: "kebab",
                 subcat: "Doner & Kebablar",

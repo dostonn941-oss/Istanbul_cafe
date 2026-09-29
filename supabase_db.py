@@ -1,5 +1,5 @@
 """
-Korolevskiy Center - Supabase Ma'lumotlar Bazasi Moduli
+Istanbul Cafe - Supabase Ma'lumotlar Bazasi Moduli
 Supabase REST API (PostgREST) va Storage bilan to'g'ridan-to'g'ri integratsiya.
 Lokal fayllar (menu.json, orders.json, settings.json) zaxira (fallback) sifatida avtomatik ishlatiladi.
 """
@@ -279,9 +279,9 @@ def get_settings() -> dict:
     """Kafe sozlamalarini oladi."""
     default_settings = {
         "card_number": os.environ.get("PAYME_CARD", "8600 1234 5678 9012"),
-        "card_owner": os.environ.get("PAYME_OWNER", "Korolevskiy Center"),
+        "card_owner": os.environ.get("PAYME_OWNER", "Istanbul Cafe"),
         "is_open": True,
-        "cafe_name": "Korolevskiy Center",
+        "cafe_name": "Istanbul Cafe",
     }
 
     # 1. Supabase dan olish
@@ -333,7 +333,7 @@ def save_settings(settings_data: dict) -> bool:
             "card_number": settings_data.get("card_number"),
             "card_owner": settings_data.get("card_owner"),
             "is_open": bool(settings_data.get("is_open", True)),
-            "cafe_name": settings_data.get("cafe_name", "Korolevskiy Center")
+            "cafe_name": settings_data.get("cafe_name", "Istanbul Cafe")
         }
         res = requests.post(
             f"{SUPABASE_URL}/rest/v1/cafe_settings",

@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 # ==========================
 TOKEN = os.environ.get("BOT_TOKEN", "8728959771:AAE7gczpAq26lFuHMQfigxwzF6n3Ix6_06Y")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "8469252037"))
-DEFAULT_RENDER_URL = "https://korolevskiy-center.onrender.com"
+DEFAULT_RENDER_URL = "https://istanbul-cafe.onrender.com"
 WEB_APP_URL = (os.environ.get("WEB_URL") or os.environ.get("RENDER_EXTERNAL_URL") or DEFAULT_RENDER_URL).strip()
 TUNNEL_PROCESS = None
 ACTUAL_FLASK_PORT = None
@@ -70,32 +70,36 @@ MAIN_LOOP = None
 # MENYU MA'LUMOTLARI (Telegram va Veb uchun - Emojilar bilan)
 # ==========================
 MENU_ITEMS = {
-    "bg1": ("🍔 Korolevskiy Burger", "36 000 so'm", 36000, "burger"),
-    "bg2": ("🍔 Korolevskiy Cheese Burger", "32 000 so'm", 32000, "burger"),
-    "bg3": ("🍔 Korolevskiy Big Burger", "38 000 so'm", 38000, "burger"),
+    "bg1": ("🍔 Istanbul Burger", "36 000 so'm", 36000, "burger"),
+    "bg2": ("🍔 Istanbul Cheese Burger", "32 000 so'm", 32000, "burger"),
+    "bg3": ("🍔 Istanbul Big Burger", "38 000 so'm", 38000, "burger"),
     "bg4": ("🍔 Crispy Chicken Burger", "28 000 so'm", 28000, "burger"),
-    "lv1": ("🥙 Korolevskiy Lavash (Mol go'shti)", "32 000 so'm", 32000, "lavash"),
-    "lv2": ("🥙 Korolevskiy Pishloqli Lavash", "35 000 so'm", 35000, "lavash"),
-    "lv3": ("🥙 Korolevskiy Tovuqli Lavash", "28 000 so'm", 28000, "lavash"),
+    "lv1": ("🥙 Istanbul Lavash (Mol go'shti)", "32 000 so'm", 32000, "lavash"),
+    "lv2": ("🥙 Istanbul Pishloqli Lavash", "35 000 so'm", 35000, "lavash"),
+    "lv3": ("🥙 Istanbul Tovuqli Lavash", "28 000 so'm", 28000, "lavash"),
     "lv4": ("🥙 Tandir Doner Lavash", "30 000 so'm", 30000, "lavash"),
-    "pz1": ("🍕 Korolevskiy Pizza", "55 000 so'm", 55000, "pizza"),
+    "hd1": ("🌭 Istanbul Klassik Hot-Dog", "18 000 so'm", 18000, "hotdog"),
+    "hd2": ("🌭 Istanbul Pishloqli Hot-Dog", "22 000 so'm", 22000, "hotdog"),
+    "hd3": ("🌭 Istanbul Double Hot-Dog", "25 000 so'm", 25000, "hotdog"),
+    "pz1": ("🍕 Istanbul Maxsus Pizza", "55 000 so'm", 55000, "pizza"),
     "pz2": ("🍕 Pepperoni Supreme", "50 000 so'm", 50000, "pizza"),
     "pz3": ("🍕 BBQ Chicken Pizza", "48 000 so'm", 48000, "pizza"),
     "pz4": ("🍕 4 Pishloqli Pizza", "52 000 so'm", 52000, "pizza"),
-    "kb1": ("🥩 Korolevskiy Doner Kebab", "28 000 so'm", 28000, "kebab"),
+    "kb1": ("🥩 Istanbul Doner Kebab", "28 000 so'm", 28000, "kebab"),
     "kb2": ("🥩 Iskender Kebab", "38 000 so'm", 38000, "kebab"),
-    "kb3": ("🥩 Tovuq Shish Kebab", "28 000 so'm", 28000, "kebab"),
-    "kb4": ("🥩 Qiymali Kebab", "30 000 so'm", 30000, "kebab"),
+    "kb3": ("🥩 Adana Kebab", "32 000 so'm", 32000, "kebab"),
+    "kb4": ("🥩 Tovuq Shish Kebab", "28 000 so'm", 28000, "kebab"),
     "sn1": ("🍟 Fri kartoshkasi", "15 000 so'm", 15000, "drinks"),
     "sn2": ("🍗 Qarsildoq Naggets (6 dona)", "18 000 so'm", 18000, "drinks"),
     "ot4": ("🥤 Coca-Cola 0.5L", "10 000 so'm", 10000, "drinks"),
     "ot5": ("🥤 Fanta Orange 0.5L", "10 000 so'm", 10000, "drinks"),
-    "ot6": ("🥤 Muzdek Ayron", "7 000 so'm", 7000, "drinks"),
+    "ot6": ("🥤 Muzdek Turk Ayrani", "7 000 so'm", 7000, "drinks"),
 }
 
 CATEGORY_NAMES = {
     "burger": "🍔 Burgerlar",
     "lavash": "🥙 Lavash va Doner",
+    "hotdog": "🌭 Hot-doglar",
     "pizza": "🍕 Pitsalar",
     "kebab": "🥩 Doner & Kebablar",
     "drinks": "🥤 Ichimliklar va gazaklar",
@@ -163,9 +167,9 @@ load_menu()
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), "settings.json")
 CAFE_SETTINGS = {
     "card_number": os.environ.get("PAYME_CARD", "8600 1234 5678 9012"),
-    "card_owner": os.environ.get("PAYME_OWNER", "Korolevskiy Center"),
+    "card_owner": os.environ.get("PAYME_OWNER", "Istanbul Cafe"),
     "is_open": True,
-    "cafe_name": "Korolevskiy Center",
+    "cafe_name": "Istanbul Cafe",
 }
 
 def load_settings():
@@ -173,7 +177,7 @@ def load_settings():
     try:
         CAFE_SETTINGS = supabase_db.get_settings()
         PAYME_CARD = CAFE_SETTINGS.get("card_number", "8600 1234 5678 9012")
-        PAYME_OWNER = CAFE_SETTINGS.get("card_owner", "Korolevskiy Center")
+        PAYME_OWNER = CAFE_SETTINGS.get("card_owner", "Istanbul Cafe")
     except Exception:
         logger.exception("Sozlamalarni yuklashda xatolik")
 
@@ -184,7 +188,7 @@ def save_settings():
         logger.exception("settings saqlashda xatolik")
 
 PAYME_CARD = "8600 1234 5678 9012"
-PAYME_OWNER = "Korolevskiy Center"
+PAYME_OWNER = "Istanbul Cafe"
 load_settings()
 
 
@@ -194,7 +198,7 @@ def reverse_geocode(lat: float, lon: float) -> Optional[str]:
         resp = requests.get(
             "https://nominatim.openstreetmap.org/reverse",
             params={"lat": lat, "lon": lon, "format": "json", "addressdetails": 1},
-            headers={"User-Agent": "KorolevskiyCenterBot/2.0"},
+            headers={"User-Agent": "IstanbulCafeBot/2.0"},
             timeout=5
         )
         if resp.status_code == 200:
@@ -249,7 +253,7 @@ def index():
     if os.path.exists(template_path):
         with open(template_path, "r", encoding="utf-8") as f:
             return f.read()
-    return "<h1>Korolevskiy Center</h1><p>Veb-sahifa topilmadi.</p>"
+    return "<h1>Istanbul Cafe</h1><p>Veb-sahifa topilmadi.</p>"
 
 
 @flask_app.route("/uploads/<path:filename>")
@@ -789,9 +793,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     is_admin = (uid == ADMIN_ID)
 
     welcome_text = (
-        "👑 <b>Korolevskiy Center botiga xush kelibsiz!</b>\n\n"
+        "☕ <b>Istanbul Cafe botiga xush kelibsiz!</b>\n\n"
         "🍽 <b>Menular</b> — Telegram ichida qisqa menyu orqali buyurtma berish.\n"
-        "🌐 <b>Sayt orqali buyurtma</b> — Fotosuratli to'liq menyu orqali qulay buyurtma berish! 🍔 🍕 🥙"
+        "🌐 <b>Sayt orqali buyurtma</b> — Fotosuratli to'liq menyu orqali qulay buyurtma berish! 🍔 🍕 🥙 🌭"
     )
     if is_admin:
         welcome_text += "\n\n👑 <b>Siz tizim administratorisiz!</b>\nAdmin Panel orqali barcha tushgan buyurtmalarni boshqarishingiz mumkin."
@@ -821,7 +825,7 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await safe_reply_text(
         update.message,
-        f"👑 <b>Korolevskiy Center — Admin Boshqaruv Paneli:</b>\n\n"
+        f"☕ <b>Istanbul Cafe — Admin Boshqaruv Paneli:</b>\n\n"
         f"Havola: <a href=\"{admin_url}\">{admin_url}</a>",
         reply_markup=inline_markup,
         parse_mode="HTML"
@@ -1152,7 +1156,7 @@ async def text_message_router(update: Update, context: ContextTypes.DEFAULT_TYPE
             [InlineKeyboardButton("📱 Saytni ochish (Web App)", web_app=WebAppInfo(url=url_text))],
             [InlineKeyboardButton("🌐 Brauzerda ochish", url=url_text)]
         ])
-        msg_text = f"🌐 <b>Korolevskiy Center veb-sayti:</b>\n\nHavola: <a href=\"{url_text}\">{url_text}</a>\n\nQuyidagi tugma orqali fotosuratli qulay menyuni ochishingiz mumkin:"
+        msg_text = f"🌐 <b>Istanbul Cafe veb-sayti:</b>\n\nHavola: <a href=\"{url_text}\">{url_text}</a>\n\nQuyidagi tugma orqali fotosuratli qulay menyuni ochishingiz mumkin:"
         await safe_reply_text(
             update.message,
             msg_text,

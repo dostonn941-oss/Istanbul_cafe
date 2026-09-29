@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boshqaruv Paneli — Korolevskiy Center</title>
+    <title>Boshqaruv Paneli — Istanbul Cafe</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1435,7 +1435,7 @@
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
                 </div>
                 <div class="brand-text-wrap">
-                    <span class="brand-name" id="sidebarCafeName">Korolevskiy Center</span>
+                    <span class="brand-name" id="sidebarCafeName">Istanbul Cafe</span>
                     <span class="brand-sub">Boshqaruv Paneli</span>
                 </div>
             </div>
@@ -1878,7 +1878,7 @@
 
                     <div class="form-row">
                         <span class="form-label-txt">Karta Egasi Ismi:</span>
-                        <input type="text" class="form-control-input" id="settingCardOwner" required placeholder="Korolevskiy Center">
+                        <input type="text" class="form-control-input" id="settingCardOwner" required placeholder="Istanbul Cafe">
                     </div>
 
                     <div class="form-row">
@@ -1891,7 +1891,7 @@
 
                     <div class="form-row">
                         <span class="form-label-txt">Kafe Nomi:</span>
-                        <input type="text" class="form-control-input" id="settingCafeName" value="Korolevskiy Center" placeholder="Korolevskiy Center">
+                        <input type="text" class="form-control-input" id="settingCafeName" value="Istanbul Cafe" placeholder="Istanbul Cafe">
                     </div>
 
                     <div id="settingsAlertBox" style="display: none; padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;"></div>
@@ -3308,10 +3308,10 @@
                 const sidebarStatusText = document.getElementById('sidebarStatusText');
 
                 if (cardNumEl) cardNumEl.value = s.card_number || '8600 1234 5678 9012';
-                if (cardOwnEl) cardOwnEl.value = s.card_owner || 'Korolevskiy Center';
+                if (cardOwnEl) cardOwnEl.value = s.card_owner || 'Istanbul Cafe';
                 if (isOpenEl) isOpenEl.value = s.is_open === false ? 'false' : 'true';
-                if (cafeNameEl) cafeNameEl.value = s.cafe_name || 'Korolevskiy Center';
-                if (sidebarCafeEl) sidebarCafeEl.textContent = s.cafe_name || 'Korolevskiy Center';
+                if (cafeNameEl) cafeNameEl.value = s.cafe_name || 'Istanbul Cafe';
+                if (sidebarCafeEl) sidebarCafeEl.textContent = s.cafe_name || 'Istanbul Cafe';
                 if (sidebarStatusText) {
                     sidebarStatusText.innerHTML = s.is_open === false 
                         ? `<span class="live-dot" style="background:#ef4444;"></span>Kafe: Yopiq`

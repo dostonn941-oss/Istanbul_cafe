@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: korolevskiy-center-bot
+    name: istanbul-cafe-bot
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
