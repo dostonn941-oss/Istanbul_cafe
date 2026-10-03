@@ -1,2 +1,16 @@
+[project]
+name = "istanbul-cafe"
+version = "1.0.0"
+description = "Istanbul Cafe Web & Telegram Bot"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.0",
+    "python-telegram-bot>=21.0",
+    "requests>=2.31",
+    "werkzeug>=3.0",
+    "python-dotenv>=1.0.0",
+]
+
 [tool.vercel]
 entrypoint = "istanbul_cafe_bot:app"
