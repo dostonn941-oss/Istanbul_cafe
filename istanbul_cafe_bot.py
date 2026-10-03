@@ -221,7 +221,8 @@ def reverse_geocode(lat: float, lon: float) -> Optional[str]:
 # ==========================
 # FLASK VEB ILOVASI
 # ==========================
-flask_app = Flask(__name__)
+app = Flask(__name__)
+flask_app = app
 
 @flask_app.after_request
 def add_cors_and_security_headers(response):
