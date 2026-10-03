@@ -45,7 +45,10 @@ logger = logging.getLogger(__name__)
 TOKEN = os.environ.get("BOT_TOKEN", "8728959771:AAE7gczpAq26lFuHMQfigxwzF6n3Ix6_06Y")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "8469252037"))
 DEFAULT_RENDER_URL = "https://istanbul-cafe.onrender.com"
-WEB_APP_URL = (os.environ.get("WEB_URL") or os.environ.get("RENDER_EXTERNAL_URL") or DEFAULT_RENDER_URL).strip()
+_vercel_url = os.environ.get("VERCEL_URL")
+if _vercel_url and not _vercel_url.startswith("http"):
+    _vercel_url = "https://" + _vercel_url
+WEB_APP_URL = (os.environ.get("WEB_URL") or _vercel_url or os.environ.get("RENDER_EXTERNAL_URL") or DEFAULT_RENDER_URL).strip()
 TUNNEL_PROCESS = None
 ACTUAL_FLASK_PORT = None
 
@@ -1626,7 +1629,7 @@ def setup_telegram_handlers(app):
 # ==============================================================================
 
 @flask_app.route("/api/webhook", methods=["POST"])
-def telegram_webhook():
+async def telegram_webhook():
     """Telegram Webhook orqali yangilanishlarni qabul qilish (Serverless / Vercel uchun)."""
     try:
         data = request.get_json(force=True, silent=True)
@@ -1639,21 +1642,14 @@ def telegram_webhook():
             tg_application = ApplicationBuilder().token(TOKEN).request(request_config).build()
             setup_telegram_handlers(tg_application)
 
+        if not getattr(tg_application, "_initialized", False):
+            await tg_application.initialize()
+        if not getattr(tg_application, "running", False):
+            await tg_application.start()
+
         update = Update.de_json(data, tg_application.bot)
         if update:
-            async def _process():
-                if not getattr(tg_application, "_initialized", False):
-                    await tg_application.initialize()
-                await tg_application.process_update(update)
-
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    asyncio.create_task(_process())
-                else:
-                    loop.run_until_complete(_process())
-            except RuntimeError:
-                asyncio.run(_process())
+            await tg_application.process_update(update)
 
         return jsonify({"status": "ok"}), 200
     except Exception as e:
@@ -1669,11 +1665,13 @@ def set_telegram_webhook():
         webhook_url = custom_url.rstrip("/")
         if not webhook_url.endswith("/api/webhook"):
             webhook_url += "/api/webhook"
+        base_domain = webhook_url.replace("/api/webhook", "")
     else:
         host = request.host_url.rstrip("/")
         if host.startswith("http://"):
             host = "https://" + host[7:]
         webhook_url = f"{host}/api/webhook"
+        base_domain = host
 
     try:
         r = requests.post(
@@ -1682,10 +1680,29 @@ def set_telegram_webhook():
             timeout=10
         )
         res_data = r.json()
+
+        menu_res = None
+        try:
+            mr = requests.post(
+                f"https://api.telegram.org/bot{TOKEN}/setChatMenuButton",
+                json={
+                    "menu_button": {
+                        "type": "web_app",
+                        "text": "🍽 Buyurtma",
+                        "web_app": {"url": base_domain}
+                    }
+                },
+                timeout=10
+            )
+            menu_res = mr.json()
+        except Exception:
+            pass
+
         return jsonify({
             "success": r.status_code == 200 and res_data.get("ok", False),
             "webhook_url": webhook_url,
-            "telegram_response": res_data
+            "telegram_response": res_data,
+            "menu_button_response": menu_res
         })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
