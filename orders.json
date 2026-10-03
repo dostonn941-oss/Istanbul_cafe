@@ -83,31 +83,6 @@
     "card_owner": null
   },
   {
-    "id": 4,
-    "status": "cancelled",
-    "timestamp": "2026-09-19T09:08:35.995055",
-    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
-    "phone": "998770300780",
-    "service": "pickup",
-    "location": "Filialdan olib ketish",
-    "payment": "💳 Click / Plastik karta",
-    "card_number": "8600 1234 5678 9012",
-    "card_owner": "Istanbul Center",
-    "payment_confirmed": true,
-    "receipt_url": "/uploads/receipt_4.jpg",
-    "items": [
-      {
-        "name": "BBQ Chicken Pizza",
-        "qty": 2,
-        "price": 48000
-      }
-    ],
-    "total": 96000,
-    "lat": null,
-    "lng": null,
-    "tg_user_id": 8469252037
-  },
-  {
     "id": 5,
     "status": "cancelled",
     "timestamp": "2026-09-19T09:28:24.822263",

@@ -6,3 +6,5 @@ __pycache__/
 cloudflared.exe
 uploads/
 .env
+.vercel/
+

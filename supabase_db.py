@@ -406,11 +406,15 @@ def create_order(order_data: dict) -> int:
 
     # Supabase ga yuborish
     try:
+        from datetime import datetime
+        ts = order_data.get("timestamp") or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        customer = str(order_data.get("customer") or "Mijoz").strip() or "Mijoz"
+        phone = str(order_data.get("phone") or "-").strip() or "-"
         insert_payload = {
             "status": order_data.get("status", "new"),
-            "timestamp": order_data.get("timestamp"),
-            "customer": order_data.get("customer", "Mijoz"),
-            "phone": order_data.get("phone", ""),
+            "timestamp": ts,
+            "customer": customer,
+            "phone": phone,
             "service": order_data.get("service", "pickup"),
             "location": order_data.get("location", ""),
             "payment": order_data.get("payment", ""),

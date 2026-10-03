@@ -235,7 +235,7 @@ def add_cors_and_security_headers(response):
 
 @flask_app.route("/healthz")
 def health_check():
-    return jsonify({"status": "ok", "service": "korolevskiy-center"}), 200
+    return jsonify({"status": "ok", "service": "istanbul-cafe"}), 200
 
 
 @flask_app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
@@ -441,7 +441,7 @@ def api_order():
     order_id = supabase_db.create_order(order_obj)
 
     admin_msg = (
-        f"👑 <b>KOROLEVSKIY CENTER - YANGI BUYURTMA (№{order_id})</b>\n"
+        f"🍽 <b>ISTANBUL CAFE - YANGI BUYURTMA (№{order_id})</b>\n"
         f"{'<i>To\'lov cheki (screenshot) biriktirilgan</i>\n' if receipt_url else ''}\n"
         f"<b>Mahsulotlar:</b>\n{items_text}\n\n"
         f"<b>Jami:</b> {fmt_price(total)}\n\n"
@@ -1313,7 +1313,7 @@ async def payme_screenshot_received(update: Update, context: ContextTypes.DEFAUL
 
     admin_caption = (
         f"<b>CLICK / PLASTIK TO'LOV CHEKI KELDI</b>\n\n"
-        f"👑 <b>KOROLEVSKIY CENTER — YANGI BUYURTMA (Telegram orqali)</b>\n\n"
+        f"🍽 <b>ISTANBUL CAFE — YANGI BUYURTMA (Telegram orqali)</b>\n\n"
         f"<b>Mahsulotlar:</b>\n{items_text}\n\n"
         f"<b>Jami:</b> {fmt_price(total)}\n"
         f"<b>Mijoz:</b> {esc(client_name)}\n"
@@ -1430,7 +1430,7 @@ async def _finalize_telegram_order(update: Update, context: ContextTypes.DEFAULT
     maps_line = f"\nXarita: https://maps.google.com/?q={lat},{lon}" if lat is not None and lon is not None else ""
 
     msg = (
-        f"👑 <b>KOROLEVSKIY CENTER - YANGI BUYURTMA (Telegram orqali)</b>\n\n"
+        f"🍽 <b>ISTANBUL CAFE - YANGI BUYURTMA (Telegram orqali)</b>\n\n"
         f"<b>Mahsulotlar:</b>\n{items_text}\n\n"
         f"<b>Jami narx:</b> {fmt_price(total)}\n\n"
         f"<b>Mijoz:</b> {esc(client_name)}\n"
@@ -1618,6 +1618,91 @@ def setup_telegram_handlers(app):
     app.add_handler(MessageHandler(filters.PHOTO | filters.Document.IMAGE, payme_screenshot_received))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message_router))
     app.add_error_handler(error_handler)
+
+
+# ==============================================================================
+# TELEGRAM WEBHOOK (VERCEL SERVERLESS VA CLOUD UCHUN)
+# ==============================================================================
+
+@flask_app.route("/api/webhook", methods=["POST"])
+def telegram_webhook():
+    """Telegram Webhook orqali yangilanishlarni qabul qilish (Serverless / Vercel uchun)."""
+    try:
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            return jsonify({"status": "ignored", "reason": "empty"}), 200
+
+        global tg_application
+        if tg_application is None:
+            request_config = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
+            tg_application = ApplicationBuilder().token(TOKEN).request(request_config).build()
+            setup_telegram_handlers(tg_application)
+
+        update = Update.de_json(data, tg_application.bot)
+        if update:
+            async def _process():
+                if not getattr(tg_application, "_initialized", False):
+                    await tg_application.initialize()
+                await tg_application.process_update(update)
+
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    asyncio.create_task(_process())
+                else:
+                    loop.run_until_complete(_process())
+            except RuntimeError:
+                asyncio.run(_process())
+
+        return jsonify({"status": "ok"}), 200
+    except Exception as e:
+        logger.exception(f"Webhook processing xatoligi: {e}")
+        return jsonify({"status": "error", "error": str(e)}), 200
+
+
+@flask_app.route("/api/set-webhook", methods=["GET", "POST"])
+def set_telegram_webhook():
+    """Telegram Webhookni avtomatik Vercel domeniga ulash."""
+    custom_url = request.args.get("url")
+    if custom_url:
+        webhook_url = custom_url.rstrip("/")
+        if not webhook_url.endswith("/api/webhook"):
+            webhook_url += "/api/webhook"
+    else:
+        host = request.host_url.rstrip("/")
+        if host.startswith("http://"):
+            host = "https://" + host[7:]
+        webhook_url = f"{host}/api/webhook"
+
+    try:
+        r = requests.post(
+            f"https://api.telegram.org/bot{TOKEN}/setWebhook",
+            json={"url": webhook_url, "drop_pending_updates": True},
+            timeout=10
+        )
+        res_data = r.json()
+        return jsonify({
+            "success": r.status_code == 200 and res_data.get("ok", False),
+            "webhook_url": webhook_url,
+            "telegram_response": res_data
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@flask_app.route("/api/delete-webhook", methods=["GET", "POST"])
+def delete_telegram_webhook():
+    """Telegram Webhookni bekor qilish (Lokal polling rejimiga o'tish uchun)."""
+    try:
+        r = requests.post(
+            f"https://api.telegram.org/bot{TOKEN}/deleteWebhook",
+            json={"drop_pending_updates": True},
+            timeout=10
+        )
+        return jsonify({"success": True, "telegram_response": r.json()})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 
 def keep_alive_worker():
