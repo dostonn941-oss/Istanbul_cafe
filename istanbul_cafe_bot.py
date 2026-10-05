@@ -48,7 +48,7 @@ DEFAULT_RENDER_URL = "https://istanbul-cafe.onrender.com"
 _vercel_url = os.environ.get("VERCEL_URL")
 if _vercel_url and not _vercel_url.startswith("http"):
     _vercel_url = "https://" + _vercel_url
-WEB_APP_URL = (os.environ.get("WEB_URL") or _vercel_url or os.environ.get("RENDER_EXTERNAL_URL") or DEFAULT_RENDER_URL).strip()
+WEB_APP_URL = (os.environ.get("WEB_URL") or _vercel_url or os.environ.get("RENDER_EXTERNAL_URL") or "").strip()
 TUNNEL_PROCESS = None
 ACTUAL_FLASK_PORT = None
 
@@ -741,7 +741,7 @@ def api_admin_save_settings():
 # TELEGRAM BOT LOGIKASI
 # ==========================
 def get_start_keyboard(user_id: Optional[int] = None):
-    web_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else DEFAULT_RENDER_URL
+    web_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else None
     buttons = [
         [KeyboardButton("🍽 Menular")]
     ]
@@ -1576,6 +1576,21 @@ def start_tunnel_worker(port: int = 10000):
                             WEB_APP_URL = m.group(0)
                             found = True
                             logger.info(f"CLOUDFLARE HTTPS: {WEB_APP_URL}")
+                            try:
+                                requests.post(
+                                    f"https://api.telegram.org/bot{TOKEN}/setChatMenuButton",
+                                    json={
+                                        "menu_button": {
+                                            "type": "web_app",
+                                            "text": "🍽 Buyurtma",
+                                            "web_app": {"url": WEB_APP_URL}
+                                        }
+                                    },
+                                    timeout=10
+                                )
+                                logger.info(f"Telegram WebApp menyu tugmasi yangilandi: {WEB_APP_URL}")
+                            except Exception as _e_mb:
+                                logger.warning(f"Telegram MenuButton yangilashda xato: {_e_mb}")
                 proc.wait()
             except Exception as e_cf:
                 logger.warning(f"Cloudflare tunnel: {e_cf}")
@@ -1599,6 +1614,20 @@ def start_tunnel_worker(port: int = 10000):
                         WEB_APP_URL = m.group(0)
                         found = True
                         logger.info(f"PINGGY HTTPS: {WEB_APP_URL}")
+                        try:
+                            requests.post(
+                                f"https://api.telegram.org/bot{TOKEN}/setChatMenuButton",
+                                json={
+                                    "menu_button": {
+                                        "type": "web_app",
+                                        "text": "🍽 Buyurtma",
+                                        "web_app": {"url": WEB_APP_URL}
+                                    }
+                                },
+                                timeout=10
+                            )
+                        except Exception:
+                            pass
             proc.wait()
         except Exception as e:
             logger.warning(f"Pinggy tunnel: {e}")
