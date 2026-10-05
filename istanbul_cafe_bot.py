@@ -260,6 +260,43 @@ def index():
     return "<h1>Istanbul Cafe</h1><p>Veb-sahifa topilmadi.</p>"
 
 
+@flask_app.route("/privacy")
+def privacy_policy():
+    return render_template_string("""<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfiylik Siyosati — Istanbul Cafe</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f1f5f9; padding: 24px; line-height: 1.6; max-width: 800px; margin: 0 auto; }
+        h1 { color: #10b981; font-size: 24px; border-bottom: 1px solid #334155; padding-bottom: 12px; }
+        h2 { color: #f59e0b; font-size: 18px; margin-top: 20px; }
+        p, li { color: #cbd5e1; font-size: 15px; }
+        ul { padding-left: 20px; }
+        .card { background: #1e293b; border-radius: 12px; padding: 20px; margin-top: 16px; border: 1px solid #334155; }
+    </style>
+</head>
+<body>
+    <h1>🔒 Istanbul Cafe — Maxfiylik Siyosati (Privacy Policy)</h1>
+    <div class="card">
+        <h2>1. Umumiy ma'lumotlar</h2>
+        <p>Ushbu maxfiylik siyosati "Istanbul Cafe" Telegram boti va veb-ilovasidan foydalanuvchilarning shaxsiy ma'lumotlarini himoya qilish tartibini belgilaydi.</p>
+        <h2>2. Qanday ma'lumotlar to'planadi?</h2>
+        <ul>
+            <li>Buyurtmani rasmiylashtirish uchun: Ism, telefon raqami va yetkazib berish manzili;</li>
+            <li>To'lovni tasdiqlash uchun: To'lov cheki skrinshoti yoki to'lov turi;</li>
+            <li>Telegram foydalanuvchi identifikatori (ID).</li>
+        </ul>
+        <h2>3. Ma'lumotlardan foydalanish maqsadi</h2>
+        <p>To'plangan ma'lumotlar faqat buyurtmalarni tayyorlash, mijoz bilan bog'lanish va manzilingizga tezkor yetkazib berish uchun ishlatiladi. Ma'lumotlar uchinchi shaxslarga berilmaydi.</p>
+        <h2>4. Bog'lanish</h2>
+        <p>Savollar bo'yicha Telegram boti orqali ma'muriyatga murojaat qilishingiz mumkin.</p>
+    </div>
+</body>
+</html>""")
+
+
 @flask_app.route("/uploads/<path:filename>")
 def serve_upload(filename):
     return send_from_directory(UPLOADS_DIR, filename)
