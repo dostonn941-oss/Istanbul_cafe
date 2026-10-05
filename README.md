@@ -24,7 +24,7 @@ pip install -r requirements.txt
 
 2. `.env` faylida kalitlar to'g'riligini tekshiring:
 ```env
-BOT_TOKEN=8728959771:AAE7gczpAq26lFuHMQfigxwzF6n3Ix6_06Y
+BOT_TOKEN=8780942618:AAEM8JdnmV2vPyoFrYGIm7dbd7Z964zsaxg
 ADMIN_ID=8469252037
 SUPABASE_URL=https://jtzuytfxeakexupudxoy.supabase.co
 SUPABASE_KEY=sb_publishable_0yEdTo2GGH0slSNwSB91sA_Zt8p75Xb

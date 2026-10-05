@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 # ==========================
 # SOZLAMALAR (SETTINGS)
 # ==========================
-TOKEN = os.environ.get("BOT_TOKEN", "8728959771:AAE7gczpAq26lFuHMQfigxwzF6n3Ix6_06Y")
+TOKEN = os.environ.get("BOT_TOKEN", "8780942618:AAEM8JdnmV2vPyoFrYGIm7dbd7Z964zsaxg")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "8469252037"))
 DEFAULT_RENDER_URL = "https://istanbul-cafe.onrender.com"
 _vercel_url = os.environ.get("VERCEL_URL")
