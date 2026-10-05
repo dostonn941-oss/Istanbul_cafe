@@ -109,7 +109,7 @@
   },
   {
     "id": 6,
-    "status": "completed",
+    "status": "cancelled",
     "timestamp": "2026-09-19T09:29:44.990982",
     "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
     "phone": "998770300780",
@@ -182,5 +182,80 @@
     "lat": 40.2925281,
     "lng": 71.9872462,
     "tg_user_id": null
+  },
+  {
+    "status": "new",
+    "timestamp": "2026-10-05T21:34:01.852772",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "https://jtzuytfxeakexupudxoy.supabase.co/storage/v1/object/public/receipts/receipt_1791218034007.jpg",
+    "items": [
+      {
+        "name": "🍔 Istanbul Burger",
+        "qty": 5,
+        "price": 36000
+      },
+      {
+        "name": "🍔 Istanbul Big Burger",
+        "qty": 2,
+        "price": 38000
+      },
+      {
+        "name": "🥙 Istanbul Tovuqli Lavash",
+        "qty": 5,
+        "price": 28000
+      },
+      {
+        "name": "🥙 Istanbul Lavash (Mol go'shti)",
+        "qty": 1,
+        "price": 32000
+      },
+      {
+        "name": "🍔 Istanbul Cheese Burger",
+        "qty": 1,
+        "price": 32000
+      },
+      {
+        "name": "🍔 Crispy Chicken Burger",
+        "qty": 5,
+        "price": 28000
+      }
+    ],
+    "total": 600000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037,
+    "id": 5
+  },
+  {
+    "status": "new",
+    "timestamp": "2026-10-05T21:50:30.950880",
+    "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
+    "phone": "998770300780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "https://jtzuytfxeakexupudxoy.supabase.co/storage/v1/object/public/receipts/receipt_1791219028839.jpg",
+    "items": [
+      {
+        "name": "🍔 Istanbul Cheese Burger",
+        "qty": 1,
+        "price": 32000
+      }
+    ],
+    "total": 32000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 8469252037,
+    "id": 6
   }
 ]
