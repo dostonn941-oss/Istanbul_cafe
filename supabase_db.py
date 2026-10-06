@@ -27,7 +27,10 @@ MENU_FILE = os.path.join(BASE_DIR, "menu.json")
 ORDERS_FILE = os.path.join(BASE_DIR, "orders.json")
 SETTINGS_FILE = os.path.join(BASE_DIR, "settings.json")
 UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
-os.makedirs(UPLOADS_DIR, exist_ok=True)
+try:
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+except OSError:
+    pass
 
 
 def get_headers(prefer: Optional[str] = None) -> dict:

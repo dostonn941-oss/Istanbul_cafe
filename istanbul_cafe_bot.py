@@ -248,7 +248,10 @@ def options_preflight(path):
     return "", 204
 
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
-os.makedirs(UPLOADS_DIR, exist_ok=True)
+try:
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+except OSError:
+    pass
 
 
 @flask_app.route("/")
@@ -1695,28 +1698,23 @@ def setup_telegram_handlers(app):
 # ==============================================================================
 
 @flask_app.route("/api/webhook", methods=["POST"])
-async def telegram_webhook():
+def telegram_webhook():
     """Telegram Webhook orqali yangilanishlarni qabul qilish (Serverless / Vercel uchun)."""
     try:
         data = request.get_json(force=True, silent=True)
         if not data:
             return jsonify({"status": "ignored", "reason": "empty"}), 200
 
-        global tg_application
-        if tg_application is None:
-            request_config = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
-            tg_application = ApplicationBuilder().token(TOKEN).request(request_config).build()
-            setup_telegram_handlers(tg_application)
+        async def _process_update():
+            req_cfg = HTTPXRequest(connect_timeout=25.0, read_timeout=25.0)
+            app_inst = ApplicationBuilder().token(TOKEN).request(req_cfg).build()
+            setup_telegram_handlers(app_inst)
+            async with app_inst:
+                update = Update.de_json(data, app_inst.bot)
+                if update:
+                    await app_inst.process_update(update)
 
-        if not getattr(tg_application, "_initialized", False):
-            await tg_application.initialize()
-        if not getattr(tg_application, "running", False):
-            await tg_application.start()
-
-        update = Update.de_json(data, tg_application.bot)
-        if update:
-            await tg_application.process_update(update)
-
+        asyncio.run(_process_update())
         return jsonify({"status": "ok"}), 200
     except Exception as e:
         logger.exception(f"Webhook processing xatoligi: {e}")

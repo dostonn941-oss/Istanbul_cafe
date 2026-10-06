@@ -159,7 +159,7 @@
     "card_owner": null
   },
   {
-    "id": 11,
+    "id": 7,
     "status": "completed",
     "timestamp": "2026-09-22T09:33:24.595597",
     "customer": "Doston Nematov",
@@ -184,7 +184,7 @@
     "tg_user_id": null
   },
   {
-    "status": "new",
+    "status": "completed",
     "timestamp": "2026-10-05T21:34:01.852772",
     "customer": "ᶰᵉᵐᵃᵗᵒʷ_1",
     "phone": "998770300780",
@@ -231,7 +231,7 @@
     "lat": null,
     "lng": null,
     "tg_user_id": 8469252037,
-    "id": 5
+    "id": 8
   },
   {
     "status": "new",
@@ -257,5 +257,60 @@
     "lng": null,
     "tg_user_id": 8469252037,
     "id": 6
+  },
+  {
+    "status": "new",
+    "timestamp": "2026-10-05T22:04:18.971817",
+    "customer": "Рустамжон",
+    "phone": "998999900780",
+    "service": "pickup",
+    "location": "Filialdan olib ketish",
+    "payment": "💳 Click / Plastik karta",
+    "card_number": "8600 1234 5678 9012",
+    "card_owner": "Istanbul Cafe",
+    "payment_confirmed": true,
+    "receipt_url": "https://jtzuytfxeakexupudxoy.supabase.co/storage/v1/object/public/receipts/receipt_1791219855972.jpg",
+    "items": [
+      {
+        "name": "🥙 Istanbul Pishloqli Lavash",
+        "qty": 1,
+        "price": 35000
+      }
+    ],
+    "total": 35000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": 6284381769,
+    "id": 7
+  },
+  {
+    "status": "new",
+    "timestamp": "2026-10-05T22:08:38.769615",
+    "customer": "Dostonbek",
+    "phone": "+998770300780",
+    "service": "delivery",
+    "location": "Quvasoy shahri, Logon qishlogi, (Quruvchi 37 uy)",
+    "payment": "Naqd pul",
+    "card_number": null,
+    "card_owner": null,
+    "payment_confirmed": false,
+    "receipt_url": null,
+    "items": [
+      {
+        "name": "🍔 Istanbul Burger",
+        "price": 36000,
+        "qty": 4
+      },
+      {
+        "name": "🍔 Istanbul Cheese Burger",
+        "price": 32000,
+        "qty": 6
+      }
+    ],
+    "total": 336000,
+    "lat": null,
+    "lng": null,
+    "tg_user_id": null,
+    "id": 8
   }
 ]
