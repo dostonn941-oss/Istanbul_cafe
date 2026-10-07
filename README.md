@@ -26,8 +26,8 @@ pip install -r requirements.txt
 ```env
 BOT_TOKEN=8780942618:AAEM8JdnmV2vPyoFrYGIm7dbd7Z964zsaxg
 ADMIN_ID=8469252037
-SUPABASE_URL=https://jtzuytfxeakexupudxoy.supabase.co
-SUPABASE_KEY=sb_publishable_0yEdTo2GGH0slSNwSB91sA_Zt8p75Xb
+SUPABASE_URL=https://gjbxlcdjvvlahudfdabj.supabase.co
+SUPABASE_KEY=sb_publishable_FK_hBF3B_c3YBgq9nxySzA_DE8iAohw
 PORT=10000
 ```
 

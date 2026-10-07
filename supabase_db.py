@@ -15,11 +15,11 @@ logger = logging.getLogger(__name__)
 # ==========================
 # SUPABASE KONFIGURATSIYASI
 # ==========================
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://jtzuytfxeakexupudxoy.supabase.co").rstrip("/")
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://gjbxlcdjvvlahudfdabj.supabase.co").rstrip("/")
 SUPABASE_KEY = (
     os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
     or os.environ.get("SUPABASE_KEY")
-    or "sb_publishable_0yEdTo2GGH0slSNwSB91sA_Zt8p75Xb"
+    or "sb_publishable_FK_hBF3B_c3YBgq9nxySzA_DE8iAohw"
 ).strip()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -81,21 +81,21 @@ def check_supabase_connection() -> dict:
 
     try:
         # Auth / API tekshirish
-        auth_res = requests.get(f"{SUPABASE_URL}/auth/v1/health", headers=get_headers(), timeout=5)
+        auth_res = requests.get(f"{SUPABASE_URL}/auth/v1/health", headers=get_headers(), timeout=10)
         if auth_res.status_code == 200:
             status["auth_ok"] = True
             status["connected"] = True
 
         # Jadvallarni tekshirish
         for table in status["tables"].keys():
-            res = requests.get(f"{SUPABASE_URL}/rest/v1/{table}?select=id&limit=1", headers=get_headers(), timeout=5)
+            res = requests.get(f"{SUPABASE_URL}/rest/v1/{table}?select=id&limit=1", headers=get_headers(), timeout=10)
             if res.status_code == 200:
                 status["tables"][table] = True
             else:
                 status["tables"][table] = False
 
         # Storage tekshirish
-        st_res = requests.get(f"{SUPABASE_URL}/storage/v1/bucket", headers=get_headers(), timeout=5)
+        st_res = requests.get(f"{SUPABASE_URL}/storage/v1/bucket", headers=get_headers(), timeout=10)
         if st_res.status_code == 200:
             buckets = [b.get("id") for b in st_res.json() if isinstance(b, dict)]
             status["storage"] = "receipts" in buckets

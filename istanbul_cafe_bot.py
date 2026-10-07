@@ -53,11 +53,11 @@ TUNNEL_PROCESS = None
 ACTUAL_FLASK_PORT = None
 
 # Supabase
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://jtzuytfxeakexupudxoy.supabase.co").strip()
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://gjbxlcdjvvlahudfdabj.supabase.co").strip()
 SUPABASE_KEY = (
     os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
     or os.environ.get("SUPABASE_KEY")
-    or "sb_publishable_0yEdTo2GGH0slSNwSB91sA_Zt8p75Xb"
+    or "sb_publishable_FK_hBF3B_c3YBgq9nxySzA_DE8iAohw"
 ).strip()
 
 if not TOKEN:

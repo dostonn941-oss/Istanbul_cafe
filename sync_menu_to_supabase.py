@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SUPABASE_URL = (os.environ.get("SUPABASE_URL") or "https://jtzuytfxeakexupudxoy.supabase.co").rstrip("/")
-SUPABASE_KEY = (os.environ.get("SUPABASE_KEY") or "sb_publishable_0yEdTo2GGH0slSNwSB91sA_Zt8p75Xb").strip()
+SUPABASE_URL = (os.environ.get("SUPABASE_URL") or "https://gjbxlcdjvvlahudfdabj.supabase.co").rstrip("/")
+SUPABASE_KEY = (os.environ.get("SUPABASE_KEY") or "sb_publishable_FK_hBF3B_c3YBgq9nxySzA_DE8iAohw").strip()
 
 HEADERS = {
     "apikey": SUPABASE_KEY,
