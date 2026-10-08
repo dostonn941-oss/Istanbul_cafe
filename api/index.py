@@ -1,6 +1,5 @@
 import os
 import sys
-from flask import Flask
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
@@ -8,8 +7,10 @@ if BASE_DIR not in sys.path:
 
 from istanbul_cafe_bot import app, flask_app
 
-# Vercel WSGI entry point
-application = app
+# Vercel WSGI & ASGI entrypoints
+app = flask_app
+application = flask_app
+handler = flask_app
 
 if __name__ == "__main__":
     app.run()

@@ -2009,6 +2009,43 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Telegram Webhook Card -->
+            <div class="panel-card" style="padding: 24px; max-width: 620px; margin-top: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        <h2 style="font-size: 16px; font-weight: 900; color: var(--text-primary); margin: 0;">Telegram Bot & Vercel Webhook</h2>
+                    </div>
+                    <button type="button" class="btn-fast-advance" onclick="checkTelegramWebhookStatus()" style="padding: 6px 14px; font-size: 12px; cursor: pointer;">Holatni tekshirish</button>
+                </div>
+
+                <div id="tgWebhookStatusContent" style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+                        <span style="color: var(--text-secondary); font-weight: 600;">Telegram Bot:</span>
+                        <a href="https://t.me/Istanbul_cafe_bot" target="_blank" style="font-weight: 800; color: #2563eb; text-decoration: none;">@Istanbul_cafe_bot ↗</a>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+                        <span style="color: var(--text-secondary); font-weight: 600;">Webhook Holati:</span>
+                        <span id="tgWebhookBadge" style="font-weight: 800; color: var(--text-secondary);">Tekshirilmoqda...</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+                        <span style="color: var(--text-secondary); font-weight: 600;">Webhook Manzili:</span>
+                        <span id="tgWebhookUrlTxt" style="font-family: monospace; font-size: 11px; font-weight: 700; color: var(--text-primary); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
+                    </div>
+                </div>
+
+                <div id="tgAlertBox" style="display: none; margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;"></div>
+
+                <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
+                    <button type="button" class="btn-add-item" onclick="connectTelegramWebhookNow()" style="justify-content: center; padding: 11px 18px; background: #2563eb;">
+                        <span>⚡ Webhookni ushbu Vercel domeniga ulash</span>
+                    </button>
+                    <button type="button" class="btn-fast-advance" onclick="deleteTelegramWebhookNow()" style="padding: 11px 16px; color: #dc2626; border-color: rgba(220, 38, 38, 0.3); cursor: pointer;">
+                        <span>Bekor qilish (Lokal rejim)</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
     </main>
@@ -3623,10 +3660,93 @@
         }
     }
 
+    // Telegram Webhook boshqaruvi
+    async function checkTelegramWebhookStatus() {
+        const badge = document.getElementById('tgWebhookBadge');
+        const urlTxt = document.getElementById('tgWebhookUrlTxt');
+        if (badge) {
+            badge.textContent = 'Tekshirilmoqda...';
+            badge.style.color = 'var(--text-secondary)';
+        }
+        try {
+            const res = await fetch('/api/webhook-info');
+            const data = await res.json();
+            if (data.success && data.webhook) {
+                const wh = data.webhook;
+                if (wh.url && wh.url.length > 0) {
+                    if (badge) {
+                        badge.textContent = '● Faol (Uланган)';
+                        badge.style.color = '#10b981';
+                    }
+                    if (urlTxt) urlTxt.textContent = wh.url;
+                } else {
+                    if (badge) {
+                        badge.textContent = '○ Ulanmagan';
+                        badge.style.color = '#ef4444';
+                    }
+                    if (urlTxt) urlTxt.textContent = "Hali webhook o'rnatilmagan";
+                }
+            } else {
+                if (badge) badge.textContent = 'Noma\'lum';
+            }
+        } catch (e) {
+            if (badge) badge.textContent = 'Xatolik';
+        }
+    }
+
+    async function connectTelegramWebhookNow() {
+        const alertBox = document.getElementById('tgAlertBox');
+        const currentOrigin = window.location.origin;
+        if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = 'rgba(37, 99, 235, 0.12)';
+            alertBox.style.color = '#1d4ed8';
+            alertBox.style.border = '1px solid rgba(37, 99, 235, 0.3)';
+            alertBox.textContent = "⚡ Telegram bot Vercel domeniga ulanmoqda va profillar yangilanmoqda...";
+        }
+        try {
+            const res = await fetch('/api/set-webhook?url=' + encodeURIComponent(currentOrigin));
+            const data = await res.json();
+            if (data.success) {
+                if (alertBox) {
+                    alertBox.style.background = 'rgba(16, 185, 129, 0.12)';
+                    alertBox.style.color = '#047857';
+                    alertBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                    alertBox.textContent = "✅ Telegram bot muvaffaqiyatli ulandi! Endi Telegramda /start to'liq ishlaydi.";
+                }
+                checkTelegramWebhookStatus();
+            } else {
+                if (alertBox) {
+                    alertBox.style.background = 'rgba(239, 68, 68, 0.12)';
+                    alertBox.style.color = '#b91c1c';
+                    alertBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                    alertBox.textContent = "Xatolik: " + (data.message || 'Ulab bo\'lmadi');
+                }
+            }
+        } catch (err) {
+            if (alertBox) {
+                alertBox.textContent = "Server bilan bog'lanishda xatolik yuz berdi.";
+            }
+        }
+    }
+
+    async function deleteTelegramWebhookNow() {
+        if (!confirm("Webhookni o'chirib, lokal polling rejimiga o'tmoqchimisiz?")) return;
+        try {
+            const res = await fetch('/api/delete-webhook');
+            const data = await res.json();
+            alert("Webhook bekor qilindi. Endi kompyuterda python istanbul_cafe_bot.py orqali botni yurgizishingiz mumkin.");
+            checkTelegramWebhookStatus();
+        } catch (e) {
+            alert("Xatolik yuz berdi: " + e.message);
+        }
+    }
+
     // Initial Load & polling
     updateSoundButtonUI();
     loadOrders();
     loadAdminSettings();
+    checkTelegramWebhookStatus();
     setInterval(loadOrders, 4000);
 </script>
 

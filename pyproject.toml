@@ -13,4 +13,4 @@ dependencies = [
 ]
 
 [tool.vercel]
-entrypoint = "istanbul_cafe_bot:app"
+entrypoint = "api/index.py"

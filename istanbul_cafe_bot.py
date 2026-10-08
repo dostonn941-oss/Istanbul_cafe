@@ -247,7 +247,8 @@ def health_check():
 def options_preflight(path):
     return "", 204
 
-UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
 try:
     os.makedirs(UPLOADS_DIR, exist_ok=True)
 except OSError:
@@ -256,7 +257,7 @@ except OSError:
 
 @flask_app.route("/")
 def index():
-    template_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
+    template_path = os.path.join(BASE_DIR, "templates", "index.html")
     if os.path.exists(template_path):
         with open(template_path, "r", encoding="utf-8") as f:
             return f.read()
@@ -525,7 +526,7 @@ def api_order():
 # ==========================
 # ADMIN BOSHQARUV PANELI (FLASK ROUTES)
 # ==========================
-ADMIN_TEMPLATE_FILE = os.path.join(os.path.dirname(__file__), "templates", "admin.html")
+ADMIN_TEMPLATE_FILE = os.path.join(BASE_DIR, "templates", "admin.html")
 
 def get_admin_html_template() -> str:
     if os.path.exists(ADMIN_TEMPLATE_FILE):
@@ -782,13 +783,13 @@ def api_admin_save_settings():
 # ==========================
 def get_start_keyboard(user_id: Optional[int] = None):
     web_url = WEB_APP_URL if (WEB_APP_URL and WEB_APP_URL.startswith("https://")) else None
-    buttons = [
-        [KeyboardButton("🍽 Menular")]
-    ]
+    row1 = [KeyboardButton("🍽 Menular")]
     if web_url:
-        buttons.append([KeyboardButton("🌐 Sayt orqali buyurtma", web_app=WebAppInfo(url=web_url))])
+        row1.append(KeyboardButton("🌐 Sayt orqali buyurtma", web_app=WebAppInfo(url=web_url)))
     else:
-        buttons.append([KeyboardButton("🌐 Sayt orqali buyurtma")])
+        row1.append(KeyboardButton("🌐 Sayt orqali buyurtma"))
+
+    buttons = [row1]
 
     if user_id and int(user_id) == ADMIN_ID:
         if web_url:
@@ -799,57 +800,91 @@ def get_start_keyboard(user_id: Optional[int] = None):
 
 
 async def safe_reply_text(message, text: str, **kwargs):
-    for attempt in range(1, 5):
+    if not message:
+        return None
+    try:
+        return await message.reply_text(text, **kwargs)
+    except (TimedOut, NetworkError) as e:
+        logger.warning(f"Tarmoq sekinligi, qayta urinish: {e}")
         try:
+            await asyncio.sleep(0.5)
             return await message.reply_text(text, **kwargs)
-        except Exception as e:
-            if attempt < 4:
-                await asyncio.sleep(1.0)
-            else:
-                logger.error(f"Xabarni yuborib bo'lmadi: {e}")
+        except Exception as e2:
+            logger.error(f"safe_reply_text qayta urinishda xato: {e2}")
+    except Exception as e:
+        logger.error(f"safe_reply_text xatolik: {e}")
+        if "can't parse entities" in str(e).lower() and kwargs.get("parse_mode"):
+            try:
+                import re
+                clean = re.sub(r'<[^>]+>', '', text)
+                kw = dict(kwargs)
+                kw.pop("parse_mode", None)
+                return await message.reply_text(clean, **kw)
+            except Exception:
+                pass
 
 
 async def safe_edit_text(message, text: str, **kwargs):
-    for attempt in range(1, 5):
+    if not message:
+        return None
+    try:
+        return await message.edit_text(text, **kwargs)
+    except (TimedOut, NetworkError) as e:
+        logger.warning(f"safe_edit_text tarmoq sekinligi: {e}")
         try:
+            await asyncio.sleep(0.5)
             return await message.edit_text(text, **kwargs)
-        except Exception as e:
-            if attempt < 4:
-                await asyncio.sleep(1.0)
-            else:
-                logger.error(f"Xabarni tahrirlab bo'lmadi: {e}")
+        except Exception:
+            pass
+    except Exception as e:
+        logger.error(f"safe_edit_text xatolik: {e}")
 
 
 async def safe_send_message(bot, chat_id, text: str, **kwargs):
-    for attempt in range(1, 5):
+    if not bot or not chat_id:
+        return None
+    try:
+        return await bot.send_message(chat_id=chat_id, text=text, **kwargs)
+    except (TimedOut, NetworkError) as e:
+        logger.warning(f"safe_send_message tarmoq sekinligi: {e}")
         try:
+            await asyncio.sleep(0.5)
             return await bot.send_message(chat_id=chat_id, text=text, **kwargs)
-        except Exception as e:
-            if attempt < 4:
-                await asyncio.sleep(1.0)
-            else:
-                logger.error(f"Xabar yuborib bo'lmadi: {e}")
+        except Exception:
+            pass
+    except Exception as e:
+        logger.error(f"safe_send_message xatolik: {e}")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
-    uid = update.effective_user.id
-    is_admin = (uid == ADMIN_ID)
+    uid = update.effective_user.id if update.effective_user else None
+    is_admin = (uid == ADMIN_ID) if uid else False
 
     welcome_text = (
         "☕ <b>Istanbul Cafe botiga xush kelibsiz!</b>\n\n"
-        "🍽 <b>Menular</b> — Telegram ichida qisqa menyu orqali buyurtma berish.\n"
-        "🌐 <b>Sayt orqali buyurtma</b> — Fotosuratli to'liq menyu orqali qulay buyurtma berish! 🍔 🍕 🥙 🌭"
+        "🍽 <b>Menular</b> — Telegram ichida qulay menyu orqali buyurtma berish.\n"
+        "🌐 <b>Sayt orqali buyurtma</b> — Fotosuratli to'liq menyu orqali zamonaviy buyurtma berish! 🍔 🍕 🥙 🌭"
     )
     if is_admin:
         welcome_text += "\n\n👑 <b>Siz tizim administratorisiz!</b>\nAdmin Panel orqali barcha tushgan buyurtmalarni boshqarishingiz mumkin."
 
-    await safe_reply_text(
-        update.message,
-        welcome_text,
-        reply_markup=get_start_keyboard(user_id=uid),
-        parse_mode="HTML"
-    )
+    msg = update.effective_message or update.message
+    if msg:
+        await safe_reply_text(
+            msg,
+            welcome_text,
+            reply_markup=get_start_keyboard(user_id=uid),
+            parse_mode="HTML"
+        )
+    elif update.effective_chat:
+        await safe_send_message(
+            context.bot,
+            update.effective_chat.id,
+            welcome_text,
+            reply_markup=get_start_keyboard(user_id=uid),
+            parse_mode="HTML"
+        )
 
 
 async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1697,16 +1732,32 @@ def setup_telegram_handlers(app):
 # TELEGRAM WEBHOOK (VERCEL SERVERLESS VA CLOUD UCHUN)
 # ==============================================================================
 
-@flask_app.route("/api/webhook", methods=["POST"])
+@flask_app.route("/api/webhook", methods=["GET", "POST"])
 def telegram_webhook():
     """Telegram Webhook orqali yangilanishlarni qabul qilish (Serverless / Vercel uchun)."""
+    if request.method == "GET":
+        return jsonify({
+            "status": "ok",
+            "bot": "Istanbul_cafe_bot",
+            "message": "Telegram Webhook serverless funktsiyasi faol! Telegram so'rovlarini qabul qilishga tayyor."
+        }), 200
+
     try:
         data = request.get_json(force=True, silent=True)
         if not data:
             return jsonify({"status": "ignored", "reason": "empty"}), 200
 
+        # Vercel yoki Cloud domenini dinamik yangilash
+        f_host = request.headers.get("x-forwarded-host") or os.environ.get("VERCEL_URL")
+        if f_host:
+            global WEB_APP_URL
+            if not f_host.startswith("http"):
+                WEB_APP_URL = f"https://{f_host}".rstrip("/")
+            else:
+                WEB_APP_URL = f_host.rstrip("/")
+
         async def _process_update():
-            req_cfg = HTTPXRequest(connect_timeout=25.0, read_timeout=25.0)
+            req_cfg = HTTPXRequest(connect_timeout=15.0, read_timeout=15.0)
             app_inst = ApplicationBuilder().token(TOKEN).request(req_cfg).build()
             setup_telegram_handlers(app_inst)
             async with app_inst:
@@ -1721,55 +1772,140 @@ def telegram_webhook():
         return jsonify({"status": "error", "error": str(e)}), 200
 
 
+@flask_app.route("/api/webhook-info", methods=["GET"])
+def get_telegram_webhook_info():
+    """Telegram Webhook va Bot holati haqida to'liq ma'lumot olish."""
+    try:
+        wr = requests.get(f"https://api.telegram.org/bot{TOKEN}/getWebhookInfo", timeout=10).json()
+        mr = requests.get(f"https://api.telegram.org/bot{TOKEN}/getMe", timeout=10).json()
+        return jsonify({
+            "success": True,
+            "webhook": wr.get("result", {}),
+            "bot": mr.get("result", {}),
+            "active_web_app_url": WEB_APP_URL
+        }), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @flask_app.route("/api/set-webhook", methods=["GET", "POST"])
 def set_telegram_webhook():
-    """Telegram Webhookni avtomatik Vercel domeniga ulash."""
+    """Telegram Webhook va Bot ma'lumotlarini to'liq Vercel domeniga ulash."""
     custom_url = request.args.get("url")
     if custom_url:
         webhook_url = custom_url.rstrip("/")
         if not webhook_url.endswith("/api/webhook"):
             webhook_url += "/api/webhook"
-        base_domain = webhook_url.replace("/api/webhook", "")
+        base_domain = webhook_url.replace("/api/webhook", "").rstrip("/")
     else:
-        host = request.host_url.rstrip("/")
-        if host.startswith("http://"):
-            host = "https://" + host[7:]
-        webhook_url = f"{host}/api/webhook"
-        base_domain = host
+        f_host = request.headers.get("x-forwarded-host") or os.environ.get("VERCEL_URL") or request.host
+        if not f_host.startswith("http://") and not f_host.startswith("https://"):
+            base_domain = f"https://{f_host}".rstrip("/")
+        else:
+            base_domain = f_host.rstrip("/")
+            if base_domain.startswith("http://"):
+                base_domain = "https://" + base_domain[7:]
+        webhook_url = f"{base_domain}/api/webhook"
 
+    global WEB_APP_URL
+    WEB_APP_URL = base_domain
+
+    results = {}
+
+    # 1. setWebhook
     try:
         r = requests.post(
             f"https://api.telegram.org/bot{TOKEN}/setWebhook",
             json={"url": webhook_url, "drop_pending_updates": True},
             timeout=10
         )
-        res_data = r.json()
-
-        menu_res = None
-        try:
-            mr = requests.post(
-                f"https://api.telegram.org/bot{TOKEN}/setChatMenuButton",
-                json={
-                    "menu_button": {
-                        "type": "web_app",
-                        "text": "🍽 Buyurtma",
-                        "web_app": {"url": base_domain}
-                    }
-                },
-                timeout=10
-            )
-            menu_res = mr.json()
-        except Exception:
-            pass
-
-        return jsonify({
-            "success": r.status_code == 200 and res_data.get("ok", False),
-            "webhook_url": webhook_url,
-            "telegram_response": res_data,
-            "menu_button_response": menu_res
-        })
+        results["webhook"] = r.json()
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        results["webhook"] = {"error": str(e)}
+
+    # 2. setChatMenuButton
+    try:
+        mr = requests.post(
+            f"https://api.telegram.org/bot{TOKEN}/setChatMenuButton",
+            json={
+                "menu_button": {
+                    "type": "web_app",
+                    "text": "🍽 Buyurtma",
+                    "web_app": {"url": base_domain}
+                }
+            },
+            timeout=10
+        )
+        results["menu_button"] = mr.json()
+    except Exception as e:
+        results["menu_button"] = {"error": str(e)}
+
+    # 3. setMyName
+    try:
+        nr = requests.post(
+            f"https://api.telegram.org/bot{TOKEN}/setMyName",
+            json={"name": "Istanbul Cafe"},
+            timeout=10
+        )
+        results["name"] = nr.json()
+    except Exception as e:
+        results["name"] = {"error": str(e)}
+
+    # 4. setMyDescription
+    try:
+        dr = requests.post(
+            f"https://api.telegram.org/bot{TOKEN}/setMyDescription",
+            json={
+                "description": "☕ Istanbul Cafe rasmiy boti!\n\n"
+                               "🍔 Burgerlar\n"
+                               "🥙 Mazali lavashlar\n"
+                               "🍕 Issiq pitsalar\n"
+                               "🌭 Hot-doglar\n"
+                               "🥩 Doner va kebablar\n"
+                               "🥤 Muzdek ichimliklar\n\n"
+                               "Buyurtma berish uchun /start bosing yoki quyidagi '🍽 Buyurtma' tugmasidan foydalaning!"
+            },
+            timeout=10
+        )
+        results["description"] = dr.json()
+    except Exception as e:
+        results["description"] = {"error": str(e)}
+
+    # 5. setMyShortDescription
+    try:
+        sdr = requests.post(
+            f"https://api.telegram.org/bot{TOKEN}/setMyShortDescription",
+            json={"short_description": "Istanbul Cafe — Mazali fast-food va tez yetkazib berish xizmati! 🍔🍕"},
+            timeout=10
+        )
+        results["short_description"] = sdr.json()
+    except Exception as e:
+        results["short_description"] = {"error": str(e)}
+
+    # 6. setMyCommands
+    try:
+        cr = requests.post(
+            f"https://api.telegram.org/bot{TOKEN}/setMyCommands",
+            json={
+                "commands": [
+                    {"command": "start", "description": "☕ Botni ishga tushirish va menyu"},
+                    {"command": "admin", "description": "📊 Admin Boshqaruv Paneli"}
+                ]
+            },
+            timeout=10
+        )
+        results["commands"] = cr.json()
+    except Exception as e:
+        results["commands"] = {"error": str(e)}
+
+    webhook_ok = results.get("webhook", {}).get("ok", False)
+    return jsonify({
+        "success": webhook_ok,
+        "message": "Istanbul Cafe Telegram boti va vebhook muvaffaqiyatli sozlandi!" if webhook_ok else "Vebhook sozlashda ogohlantirish yuz berdi.",
+        "webhook_url": webhook_url,
+        "base_domain": base_domain,
+        "details": results
+    }), (200 if webhook_ok else 500)
 
 
 @flask_app.route("/api/delete-webhook", methods=["GET", "POST"])
