@@ -9,5 +9,9 @@ if BASE_DIR not in sys.path:
 
 from istanbul_cafe_bot import app, flask_app
 
+# Vercel WSGI & ASGI entrypoints
+application = flask_app
+handler = flask_app
+
 if __name__ == "__main__":
     app.run()

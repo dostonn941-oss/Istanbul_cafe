@@ -1,15 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
+    "app.py": {
+      "maxDuration": 15,
+      "includeFiles": "{templates/**,menu.json,orders.json}"
+    },
     "api/index.py": {
       "maxDuration": 15,
-      "includeFiles": "templates/**"
+      "includeFiles": "{templates/**,menu.json,orders.json}"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index.py"
-    }
-  ]
+  }
 }
+
